@@ -1,2 +1,5 @@
 # Renting-accommodation
-Project: XML and WEB Services &amp; Business Information Systems &amp; E-Business Systems Security
+
+### Class Project: XML and WEB Services & Business Information Systems & E-Business Systems Security.
+
+Group Members: Tanja Provci, Aleksandar Arambasic, Milos Lukovic and Maja Gulan
