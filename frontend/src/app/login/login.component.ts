@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../animations';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -9,9 +10,16 @@ import { fadeIn } from '../animations';
 })
 export class LoginComponent implements OnInit {
 
-  constructor() { }
+  constructor(private formBuilder: FormBuilder) { }
+
+  loginForm = this.formBuilder.group({
+    email: ['', Validators.required],
+    password: ['', Validators.required]
+  });
 
   ngOnInit() {
   }
 
+  login() {
+  }
 }

@@ -14,4 +14,5 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
+  title = 'The Booking App';
 }
