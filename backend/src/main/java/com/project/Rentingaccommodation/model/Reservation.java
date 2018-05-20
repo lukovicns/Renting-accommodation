@@ -39,4 +39,76 @@ public class Reservation {
 	
 	@Enumerated(EnumType.STRING)
 	private ReservationStatus status;
+	
+	public Reservation() {
+		
+	}
+
+	public Reservation(Long id, User user, Room room, String startDate, String endDate, int price,
+			ReservationStatus status) {
+		super();
+		this.id = id;
+		this.user = user;
+		this.room = room;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.price = price;
+		this.status = status;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public ReservationStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ReservationStatus status) {
+		this.status = status;
+	}
 }

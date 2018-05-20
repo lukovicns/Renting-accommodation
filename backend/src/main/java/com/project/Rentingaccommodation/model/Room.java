@@ -50,4 +50,101 @@ public class Room {
 	@Transient
 	private List<String> imageList;
 	
+	public Room() {
+		
+	}
+
+	public Room(Long id, String name, BedType type, String description, Accommodation accommodation, int size,
+			int maxNumberOfGuests, int numberOfRooms) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.description = description;
+		this.accommodation = accommodation;
+		this.size = size;
+		this.maxNumberOfGuests = maxNumberOfGuests;
+		this.numberOfRooms = numberOfRooms;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public BedType getType() {
+		return type;
+	}
+
+	public void setType(BedType type) {
+		this.type = type;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Accommodation getAccommodation() {
+		return accommodation;
+	}
+
+	public void setAccommodation(Accommodation accommodation) {
+		this.accommodation = accommodation;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public int getMaxNumberOfGuests() {
+		return maxNumberOfGuests;
+	}
+
+	public void setMaxNumberOfGuests(int maxNumberOfGuests) {
+		this.maxNumberOfGuests = maxNumberOfGuests;
+	}
+
+	public int getNumberOfRooms() {
+		return numberOfRooms;
+	}
+
+	public void setNumberOfRooms(int numberOfRooms) {
+		this.numberOfRooms = numberOfRooms;
+	}
+
+	public byte[] getImages() {
+		return images;
+	}
+
+	public void setImages(byte[] images) {
+		this.images = images;
+	}
+
+	public List<String> getImageList() {
+		return imageList;
+	}
+
+	public void setImageList(List<String> imageList) {
+		this.imageList = imageList;
+	}
 }
+

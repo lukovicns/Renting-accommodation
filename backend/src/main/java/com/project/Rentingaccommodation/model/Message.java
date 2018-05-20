@@ -44,5 +44,84 @@ public class Message {
 	@Enumerated(EnumType.STRING)
 	private Direction direction;
 	
+	public Message() {
+		
+	}
+
+	public Message(Long id, User user, Agent agent, Room room, String date, String text, MessageStatus status, Direction direction) {
+		super();
+		this.id = id;
+		this.user = user;
+		this.agent = agent;
+		this.room = room;
+		this.date = date;
+		this.text = text;
+		this.status = status;
+		this.direction = direction;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Agent getAgent() {
+		return agent;
+	}
+
+	public void setAgent(Agent agent) {
+		this.agent = agent;
+	}
+
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public MessageStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(MessageStatus status) {
+		this.status = status;
+	}
+
+	public Direction getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
+	}
 }
 

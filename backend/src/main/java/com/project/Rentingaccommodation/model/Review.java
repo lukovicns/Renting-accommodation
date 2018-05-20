@@ -39,4 +39,75 @@ public class Review {
 	
 	@Enumerated(EnumType.STRING)
 	private ReviewStatus status;
+
+	public Review() {
+		
+	}
+	
+	public Review(Long id, User user, Room room, String comment, String date, int rating, ReviewStatus status) {
+		super();
+		this.id = id;
+		this.user = user;
+		this.room = room;
+		this.comment = comment;
+		this.date = date;
+		this.rating = rating;
+		this.status = status;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+	public ReviewStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ReviewStatus status) {
+		this.status = status;
+	}
 }

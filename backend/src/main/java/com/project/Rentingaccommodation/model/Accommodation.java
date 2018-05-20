@@ -28,21 +28,13 @@ public class Accommodation {
 	@OneToOne
 	@JoinColumn(name="accommodation_type_id")
 	private AccommodationType type;
+
+	@OneToOne
+	@JoinColumn(name="city_id")
+	private City city;
 	
-	@Column(name="email", nullable=false)
-	private String email;
-	
-	@Column(name="country", nullable=false)
-	private String country;
-	
-	@Column(name="city", nullable=false)
-	private String city;
-	
-	@Column(name="address", nullable=false)
-	private String address;
-	
-	@Column(name="phone", nullable=false)
-	private String phone;
+	@Column(name="street", nullable=false)
+	private String street;
 	
 	@Column(name="description", nullable=false)
 	private String description;
@@ -55,6 +47,7 @@ public class Accommodation {
 	@JoinColumn(name="agent_id")
 	private Agent agent;
 	
+	//prokomentarisati
 	@Column(name = "images", columnDefinition = "LONGBLOB")
 	private byte[] images;
 	
@@ -65,17 +58,14 @@ public class Accommodation {
 		
 	}
 
-	public Accommodation(Long id, String name, AccommodationType type, String email, String country, String city,
-			String address, String phone, String description, AccommodationCategory category, Agent agent) {
+	public Accommodation(Long id, String name, AccommodationType type, City city, String street, String description,
+			AccommodationCategory category, Agent agent) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.type = type;
-		this.email = email;
-		this.country = country;
 		this.city = city;
-		this.address = address;
-		this.phone = phone;
+		this.street = street;
 		this.description = description;
 		this.category = category;
 		this.agent = agent;
@@ -104,45 +94,21 @@ public class Accommodation {
 	public void setType(AccommodationType type) {
 		this.type = type;
 	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public String getCity() {
+	
+	public City getCity() {
 		return city;
 	}
 
-	public void setCity(String city) {
+	public void setCity(City city) {
 		this.city = city;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getStreet() {
+		return street;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setStreet(String street) {
+		this.street = street;
 	}
 
 	public String getDescription() {

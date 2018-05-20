@@ -26,4 +26,38 @@ public class RoomService {
 	@JoinColumn(name="additional_service_id")
 	private AdditionalService additionalService;
 	
+	public RoomService() {
+		
+	}
+
+	public RoomService(Long id, Room room, AdditionalService additionalService) {
+		super();
+		this.id = id;
+		this.room = room;
+		this.additionalService = additionalService;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Room getRoom() {
+		return room;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	public AdditionalService getAdditionalService() {
+		return additionalService;
+	}
+
+	public void setAdditionalService(AdditionalService additionalService) {
+		this.additionalService = additionalService;
+	}
 }

@@ -26,20 +26,17 @@ public class Agent {
 	@Column(name="salt",unique=true, nullable=false)
 	private byte[] salt;
 	
-	@Column(name="hashedPassword", nullable=false)
-	private String hashedPassword;
+	@Column(name="password", nullable=false)
+	private String password;
 	
 	@Column(name="email", unique=true, nullable=false)
 	private String email;
 	
-	@Column(name="country", nullable=false)
-	private String country;
+	@Column(name="city_id", nullable=false)
+	private City city;
 	
-	@Column(name="city", nullable=false)
-	private String city;
-	
-	@Column(name="address", nullable=false)
-	private String address;
+	@Column(name="street", nullable=false)
+	private String street;
 	
 	@Column(name="phone", nullable=false)
 	private String phone;
@@ -51,16 +48,15 @@ public class Agent {
 		
 	}
 	
-	public Agent(Long id, String name, String surname, String email, String country, String city, String address,
+	public Agent(Long id, String name, String surname, String email, City city, String street,
 			String phone, int businessId) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.email = email;
-		this.country = country;
 		this.city = city;
-		this.address = address;
+		this.street = street;
 		this.phone = phone;
 		this.businessId = businessId;
 	}
@@ -97,12 +93,12 @@ public class Agent {
 		this.salt = salt;
 	}
 
-	public String getHashedPassword() {
-		return hashedPassword;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setHashedPassword(String hashedPassword) {
-		this.hashedPassword = hashedPassword;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getEmail() {
@@ -113,28 +109,20 @@ public class Agent {
 		this.email = email;
 	}
 
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public String getCity() {
+	public City getCity() {
 		return city;
 	}
 
-	public void setCity(String city) {
+	public void setCity(City city) {
 		this.city = city;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getStreet() {
+		return street;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setStreet(String street) {
+		this.street = street;
 	}
 
 	public String getPhone() {

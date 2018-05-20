@@ -26,8 +26,8 @@ public class Admin {
 	@Column(name="salt",unique=true, nullable=false)
 	private byte[] salt;
 	
-	@Column(name="hashedPassword", nullable=false)
-	private String hashedPassword;
+	@Column(name="password", nullable=false)
+	private String password;
 	
 	@Column(name="email", unique=true, nullable=false)
 	private String email;
@@ -76,12 +76,12 @@ public class Admin {
 		this.salt = salt;
 	}
 
-	public String getHashedPassword() {
-		return hashedPassword;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setHashedPassword(String hashedPassword) {
-		this.hashedPassword = hashedPassword;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getEmail() {
