@@ -5,4 +5,9 @@ h1 {
 .card {
   margin: 0 auto;
   max-width: 500px;
+  margin-top: 50px;
+}
+
+button {
+  margin-top: 25px;
 }
