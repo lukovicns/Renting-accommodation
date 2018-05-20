@@ -20,7 +20,6 @@ export class ApartmentListComponent implements OnInit {
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
     this.apartmentService.getApartments()
     .subscribe(res => {
-      console.log(res);
       for (let i = 0; i < res.length; i++) {
         if (res[i].accommodation['id'] == this.accommodationId) {
           this.apartments.push(res[i]);
