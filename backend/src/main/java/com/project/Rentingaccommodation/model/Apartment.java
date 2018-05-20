@@ -13,12 +13,12 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="room")
-public class Room {
+@Table(name="apartment")
+public class Apartment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "room_id", updatable = false, nullable = false, insertable=false)
+	@Column(name = "apartment_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
 	@Column(name="name", nullable=false)
@@ -28,7 +28,7 @@ public class Room {
 	@JoinColumn(name="bed_type_id")
 	private BedType type;
 	
-	@Column(name="description", nullable=false)
+	@Column(name="description"/*, nullable=false*/)
 	private String description;
 	
 	@OneToOne
@@ -50,11 +50,11 @@ public class Room {
 	@Transient
 	private List<String> imageList;
 	
-	public Room() {
+	public Apartment() {
 		
 	}
 
-	public Room(Long id, String name, BedType type, String description, Accommodation accommodation, int size,
+	public Apartment(Long id, String name, BedType type, String description, Accommodation accommodation, int size,
 			int maxNumberOfGuests, int numberOfRooms) {
 		super();
 		this.id = id;

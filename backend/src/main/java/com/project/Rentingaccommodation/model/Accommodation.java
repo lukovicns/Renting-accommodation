@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -36,7 +37,7 @@ public class Accommodation {
 	@Column(name="street", nullable=false)
 	private String street;
 	
-	@Column(name="description", nullable=false)
+	@Column(name="description"/*, nullable=false*/)
 	private String description;
 	
 	@OneToOne

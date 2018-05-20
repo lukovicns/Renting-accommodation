@@ -26,7 +26,7 @@ public class Reservation {
 	
 	@OneToOne
 	@JoinColumn(name="room_id")
-	private Room room;
+	private Apartment room;
 	
 	@Column(name="start_date", nullable=false)
 	private String startDate;
@@ -44,7 +44,7 @@ public class Reservation {
 		
 	}
 
-	public Reservation(Long id, User user, Room room, String startDate, String endDate, int price,
+	public Reservation(Long id, User user, Apartment room, String startDate, String endDate, int price,
 			ReservationStatus status) {
 		super();
 		this.id = id;
@@ -72,11 +72,11 @@ public class Reservation {
 		this.user = user;
 	}
 
-	public Room getRoom() {
+	public Apartment getRoom() {
 		return room;
 	}
 
-	public void setRoom(Room room) {
+	public void setRoom(Apartment room) {
 		this.room = room;
 	}
 

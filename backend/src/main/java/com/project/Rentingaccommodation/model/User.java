@@ -26,8 +26,9 @@ public class User {
 	
 	@Column(name="email", unique=true, nullable=false)
 	private String email;
-	
-	@Column(name="city", nullable=false)
+
+	@OneToOne
+	@JoinColumn(name = "id", nullable = false)
 	private City city;
 	
 	@Column(name="address", nullable=false)

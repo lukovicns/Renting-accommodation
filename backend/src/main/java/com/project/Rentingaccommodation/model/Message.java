@@ -30,7 +30,7 @@ public class Message {
 	
 	@OneToOne
 	@JoinColumn(name="room_id")
-	private Room room;
+	private Apartment room;
 	
 	@Column(name="date", nullable=false)
 	private String date;
@@ -48,7 +48,7 @@ public class Message {
 		
 	}
 
-	public Message(Long id, User user, Agent agent, Room room, String date, String text, MessageStatus status, Direction direction) {
+	public Message(Long id, User user, Agent agent, Apartment room, String date, String text, MessageStatus status, Direction direction) {
 		super();
 		this.id = id;
 		this.user = user;
@@ -84,11 +84,11 @@ public class Message {
 		this.agent = agent;
 	}
 
-	public Room getRoom() {
+	public Apartment getRoom() {
 		return room;
 	}
 
-	public void setRoom(Room room) {
+	public void setRoom(Apartment room) {
 		this.room = room;
 	}
 

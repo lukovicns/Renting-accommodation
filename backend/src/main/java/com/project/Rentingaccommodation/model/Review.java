@@ -26,7 +26,7 @@ public class Review {
 	
 	@OneToOne
 	@JoinColumn(name="room_id")
-	private Room room;
+	private Apartment room;
 	
 	@Column(name="comment")
 	private String comment;
@@ -44,7 +44,7 @@ public class Review {
 		
 	}
 	
-	public Review(Long id, User user, Room room, String comment, String date, int rating, ReviewStatus status) {
+	public Review(Long id, User user, Apartment room, String comment, String date, int rating, ReviewStatus status) {
 		super();
 		this.id = id;
 		this.user = user;
@@ -71,11 +71,11 @@ public class Review {
 		this.user = user;
 	}
 
-	public Room getRoom() {
+	public Apartment getRoom() {
 		return room;
 	}
 
-	public void setRoom(Room room) {
+	public void setRoom(Apartment room) {
 		this.room = room;
 	}
 

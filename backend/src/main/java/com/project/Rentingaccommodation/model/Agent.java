@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -23,16 +25,17 @@ public class Agent {
 	private String surname;
 	
 	@GeneratedValue
-	@Column(name="salt",unique=true, nullable=false)
+	@Column(name="salt",unique=true/*, nullable=false*/)
 	private byte[] salt;
 	
-	@Column(name="password", nullable=false)
+	@Column(name="password"/*, nullable=false*/)
 	private String password;
 	
 	@Column(name="email", unique=true, nullable=false)
 	private String email;
 	
-	@Column(name="city_id", nullable=false)
+	@OneToOne
+	@JoinColumn(name = "city_id", nullable = false)
 	private City city;
 	
 	@Column(name="street", nullable=false)
@@ -41,7 +44,7 @@ public class Agent {
 	@Column(name="phone", nullable=false)
 	private String phone;
 
-	@Column(name="bussinessId", unique=true, nullable=false)
+	@Column(name="bussiness_id", unique=true, nullable=false)
 	private int businessId;
 
 	public Agent() {
