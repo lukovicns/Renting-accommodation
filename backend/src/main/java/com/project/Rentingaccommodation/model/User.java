@@ -18,7 +18,7 @@ public class User {
 	private String surname;
 	
 	@GeneratedValue
-	@Column(name="salt",unique=true, nullable=false)
+	@Column(name="salt",unique=true/*, nullable=false*/)
 	private byte[] salt;
 	
 	@Column(name="password", nullable=false)
@@ -28,11 +28,11 @@ public class User {
 	private String email;
 
 	@OneToOne
-	@JoinColumn(name = "id", nullable = false)
+	@JoinColumn(name = "city_id", nullable = false)
 	private City city;
 	
-	@Column(name="address", nullable=false)
-	private String address;
+	@Column(name="street", nullable=false)
+	private String street;
 	
 	@Column(name="phone", nullable=false)
 	private String phone;
@@ -45,7 +45,7 @@ public class User {
 	}
 
 	public User(Long id, String name, String surname, byte[] salt, String password, String email, City city,
-			String address, String phone, UserStatus status) {
+			String street, String phone, UserStatus status) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -54,7 +54,7 @@ public class User {
 		this.password = password;
 		this.email = email;
 		this.city = city;
-		this.address = address;
+		this.street = street;
 		this.phone = phone;
 		this.status = status;
 	}
@@ -115,12 +115,12 @@ public class User {
 		this.city = city;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getStreet() {
+		return street;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setStreet(String street) {
+		this.street = street;
 	}
 
 	public String getPhone() {

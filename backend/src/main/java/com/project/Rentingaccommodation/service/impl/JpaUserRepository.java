@@ -20,38 +20,53 @@ public class JpaUserRepository implements UserService {
 	
 	@Override
 	public User findOne(Long id) {
-		// TODO Auto-generated method stub
+		for (User u : repository.findAll()) {
+			if (u.getId() == id) {
+				return u;
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public List<User> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAll();
 	}
 
 	@Override
 	public User save(User user) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.save(user);
 	}
 
 	@Override
 	public List<User> save(List<User> users) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.saveAll(users);
 	}
 
 	@Override
 	public User delete(Long id) {
-		// TODO Auto-generated method stub
+		User user = findOne(id);
+		if (user != null) {
+			repository.delete(user);
+			return user;	
+		}
 		return null;
 	}
 
 	@Override
 	public void delete(List<Long> ids) {
-		// TODO Auto-generated method stub
-		
+		for (Long id : ids) {
+			repository.deleteById(id);
+		}
 	}
 
+	@Override
+	public User findByEmail(String email) {
+		for (User u : repository.findAll()) {
+			if (u.getEmail().equals(email)) {
+				return u;
+			}
+		}
+		return null;
+	}
 }

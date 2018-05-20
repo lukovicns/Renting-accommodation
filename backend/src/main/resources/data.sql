@@ -20,3 +20,5 @@ insert into bed_type (bed_type_id, bed_type_name) values (1, 'King size bed');
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (1, 'Room 1', 1, 'Room 1 description', 1, 80, 4, 4);
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (2, 'Room 2', 1, 'Room 2 description', 2, 80, 4, 4);
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (3, 'Room 3', 1, 'Room 3 description', 1, 50, 2, 2);
+
+insert into user (user_id, name, surname, salt, password, email, city_id, street, phone) values (1, 'Lazar', 'Lazarevic', 0, 'passpass', 'l@l.com', 1, 'Narodnog fronta 6', '0640000000');
