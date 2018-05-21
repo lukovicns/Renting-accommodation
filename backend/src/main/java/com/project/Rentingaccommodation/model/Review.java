@@ -28,10 +28,10 @@ public class Review {
 	@JoinColumn(name="room_id")
 	private Apartment room;
 	
-	@Column(name="comment")
+	@Column(name="comment", columnDefinition="VARCHAR(999)")
 	private String comment;
 	
-	@Column(name="date", nullable=false)
+	@Column(name="date", columnDefinition="VARCHAR(50)", nullable=false)
 	private String date;
 	
 	@Column(name="rating", nullable=false)

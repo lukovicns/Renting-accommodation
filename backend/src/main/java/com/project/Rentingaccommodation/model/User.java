@@ -7,34 +7,34 @@ import javax.persistence.*;
 public class User {
 	
 	@Id
-	@Column(name = "user_id", updatable = false, nullable = false, insertable=false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "user_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
-	@Column(name="name", nullable=false)
+	@Column(name="name", columnDefinition="VARCHAR(50)", nullable=false)
 	private String name;
 	
-	@Column(name="surname", nullable=false)
+	@Column(name="surname", columnDefinition="VARCHAR(50)", nullable=false)
 	private String surname;
 	
 //	@GeneratedValue
 //	@Column(name="salt",unique=true, nullable=false)
 //	private byte[] salt;
 	
-	@Column(name="password", nullable=false)
+	@Column(name="password", columnDefinition="VARCHAR(100)", nullable=false)
 	private String password;
 	
-	@Column(name="email", unique=true, nullable=false)
+	@Column(name="email", columnDefinition="VARCHAR(50)", unique=true, nullable=false)
 	private String email;
 
 	@OneToOne
 	@JoinColumn(name = "city_id", nullable = false)
 	private City city;
 	
-	@Column(name="street", nullable=false)
+	@Column(name="street", columnDefinition="VARCHAR(50)", nullable=false)
 	private String street;
 	
-	@Column(name="phone", nullable=false)
+	@Column(name="phone", columnDefinition="VARCHAR(50)", nullable=false)
 	private String phone;
 	
 	@Enumerated(EnumType.STRING)
@@ -44,10 +44,9 @@ public class User {
 		
 	}
 
-	public User(Long id, String name, String surname, String password, String email, City city,
-			String street, String phone, UserStatus status) {
+	public User(String name, String surname, String password, String email, City city,
+			String street, String phone) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.password = password;
@@ -55,7 +54,6 @@ public class User {
 		this.city = city;
 		this.street = street;
 		this.phone = phone;
-		this.status = status;
 	}
 
 	public Long getId() {

@@ -16,7 +16,7 @@ public class AdditionalService {
 	@Column(name = "additional_service_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
-	@Column(name="additional_service_name", unique=true, nullable=false)
+	@Column(name="additional_service_name", columnDefinition="VARCHAR(50)", unique=true, nullable=false)
 	private String name;
 	
 	public AdditionalService() {

@@ -16,16 +16,15 @@ public class AccommodationType {
 	@Column(name = "accommodation_type_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
-	@Column(name="accommodation_type_name", unique=true, nullable=false)
+	@Column(name="accommodation_type_name", columnDefinition="VARCHAR(50)", unique=true, nullable=false)
 	private String name;
 	
 	public AccommodationType() {
 		
 	}
 
-	public AccommodationType(Long id, String name) {
+	public AccommodationType(String name) {
 		super();
-		this.id = id;
 		this.name = name;
 	}
 

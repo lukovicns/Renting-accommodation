@@ -23,7 +23,7 @@ public class Accommodation {
 	@Column(name = "accommodation_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
-	@Column(name="name", nullable=false)
+	@Column(name="name", columnDefinition="VARCHAR(50)", nullable=false)
 	private String name;
 	
 	@OneToOne
@@ -34,10 +34,10 @@ public class Accommodation {
 	@JoinColumn(name="city_id")
 	private City city;
 	
-	@Column(name="street", nullable=false)
+	@Column(name="street", columnDefinition="VARCHAR(50)", nullable=false)
 	private String street;
 	
-	@Column(name="description"/*, nullable=false*/)
+	@Column(name="description", columnDefinition="VARCHAR(900)")
 	private String description;
 	
 	@OneToOne
@@ -59,10 +59,9 @@ public class Accommodation {
 		
 	}
 
-	public Accommodation(Long id, String name, AccommodationType type, City city, String street, String description,
+	public Accommodation(String name, AccommodationType type, City city, String street, String description,
 			AccommodationCategory category, Agent agent) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.type = type;
 		this.city = city;

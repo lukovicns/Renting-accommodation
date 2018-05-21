@@ -16,7 +16,7 @@ public class BedType {
 	@Column(name = "bed_type_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
-	@Column(name="bed_type_name", unique=true, nullable=false)
+	@Column(name="bed_type_name", columnDefinition="VARCHAR(50)", unique=true, nullable=false)
 	private String name;
 	
 	public BedType() {

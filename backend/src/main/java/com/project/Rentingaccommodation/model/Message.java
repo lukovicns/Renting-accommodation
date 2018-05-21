@@ -35,7 +35,7 @@ public class Message {
 	@Column(name="date", nullable=false)
 	private String date;
 	
-	@Column(name="message_text", nullable=false)
+	@Column(name="message_text", columnDefinition="VARCHAR(999)", nullable=false)
 	private String text;
 	
 	@Enumerated(EnumType.STRING)

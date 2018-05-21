@@ -22,11 +22,11 @@ public class City {
 	@JoinColumn(name = "country_id", nullable = false)
 	private Country country;
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name", columnDefinition="VARCHAR(50)", nullable = false)
 	private String name;
 
 
-	@Column(name = "zipcode", nullable = false)
+	@Column(name = "zipcode", columnDefinition="VARCHAR(50)", nullable = false)
 	private String zipcode;
 	
 	public City() {

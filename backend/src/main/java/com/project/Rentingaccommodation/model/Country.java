@@ -19,7 +19,7 @@ public class Country {
 	@Column(name="country_code", length=3, nullable = false)
 	private String code;
 
-	@Column(name="country_name", nullable=false)
+	@Column(name="country_name", columnDefinition="VARCHAR(50)", nullable=false)
 	private String name;
 	
 	public Country() {

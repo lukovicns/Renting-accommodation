@@ -1,14 +1,9 @@
 package com.project.Rentingaccommodation.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table(name="admin")
+@Table(name="administrator")
 public class Admin {
 	
 	@Id
@@ -16,31 +11,32 @@ public class Admin {
 	@Column(name = "admin_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
-	@Column(name="name", nullable=false)
+	@Column(name="name", columnDefinition="VARCHAR(50)", nullable=false)
 	private String name;
 	
-	@Column(name="surname", nullable=false)
+	@Column(name="surname", columnDefinition="VARCHAR(50)", nullable=false)
 	private String surname;
 	
 //	@GeneratedValue
 //	@Column(name="salt",unique=true, nullable=false)
 //	private byte[] salt;
 	
-	@Column(name="password", nullable=false)
+	@Column(name="password", columnDefinition="VARCHAR(100)", nullable=false)
 	private String password;
 	
-	@Column(name="email", unique=true, nullable=false)
+	@Column(name="email", columnDefinition="VARCHAR(50)", unique=true, nullable=false)
 	private String email;
 	
 	public Admin() {
 		
 	}
 
-	public Admin(Long id, String name, String surname, String email) {
+	public Admin(Long id, String name, String surname, String password, String email) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
+		this.password = password;
 		this.email = email;
 	}
 

@@ -22,10 +22,10 @@ public class PricePlan {
 	@JoinColumn(name="room_id")
 	private Apartment room;
 	
-	@Column(name="start_date", nullable=false)
+	@Column(name="start_date", columnDefinition="VARCHAR(50)", nullable=false)
 	private String startDate;
 	
-	@Column(name="end_date", nullable=false)
+	@Column(name="end_date", columnDefinition="VARCHAR(50)", nullable=false)
 	private String endDate;
 	
 	@Column(name="price", nullable=false)

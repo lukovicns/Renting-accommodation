@@ -21,14 +21,14 @@ public class Apartment {
 	@Column(name = "apartment_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
-	@Column(name="name", nullable=false)
+	@Column(name="name", columnDefinition="VARCHAR(50)", nullable=false)
 	private String name;
 	
 	@OneToOne
 	@JoinColumn(name="bed_type_id")
 	private BedType type;
 	
-	@Column(name="description"/*, nullable=false*/)
+	@Column(name="description", columnDefinition="VARCHAR(900)")
 	private String description;
 	
 	@OneToOne
