@@ -24,11 +24,11 @@ public class Agent {
 	@Column(name="surname", nullable=false)
 	private String surname;
 	
-	@GeneratedValue
-	@Column(name="salt",unique=true/*, nullable=false*/)
-	private byte[] salt;
+//	@GeneratedValue
+//	@Column(name="salt",unique=true, nullable=false)
+//	private byte[] salt;
 	
-	@Column(name="password"/*, nullable=false*/)
+	@Column(name="password", nullable=false)
 	private String password;
 	
 	@Column(name="email", unique=true, nullable=false)
@@ -88,13 +88,13 @@ public class Agent {
 		this.surname = surname;
 	}
 
-	public byte[] getSalt() {
-		return salt;
-	}
-
-	public void setSalt(byte[] salt) {
-		this.salt = salt;
-	}
+//	public byte[] getSalt() {
+//		return salt;
+//	}
+//
+//	public void setSalt(byte[] salt) {
+//		this.salt = salt;
+//	}
 
 	public String getPassword() {
 		return password;

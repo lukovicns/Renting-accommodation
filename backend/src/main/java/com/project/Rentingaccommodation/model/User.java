@@ -17,9 +17,9 @@ public class User {
 	@Column(name="surname", nullable=false)
 	private String surname;
 	
-	@GeneratedValue
-	@Column(name="salt",unique=true/*, nullable=false*/)
-	private byte[] salt;
+//	@GeneratedValue
+//	@Column(name="salt",unique=true, nullable=false)
+//	private byte[] salt;
 	
 	@Column(name="password", nullable=false)
 	private String password;
@@ -44,13 +44,12 @@ public class User {
 		
 	}
 
-	public User(Long id, String name, String surname, byte[] salt, String password, String email, City city,
+	public User(Long id, String name, String surname, String password, String email, City city,
 			String street, String phone, UserStatus status) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
-		this.salt = salt;
 		this.password = password;
 		this.email = email;
 		this.city = city;
@@ -83,13 +82,13 @@ public class User {
 		this.surname = surname;
 	}
 
-	public byte[] getSalt() {
-		return salt;
-	}
-
-	public void setSalt(byte[] salt) {
-		this.salt = salt;
-	}
+//	public byte[] getSalt() {
+//		return salt;
+//	}
+//
+//	public void setSalt(byte[] salt) {
+//		this.salt = salt;
+//	}
 
 	public String getPassword() {
 		return password;
