@@ -13,12 +13,14 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.project.Rentingaccommodation.security.JWTAuthenticationEntryPoint;
-import com.project.Rentingaccommodation.security.JWTAuthenticationTokenFilter;
 import com.project.Rentingaccommodation.security.JWTAuthenticationProvider;
+import com.project.Rentingaccommodation.security.JWTAuthenticationTokenFilter;
 import com.project.Rentingaccommodation.security.JWTSuccessHandler;
+import com.project.Rentingaccommodation.security.SimpleCORSFilter;
 
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 @EnableWebSecurity
@@ -43,7 +45,7 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable()
+	    http.csrf().disable()
 			.exceptionHandling().authenticationEntryPoint(entryPoint)
 			.and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -51,7 +53,8 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			.antMatchers("/token/*").permitAll()
 			.antMatchers(HttpMethod.POST, "/api/countries/").authenticated();
-		http.addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new SimpleCORSFilter(), ChannelProcessingFilter.class);
+	    http.addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		http.headers().cacheControl();
 	}
 	
@@ -59,4 +62,5 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.GET, "/api/countries/*");
     }
+
 }
