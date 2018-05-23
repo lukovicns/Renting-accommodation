@@ -54,6 +54,7 @@ public class User {
 		this.city = city;
 		this.street = street;
 		this.phone = phone;
+		this.status = UserStatus.ACTIVATED;
 	}
 
 	public Long getId() {
