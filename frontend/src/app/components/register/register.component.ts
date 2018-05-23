@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../../services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,7 @@ import { UserService } from '../../services/user.service';
 })
 export class RegisterComponent implements OnInit {
 
-  constructor(private userService: UserService, private formBuilder: FormBuilder) { }
+  constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
 
   registerForm = this.formBuilder.group({
     email: ['', Validators.compose([
@@ -33,6 +34,9 @@ export class RegisterComponent implements OnInit {
   });
 
   ngOnInit() {
+    if (this.userService.getCurrentUser()) {
+      this.router.navigate(['/']);
+    }
   }
 
   register() {
