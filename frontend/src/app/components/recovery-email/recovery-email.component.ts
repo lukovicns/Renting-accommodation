@@ -5,18 +5,17 @@ import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  selector: 'app-recovery-email',
+  templateUrl: './recovery-email.component.html',
+  styleUrls: ['./recovery-email.component.css'],
   animations: [fadeIn()]
 })
-export class LoginComponent implements OnInit {
+export class RecoveryEmailComponent implements OnInit {
 
   constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
 
-  loginForm = this.formBuilder.group({
-    email: ['', Validators.required],
-    password: ['', Validators.required]
+   recoveryForm = this.formBuilder.group({
+    email: ['', Validators.required]
   });
 
   ngOnInit() {
@@ -25,14 +24,9 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  login() {
-    this.userService.loginUser(this.loginForm.value)
-    .subscribe(res => {
-      if (!!res['token']) {
-        localStorage.setItem('token', res['token']);
-        this.router.navigate(['/']);
-      }
-    });
-  }
-  
+  sendMail() {
+      this.userService.resetPassword(this.recoveryForm.value)
+      .subscribe();
+    }
+
 }

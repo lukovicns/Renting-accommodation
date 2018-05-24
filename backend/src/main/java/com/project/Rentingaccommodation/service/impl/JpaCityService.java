@@ -15,12 +15,7 @@ public class JpaCityService implements CityService {
 
 	@Override
 	public City findOne(Long id) {
-		for(City c : repository.findAll()) {
-			if (c.getId() == id) {
-				return c;
-			}
-		}
-		return null;
+		return repository.getOne(id);
 	}
 
 	@Override

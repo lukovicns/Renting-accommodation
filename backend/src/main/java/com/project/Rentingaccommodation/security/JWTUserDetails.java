@@ -10,15 +10,17 @@ import com.project.Rentingaccommodation.model.UserRoles;
 
 public class JWTUserDetails implements UserDetails {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String email;
-	private String password;
 	private UserRoles role;
 	private String token;
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public JWTUserDetails(String email, String password, UserRoles role, String token, List<GrantedAuthority> grantedAuthorities) {
+	public JWTUserDetails(String email, UserRoles role, String token, List<GrantedAuthority> grantedAuthorities) {
 	    this.email = email;
-	    this.password = password;
 	    this.role = role;
 	    this.token = token;
 	    this.authorities = grantedAuthorities;
@@ -61,11 +63,6 @@ public class JWTUserDetails implements UserDetails {
 		this.token = token;
 	}
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -82,12 +79,14 @@ public class JWTUserDetails implements UserDetails {
 		this.role = role;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	@Override
+	public String getUsername() {
+		return null;
 	}
 
 	@Override
-	public String getUsername() {
+	public String getPassword() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

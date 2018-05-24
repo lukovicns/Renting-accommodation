@@ -21,11 +21,11 @@ public class TokenController {
         this.jwtGenerator = jwtGenerator;
     }
 
-    @PostMapping
+   /* @PostMapping
     public ResponseEntity<Token> generate(@RequestBody JWTUser jwtUser) {
     	if (jwtUser.getEmail() == null || jwtUser.getPassword() == null) {
     		return new ResponseEntity<>(new Token(null, "You must provide valid email and password."), HttpStatus.FORBIDDEN);
     	}
         return new ResponseEntity<>(new Token(jwtGenerator.generate(jwtUser), null), HttpStatus.OK);
-    }
+    }*/
 }

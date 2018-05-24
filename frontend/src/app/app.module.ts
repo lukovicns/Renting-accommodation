@@ -17,6 +17,8 @@ import { AuthGuard } from './auth.guard';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ApartmentListComponent } from './components/apartment-list/apartment-list.component';
 import { ApartmentService } from './services/apartment.service';
+import { ProfileComponent } from './components/profile/profile.component';
+import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
 
 
 @NgModule({
@@ -28,7 +30,9 @@ import { ApartmentService } from './services/apartment.service';
     AccommodationListComponent,
     AccommodationDetailComponent,
     PageNotFoundComponent,
-    ApartmentListComponent
+    ApartmentListComponent,
+    ProfileComponent,
+    RecoveryEmailComponent
   ],
   imports: [
     BrowserModule,

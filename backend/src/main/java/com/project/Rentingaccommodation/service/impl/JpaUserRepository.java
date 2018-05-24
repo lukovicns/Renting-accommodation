@@ -62,11 +62,6 @@ public class JpaUserRepository implements UserService {
 
 	@Override
 	public User findByEmail(String email) {
-		for (User u : repository.findAll()) {
-			if (u.getEmail().equals(email)) {
-				return u;
-			}
-		}
-		return null;
+		return repository.findByEmail(email);
 	}
 }

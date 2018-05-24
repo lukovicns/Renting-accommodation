@@ -36,7 +36,7 @@ public class JWTAuthenticationProvider extends AbstractUserDetailsAuthentication
 
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList(jwtUser.getRole().toString());
-        return new JWTUserDetails(jwtUser.getEmail(), jwtUser.getPassword(), jwtUser.getRole(), token, grantedAuthorities);
+        return new JWTUserDetails(jwtUser.getEmail(), jwtUser.getRole(), token, grantedAuthorities);
     }
 
     @Override

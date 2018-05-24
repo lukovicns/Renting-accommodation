@@ -10,38 +10,31 @@ import com.project.Rentingaccommodation.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import javassist.NotFoundException;
 
 @Component
 public class JWTGenerator {
 	
 	@Autowired
 	private UserService userService;
-	
-	private boolean userExists = false;
 
     public String generate(JWTUser jwtUser) {
 
-        Claims claims = Jwts.claims();
+    	Claims claims = Jwts.claims();
         
-        for (User u : userService.findAll()) {
-        	// Poredjenje i dekriptovanih lozinki se mora odraditi.
-        	if (u.getEmail().equals(jwtUser.getEmail())) {
-                claims.put("email", jwtUser.getEmail());
-                claims.put("password", jwtUser.getPassword());
-        		claims.put("role", UserRoles.USER);
-        		userExists = true;
-        		break;
-        	}
-        }
+        User user = userService.findByEmail(jwtUser.getEmail());
         
-        if (userExists) {
-            return Jwts.builder()
+        if(user != null)
+        {
+        	claims.put("email", jwtUser.getEmail());
+    		claims.put("role", UserRoles.USER);
+    		return Jwts.builder()
                     .setClaims(claims)
                     .signWith(SignatureAlgorithm.HS512, "secretKey")
                     .compact();
+    		
         }
         
         return "User with email " + jwtUser.getEmail() + " not found.";
+        
     }
 }

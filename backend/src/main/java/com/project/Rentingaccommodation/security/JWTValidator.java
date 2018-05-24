@@ -18,7 +18,7 @@ public class JWTValidator {
                     .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
-            jwtUser = new JWTUser((String) body.get("email"), (String) body.get("password"));
+            jwtUser = new JWTUser((String) body.get("email"));
 
         }
         catch (Exception e) {
