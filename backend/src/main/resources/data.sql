@@ -19,5 +19,4 @@ insert into apartment (apartment_id, name, bed_type_id, description, accommodati
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (3, 'Room 3', 1, 'Room 3 description', 1, 50, 2, 2);
 
 insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id) values (1, 'Goran', 'Goranovic', 'passpass', 'g@g.com', 1, 'Narodnog fronta 1', '0640000000', 2);
-insert into user (user_id, name, surname, password, email, city_id, street, phone) values (1, 'Lazar', 'Lazarevic', 'passpass', 'l@l.com', 1, 'Narodnog fronta 6', '0640000000');
 insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');

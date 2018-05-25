@@ -9,6 +9,7 @@ import { AccommodationDetailComponent } from './components/accommodation-detail/
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ApartmentListComponent } from './components/apartment-list/apartment-list.component';
 import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
+import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'recovery', component: RecoveryEmailComponent},
+  { path: 'question', component: RecoveryQuestionComponent},
   { path: '**', component: PageNotFoundComponent }
 ];
 

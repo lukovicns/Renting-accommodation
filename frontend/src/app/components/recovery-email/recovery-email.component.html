@@ -5,12 +5,12 @@
         <h1>Reset password</h1>
       </div>
       <div class="card-body">
-        <form [formGroup]="recoveryForm" (ngSubmit)="sendMail()">
+        <form [formGroup]="recoveryForm">
           <div class="form-group">
             <label for="email">Email address</label>
             <input formControlName="email" type="email" class="form-control" id="email" placeholder="Enter your email here">
           </div>
-          <button type="submit" class="btn btn-info btn-block">Send mail</button>
+          <button type="button" class="btn btn-info btn-block" (click)=next() routerLink="/question">Next</button>
         </form>
       </div>
     </div>

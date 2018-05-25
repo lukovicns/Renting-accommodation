@@ -31,7 +31,9 @@ export class RegisterComponent implements OnInit {
     password2: ['', Validators.compose([
       Validators.minLength(8),
       Validators.required
-    ])]
+    ])],
+    question: ['', Validators.required],
+    answer: ['', Validators.required],
   });
 
   ngOnInit() {
