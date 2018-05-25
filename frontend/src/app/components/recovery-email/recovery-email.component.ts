@@ -27,9 +27,9 @@ export class RecoveryEmailComponent implements OnInit {
     }
   }
 
-  sendMail() {
-      this.userService.resetPassword(this.recoveryForm.value)
-      .subscribe();
+  next() {
+      console.log('usao');
+      this.userService.setEmail(this.recoveryForm.value);
     }
 
 }

@@ -17,10 +17,6 @@ public class User {
 	@Column(name="surname", columnDefinition="VARCHAR(50)", nullable=false)
 	private String surname;
 	
-//	@GeneratedValue
-//	@Column(name="salt",unique=true, nullable=false)
-//	private byte[] salt;
-	
 	@Column(name="password", columnDefinition="VARCHAR(100)", nullable=false)
 	private String password;
 	
@@ -37,6 +33,12 @@ public class User {
 	@Column(name="phone", columnDefinition="VARCHAR(50)", nullable=false)
 	private String phone;
 	
+	@Column(name="question", columnDefinition="VARCHAR(100)", nullable=false)
+	private String question;
+	
+	@Column(name="answer", columnDefinition="VARCHAR(100)", nullable=false)
+	private String answer;
+	
 	@Enumerated(EnumType.STRING)
 	private UserStatus status;
 	
@@ -45,7 +47,7 @@ public class User {
 	}
 
 	public User(String name, String surname, String password, String email, City city,
-			String street, String phone) {
+			String street, String phone, String question, String answer) {
 		super();
 		this.name = name;
 		this.surname = surname;
@@ -55,6 +57,8 @@ public class User {
 		this.street = street;
 		this.phone = phone;
 		this.status = UserStatus.ACTIVATED;
+		this.question = question;
+		this.answer = answer;
 	}
 
 	public Long getId() {
@@ -136,5 +140,23 @@ public class User {
 	public void setStatus(UserStatus status) {
 		this.status = status;
 	}
+
+	public String getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+	
+	
 }
 

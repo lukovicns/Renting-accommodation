@@ -19,6 +19,7 @@ import { ApartmentListComponent } from './components/apartment-list/apartment-li
 import { ApartmentService } from './services/apartment.service';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
+import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { RecoveryEmailComponent } from './components/recovery-email/recovery-ema
     PageNotFoundComponent,
     ApartmentListComponent,
     ProfileComponent,
-    RecoveryEmailComponent
+    RecoveryEmailComponent,
+    RecoveryQuestionComponent
   ],
   imports: [
     BrowserModule,

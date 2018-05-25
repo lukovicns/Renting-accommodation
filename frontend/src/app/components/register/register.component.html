@@ -97,7 +97,14 @@
 	            Password must be at least 8 characters long.
 	          	</div>
 	      </div>
-	      
+          <div class="form-group">
+            <label for="question">Security question</label>
+            <input formControlName="question" type="text" class="form-control" id="question" placeholder="Enter your security question">
+          </div>
+          <div class="form-group">
+            <label for="answer">Security answer</label>
+            <input formControlName="answer" type="text" class="form-control" id="answer" placeholder="Enter your answer">
+          </div>
           <button type="submit" class="btn btn-primary btn-block" [disabled]="!registerForm.valid">Register</button>
         </form>
       </div>

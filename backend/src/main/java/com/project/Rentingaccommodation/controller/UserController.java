@@ -1,5 +1,7 @@
 package com.project.Rentingaccommodation.controller;
 
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Rentingaccommodation.model.City;
@@ -25,6 +28,7 @@ import com.project.Rentingaccommodation.model.Token;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserStatus;
 import com.project.Rentingaccommodation.model.DTO.PasswordChangeDTO;
+import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JWTGenerator;
 import com.project.Rentingaccommodation.security.JWTUser;
 import com.project.Rentingaccommodation.service.CityService;
@@ -65,6 +69,7 @@ public class UserController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> registerUser(@RequestBody User user)
 	{
+		System.out.println("user "+user.getEmail());
 		User unique = userService.findByEmail(user.getEmail());
 		Charset charset = Charset.forName("UTF-8");
 		
@@ -74,13 +79,16 @@ public class UserController {
 		String name = user.getName();
 		String surname = user.getSurname();
 		String email = user.getEmail();
-
 		City city = cityService.findOne(Long.valueOf(1));
 		String street = user.getStreet();
 		String phone = user.getPhone();
 		String password = PasswordUtil.hash(user.getPassword().toCharArray(), charset);
-				
-		User regUser = new User(name, surname, password, email, city, street, phone);
+		String question = user.getQuestion();	
+		System.out.println("que "+user.getQuestion());
+		System.out.println("ans "+user.getAnswer());
+		String answer = PasswordUtil.hash(user.getAnswer().toCharArray(), charset);	
+		
+		User regUser = new User(name, surname, password, email, city, street, phone, question ,answer);
 		
 		regUser.setStatus(UserStatus.ACTIVATED);		
 		userService.save(regUser);
@@ -150,15 +158,36 @@ public class UserController {
         return body;
     }
 	
-	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-	public ResponseEntity<Void> resetPassword(@RequestBody String email) throws ParseException
-	{
-		
+	@RequestMapping(value = "/question/{email}", method = RequestMethod.GET)
+	public ResponseEntity<JSONObject> getQuestion(@PathVariable String email) throws ParseException{
+		System.out.println("email "+email);
+		User user = userService.findByEmail(email);
+		String question = user.getQuestion();//.replaceAll("\\?", "%3F");
+		System.out.println("quest "+question);
+		String jsonString = "{\"question\":\""+question+"\"}";
+		System.out.println(jsonString);
 		JSONParser parser = new JSONParser(); 
-		JSONObject json = (JSONObject) parser.parse(email);
-		String jsonEmail = (String) json.get("email");
-		String randomPassword = SendMail.sendEmail("\""+jsonEmail+"\"");
-		User user = userService.findByEmail(jsonEmail);
+		JSONObject json = (JSONObject) parser.parse(jsonString);
+		return new ResponseEntity<JSONObject>(json, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+	public ResponseEntity<Void> resetPassword(@RequestBody SecurityQuestionDTO questionDTO) throws ParseException
+	{
+		String email = questionDTO.getEmail();
+		String answer = questionDTO.getAnswer();
+		System.out.println("ans "+questionDTO.getAnswer());
+		User user = userService.findByEmail(email);
+		System.out.println(PasswordUtil.verify(user.getAnswer(), answer.toCharArray(), charset));
+		if(!PasswordUtil.verify(user.getAnswer(), answer.toCharArray(), charset)) {
+			System.out.println("netacno");
+			return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+		}
+		/*JSONParser parser = new JSONParser(); 
+		JSONObject json = (JSONObject) parser.parse(email);*/
+		//String jsonEmail = (String) json.get("email");
+		String randomPassword = SendMail.sendEmail("\""+email+"\"");
+		
 		String password = PasswordUtil.hash(randomPassword.toCharArray(), charset);
 		user.setPassword(password);
 		userService.save(user);
