@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Implementation-Title: Renting-accommodation
 Implementation-Version: 0.0.1-SNAPSHOT
-Built-By: sale1
+Built-By: Tanja
 Implementation-Vendor-Id: com.project
-Build-Jdk: 1.8.0_172
+Build-Jdk: 1.8.0_171
 Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
  ot-starter-parent/Renting-accommodation
 Created-By: Maven Integration for Eclipse

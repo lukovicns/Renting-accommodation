@@ -21,7 +21,10 @@ export class RegisterComponent implements OnInit {
     ])],
     name: ['', Validators.required],
     surname: ['', Validators.required],
-    phone: ['', Validators.required],
+    phone: ['', Validators.compose([
+      Validators.required,
+      Validators.pattern('^[0-9]*$')
+    ])],
     street: ['', Validators.required],
     city: ['', Validators.required],
     password1: ['', Validators.compose([

@@ -16,7 +16,10 @@ export class ProfileComponent {
 
   changePassForm = this.formBuilder.group({
     oldPassword: ['', Validators.required],
-    newPassword: ['', Validators.required]
+    newPassword: ['', Validators.compose([
+      Validators.minLength(8),
+      Validators.required
+    ])]
   });
 
 
