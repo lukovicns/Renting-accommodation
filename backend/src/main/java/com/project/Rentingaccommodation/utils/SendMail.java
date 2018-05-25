@@ -17,7 +17,6 @@ public class SendMail {
 		
 		// Recipient's email ID needs to be mentioned.
 	      String to = email;
-	      System.out.println("eee " + email);
 	      // Sender's email ID needs to be mentioned
 	      String from = "xml.mail.project@gmail.com";
 	      final String username = "xml.mail.project@gmail.com";//change accordingly
@@ -52,12 +51,14 @@ public class SendMail {
 	         // Set Subject: header field
 	         message.setSubject("Password reset");
 
-	         // Now set the actual message
-	         String link = "To reset your password click <a href=\"http://localhost:4200/reset" + to + "\">here.</a>";
-	         
 	         String randomPassword = generateRandomPassword();
+	         // Now set the actual message
+	         String text = "Your new password is: "+randomPassword+"<br>";
+	         text+="We recommend that you change this password after your next login.<br>";
+	         text+="Proceed to login: <a href=\"http://localhost:4200/login</a>";
 	         
-	         message.setText(link + "/n New password " + randomPassword, "UTF-8", "html");
+	         
+	         message.setText(text, "UTF-8", "html");
 //	         message.setText("<a href=\"http://localhost:9000/#/successfullRegistration\">ACTIVAR CUENTA</a>");
 
 	         // Send message

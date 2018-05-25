@@ -4,6 +4,9 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -109,22 +112,21 @@ public class UserController {
 		return new ResponseEntity<Token>(HttpStatus.NOT_FOUND);
 	}
 	
-	@PreAuthorize("hasRoles('USER')")
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
-	public ResponseEntity<Void> changePassword(@RequestBody PasswordChangeDTO passDTO)
+	public ResponseEntity<Void> changePassword(@RequestBody PasswordChangeDTO passDTO) throws ParseException
 	{
 		String oldPassword = passDTO.getOldPassword();
 		String newPassword = passDTO.getNewPassword();
 		
 		String body = testDecodeJWT(passDTO.getToken());
-		int lenght = body.length();
-		String email = body.substring(10, lenght - 16);
+		JSONParser parser = new JSONParser(); 
+		JSONObject json = (JSONObject) parser.parse(body);
+		String email = (String) json.get("email");
 		
 		User loggedInUser =  userService.findByEmail(email);
 		String verifyHash = loggedInUser.getPassword();
-		String verifyPass = oldPassword;
 		
-		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset))
+		if(!PasswordUtil.verify(verifyHash, oldPassword.toCharArray(), charset))
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		
 		String password = PasswordUtil.hash(newPassword.toCharArray(), charset);
@@ -149,17 +151,15 @@ public class UserController {
     }
 	
 	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
-	public ResponseEntity<Void> resetPassword(@RequestBody String email)
+	public ResponseEntity<Void> resetPassword(@RequestBody String email) throws ParseException
 	{
-		int length = email.length();
 		
-		String parsedEmail = email.substring(9, length - 1);
-		String randomPassword = SendMail.sendEmail(parsedEmail);
-		String findByEmail = parsedEmail.substring(1, parsedEmail.length() - 1);
-		
-		User user = userService.findByEmail(findByEmail);
+		JSONParser parser = new JSONParser(); 
+		JSONObject json = (JSONObject) parser.parse(email);
+		String jsonEmail = (String) json.get("email");
+		String randomPassword = SendMail.sendEmail("\""+jsonEmail+"\"");
+		User user = userService.findByEmail(jsonEmail);
 		String password = PasswordUtil.hash(randomPassword.toCharArray(), charset);
-		
 		user.setPassword(password);
 		userService.save(user);
 		
