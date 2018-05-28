@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 })
 export class ProfileComponent {
 
+  errorMessage: String;
+
   constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
 
   changePassForm = this.formBuilder.group({
@@ -22,11 +24,15 @@ export class ProfileComponent {
     ])]
   });
 
-
   changePassword() {
     this.userService.changePassword(this.changePassForm.value)
     .subscribe(res => {
-      console.log(res);
+      // console.log(res);
+      this.router.navigate(['/']);
+    },
+    err => {
+      this.errorMessage = err['error'];
+      console.log(err);
     });
   }
 
