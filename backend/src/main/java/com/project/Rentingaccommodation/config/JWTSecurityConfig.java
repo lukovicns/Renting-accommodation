@@ -51,8 +51,8 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.authorizeRequests()
-			.antMatchers("/token/*").permitAll()
-			.antMatchers(HttpMethod.POST, "/api/countries/").authenticated();
+			.antMatchers("/token/*").permitAll();
+//			.antMatchers(HttpMethod.POST, "/api/countries/").authenticated();
 		http.addFilterBefore(new SimpleCORSFilter(), ChannelProcessingFilter.class);
 	    http.addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		http.headers().cacheControl();

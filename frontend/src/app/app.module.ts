@@ -13,13 +13,13 @@ import { AccommodationListComponent } from './components/accommodation-list/acco
 import { AccommodationDetailComponent } from './components/accommodation-detail/accommodation-detail.component';
 import { AccommodationService } from './services/accommodation.service';
 import { UserService } from './services/user.service';
-import { AuthGuard } from './auth.guard';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ApartmentListComponent } from './components/apartment-list/apartment-list.component';
 import { ApartmentService } from './services/apartment.service';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
 import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
+import { AuthGuard } from './guards/auth.guard';
 
 
 @NgModule({

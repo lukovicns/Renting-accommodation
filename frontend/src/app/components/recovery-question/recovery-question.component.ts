@@ -12,36 +12,45 @@ import { Router } from '@angular/router';
 })
 export class RecoveryQuestionComponent implements OnInit {
 
-  constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
-
   data = {};
   question;
+  errorMessage: String;
+
+  constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
 
    questionForm = this.formBuilder.group({
     answer: ['', Validators.required]
   });
 
    ngOnInit() {
-     this.question = this.getQuestion();
+    if (!this.userService.getCurrentUser()) {
+      if (!this.userService.emailEntered()) {
+        this.router.navigate(['recovery']);
+      } else {
+        this.userService.getQuestion(this.userService.getEmail())
+        .subscribe(res => {
+          this.question = res['question'];
+        }, err => {
+          this.errorMessage = 'Email does\'t exist.';
+        });
+      }
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   sendMail() {
-      console.log(this.userService.getEmail()['email']);
-      this.data = {
-        'email': this.userService.getEmail()['email'],
-        'answer': this.questionForm.value['answer']
-      };
-      this.userService.resetPassword(this.data)
-      .subscribe();
-      this.userService.setEmail('');
-      console.log('mail ' + this.userService.getEmail()['email']);
-    }
-
-  getQuestion() {
-    this.userService.getQuestion(this.userService.getEmail())
-     .subscribe(res => {
-        this.question = res['question'];
+    this.data = {
+      'email': this.userService.getEmail(),
+      'answer': this.questionForm.value['answer']
+    };
+    this.userService.resetPassword(this.data)
+    .subscribe(res => {
+      console.log(res);
+    }, err => {
+      this.errorMessage = 'Answer is wrong!';
+      console.log(err);
     });
+    this.userService.setEmail('');
   }
-
 }

@@ -36,6 +36,11 @@ public class CityController {
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
 	public ResponseEntity<City> addCity(@RequestBody City city) {
+		if (city.getName() == null || city.getName() == "" ||
+			city.getZipcode() == null || city.getZipcode() == "" ||
+			city.getCountry() == null) {
+			return new ResponseEntity<>(city, HttpStatus.METHOD_NOT_ALLOWED);
+		}
 		City foundCity = service.findOne(city.getId());
 		if (foundCity != null) {
 			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
@@ -46,6 +51,11 @@ public class CityController {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<City> updateCity(@PathVariable Long id, @RequestBody City city) {
+		if (city.getName() == null || city.getName() == "" ||
+			city.getZipcode() == null || city.getZipcode() == "" ||
+			city.getCountry() == null) {
+			return new ResponseEntity<>(city, HttpStatus.METHOD_NOT_ALLOWED);
+		}
 		City foundCity = service.findOne(id);
 		if (foundCity != null) {
 			foundCity.setCountry(city.getCountry());

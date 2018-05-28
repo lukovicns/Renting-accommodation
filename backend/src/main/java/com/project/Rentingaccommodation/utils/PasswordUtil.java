@@ -38,7 +38,7 @@ public final class PasswordUtil {
             argon2Hasher = createInstance();
             //Create options
 //            Map<String, String> options = loadParameters();
-            int iterationsCount = 40/*Integer.parseInt(options.get("ITERATIONS"))*/;
+            int iterationsCount = 15/*Integer.parseInt(options.get("ITERATIONS"))*/;
             int memoryAmountToUse = 128000/*Integer.parseInt(options.get("MEMORY"))*/;
             int threadToUse = 4/*Integer.parseInt(options.get("PARALLELISM"))*/;
             //Compute and return the hash

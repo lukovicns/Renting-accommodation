@@ -24,6 +24,16 @@ public class JpaCountryService implements CountryService {
 	}
 
 	@Override
+	public Country findByCodeAndName(String code, String name) {
+		for (Country c : repository.findAll()) {
+			if (c.getCode().equals(code) && c.getName().equals(name)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public List<Country> findAll() {
 		return repository.findAll();
 	}

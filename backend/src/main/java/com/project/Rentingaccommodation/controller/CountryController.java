@@ -38,7 +38,10 @@ public class CountryController {
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
 	public ResponseEntity<Country> addCountry(@RequestBody Country country) {
-		Country foundCountry = service.findOne(country.getId());
+		if (country.getCode() == null || country.getCode() == "" || country.getName() == null || country.getName() == "") {
+			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		}
+		Country foundCountry = service.findByCodeAndName(country.getCode(), country.getName());
 		if (foundCountry != null) {
 			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 		}
@@ -48,6 +51,9 @@ public class CountryController {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Country> updateCountry(@PathVariable Long id, @RequestBody Country country) {
+		if (country.getCode() == null || country.getCode() == "" || country.getName() == null || country.getName() == "") {
+			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		}
 		Country foundCountry = service.findOne(id);
 		if (foundCountry != null) {
 			foundCountry.setCode(country.getCode());

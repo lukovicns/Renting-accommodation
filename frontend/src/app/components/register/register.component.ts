@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
 
+  errorMessage: String;
+
   constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
 
   registerForm = this.formBuilder.group({
@@ -28,12 +30,12 @@ export class RegisterComponent implements OnInit {
     street: ['', Validators.required],
     city: ['', Validators.required],
     password1: ['', Validators.compose([
-      Validators.minLength(8),
-      Validators.required
+      Validators.required,
+      Validators.minLength(8)
     ])],
     password2: ['', Validators.compose([
-      Validators.minLength(8),
-      Validators.required
+      Validators.required,
+      Validators.minLength(8)
     ])],
     question: ['', Validators.required],
     answer: ['', Validators.required],
@@ -46,10 +48,15 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    this.userService.registerUser(this.registerForm.value)
-    .subscribe(
-      res => console.log(res),
-      err => console.log(err)
-    );
+    if (this.registerForm.value['password1'] != this.registerForm.value['password2']) {
+      this.errorMessage = 'Passwords don\t match!';
+    } else {
+      this.userService.registerUser(this.registerForm.value)
+      .subscribe(res => {
+          this.router.navigate(['login']);
+        }, err => {
+          this.errorMessage = err['error'];
+      });
+    }
   }
 }

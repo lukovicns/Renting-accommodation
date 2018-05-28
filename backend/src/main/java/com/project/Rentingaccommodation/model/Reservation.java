@@ -25,8 +25,8 @@ public class Reservation {
 	private User user;
 	
 	@OneToOne
-	@JoinColumn(name="room_id")
-	private Apartment room;
+	@JoinColumn(name="apartment_id")
+	private Apartment apartment;
 	
 	@Column(name="start_date", columnDefinition="VARCHAR(50)", nullable=false)
 	private String startDate;
@@ -44,12 +44,12 @@ public class Reservation {
 		
 	}
 
-	public Reservation(Long id, User user, Apartment room, String startDate, String endDate, int price,
+	public Reservation(Long id, User user, Apartment apartment, String startDate, String endDate, int price,
 			ReservationStatus status) {
 		super();
 		this.id = id;
 		this.user = user;
-		this.room = room;
+		this.apartment = apartment;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.price = price;
@@ -72,12 +72,12 @@ public class Reservation {
 		this.user = user;
 	}
 
-	public Apartment getRoom() {
-		return room;
+	public Apartment getApartment() {
+		return apartment;
 	}
 
-	public void setRoom(Apartment room) {
-		this.room = room;
+	public void setApartment(Apartment apartment) {
+		this.apartment = apartment;
 	}
 
 	public String getStartDate() {

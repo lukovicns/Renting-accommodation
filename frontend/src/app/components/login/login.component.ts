@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
+  errorMessage: String;
+
   constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
 
   loginForm = this.formBuilder.group({
@@ -19,7 +21,10 @@ export class LoginComponent implements OnInit {
       Validators.required,
       Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
     ])],
-    password: ['', Validators.required]
+    password: ['', Validators.compose([
+      Validators.required,
+      Validators.minLength(8)
+    ])]
   });
 
   ngOnInit() {
@@ -31,11 +36,13 @@ export class LoginComponent implements OnInit {
   login() {
     this.userService.loginUser(this.loginForm.value)
     .subscribe(res => {
-      console.log(res);
       if (!!res['token']) {
         localStorage.setItem('token', res['token']);
         this.router.navigate(['/']);
       }
+    }, err => {
+      this.errorMessage = err['error'];
+      console.log(err);
     });
   }
 

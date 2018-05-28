@@ -17,14 +17,13 @@ public class City {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "city_id", unique = true, nullable = false)
 	private Long id;
-
+	
 	@OneToOne
 	@JoinColumn(name = "country_id", nullable = false)
 	private Country country;
 
 	@Column(name = "name", columnDefinition="VARCHAR(50)", nullable = false)
 	private String name;
-
 
 	@Column(name = "zipcode", columnDefinition="VARCHAR(50)", nullable = false)
 	private String zipcode;

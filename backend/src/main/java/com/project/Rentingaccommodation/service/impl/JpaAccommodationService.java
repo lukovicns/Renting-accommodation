@@ -1,15 +1,10 @@
 package com.project.Rentingaccommodation.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.project.Rentingaccommodation.model.Accommodation;
-import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.repository.AccommodationRepository;
 import com.project.Rentingaccommodation.service.AccommodationService;
 

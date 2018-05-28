@@ -15,9 +15,9 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   loginUser(user) {
-    console.log(user);
     return this.http.post(this.url + 'login', user);
   }
+  
   registerUser(user) {
     this.data = {
       'name': user.name,
@@ -29,7 +29,6 @@ export class UserService {
       'question': user.question,
       'answer': user.answer
     };
-    console.log(user);
     return this.http.post<User>(this.url + 'register', this.data);
   }
 
@@ -44,7 +43,6 @@ export class UserService {
 
   changePassword(passwords) {
     const token = localStorage.getItem('token');
-    console.log('token ' + token);
     this.data = {
       'oldPassword': passwords.oldPassword,
       'newPassword': passwords.newPassword,
@@ -58,7 +56,7 @@ export class UserService {
   }
 
   getQuestion(email) {
-    return this.http.get(this.url + 'question/' + email.email);
+    return this.http.get(this.url + 'question/' + email);
   }
 
   setEmail(email) {
@@ -67,5 +65,13 @@ export class UserService {
 
   getEmail() {
     return this.email;
+  }
+
+  emailEntered() {
+    return this.email != null;
+  }
+
+  getUsers() {
+    return this.http.get(this.url);
   }
 }

@@ -28,8 +28,7 @@ export class RecoveryEmailComponent implements OnInit {
   }
 
   next() {
-      console.log('usao');
-      this.userService.setEmail(this.recoveryForm.value);
-    }
-
+    this.userService.setEmail(this.recoveryForm.value['email']);
+    this.router.navigate(['question']);
+  }
 }
