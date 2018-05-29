@@ -53,4 +53,14 @@ public class JpaAdminService implements AdminService {
 		
 	}
 
+	@Override
+	public Admin findByEmail(String email) {
+		for (Admin a : repository.findAll()) {
+			if (a.getEmail().equals(email)) {
+				return a;
+			}
+		}
+		return null;
+	}
+
 }

@@ -5,8 +5,9 @@ import com.project.Rentingaccommodation.model.Admin;
 
 public interface AdminService {
 	
-	Admin findOne(Long id);
 	List<Admin> findAll();
+	Admin findOne(Long id);
+	Admin findByEmail(String email);
 	Admin save(Admin admin);
 	List<Admin> save(List<Admin> admins);
 	Admin delete(Long id);

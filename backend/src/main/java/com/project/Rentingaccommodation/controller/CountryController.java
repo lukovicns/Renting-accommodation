@@ -28,31 +28,33 @@ public class CountryController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	public ResponseEntity<Country> getCountry(@PathVariable Long id) {
+	public ResponseEntity<Object> getCountry(@PathVariable Long id) {
 		Country country = service.findOne(id);
 		if (country == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Country not found.", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(country, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<Country> addCountry(@RequestBody Country country) {
-		if (country.getCode() == null || country.getCode() == "" || country.getName() == null || country.getName() == "") {
-			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+	public ResponseEntity<Object> addCountry(@RequestBody Country country) {
+		if (country.getCode() == null || country.getCode() == "" ||
+			country.getName() == null || country.getName() == "") {
+			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
 		}
 		Country foundCountry = service.findByCodeAndName(country.getCode(), country.getName());
 		if (foundCountry != null) {
-			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+			return new ResponseEntity<>("Country already exists.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		service.save(country);
 		return new ResponseEntity<>(country, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Country> updateCountry(@PathVariable Long id, @RequestBody Country country) {
-		if (country.getCode() == null || country.getCode() == "" || country.getName() == null || country.getName() == "") {
-			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+	public ResponseEntity<Object> updateCountry(@PathVariable Long id, @RequestBody Country country) {
+		if (country.getCode() == null || country.getCode() == "" ||
+			country.getName() == null || country.getName() == "") {
+			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
 		}
 		Country foundCountry = service.findOne(id);
 		if (foundCountry != null) {
@@ -61,14 +63,14 @@ public class CountryController {
 			service.save(foundCountry);
 			return new ResponseEntity<>(foundCountry, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Country not found.", HttpStatus.NOT_FOUND);
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Country> deleteCountry(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteCountry(@PathVariable Long id) {
 		Country country = service.delete(id);
 		if (country == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Country not found.", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(country, HttpStatus.OK);
 	}

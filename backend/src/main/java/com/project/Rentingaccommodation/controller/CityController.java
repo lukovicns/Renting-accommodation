@@ -26,35 +26,36 @@ public class CityController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	public ResponseEntity<City> getCity(@PathVariable Long id) {
+	public ResponseEntity<Object> getCity(@PathVariable Long id) {
 		City city = service.findOne(id);
 		if (city == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("City not found.", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(city, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<City> addCity(@RequestBody City city) {
+	public ResponseEntity<Object> addCity(@RequestBody City city) {
 		if (city.getName() == null || city.getName() == "" ||
 			city.getZipcode() == null || city.getZipcode() == "" ||
 			city.getCountry() == null) {
-			return new ResponseEntity<>(city, HttpStatus.METHOD_NOT_ALLOWED);
+			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
 		}
-		City foundCity = service.findOne(city.getId());
-		if (foundCity != null) {
-			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		for (City c : service.findAll()) {
+			if (c.getName().equals(city.getName()) && c.getCountry().equals(city.getCountry())) {
+				return new ResponseEntity<>("This city already exists.", HttpStatus.NOT_ACCEPTABLE);
+			}
 		}
 		service.save(city);
 		return new ResponseEntity<>(city, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<City> updateCity(@PathVariable Long id, @RequestBody City city) {
+	public ResponseEntity<Object> updateCity(@PathVariable Long id, @RequestBody City city) {
 		if (city.getName() == null || city.getName() == "" ||
 			city.getZipcode() == null || city.getZipcode() == "" ||
 			city.getCountry() == null) {
-			return new ResponseEntity<>(city, HttpStatus.METHOD_NOT_ALLOWED);
+			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
 		}
 		City foundCity = service.findOne(id);
 		if (foundCity != null) {
@@ -64,14 +65,14 @@ public class CityController {
 			service.save(foundCity);
 			return new ResponseEntity<>(foundCity, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("City doesn't exist.", HttpStatus.NOT_FOUND);
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<City> deleteCity(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteCity(@PathVariable Long id) {
 		City city = service.delete(id);
 		if (city == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("City not found.", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(city, HttpStatus.OK);
 	}

@@ -9,11 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.project.Rentingaccommodation.model.Accommodation;
-import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.service.AccommodationService;
-import com.project.Rentingaccommodation.service.ApartmentService;
 
 @RestController
 @RequestMapping(value="/api/accommodations")
@@ -28,10 +25,10 @@ public class AccommodationController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	public ResponseEntity<Accommodation> getAccommodation(@PathVariable Long id) {
+	public ResponseEntity<Object> getAccommodation(@PathVariable Long id) {
 		Accommodation accommodation = service.findOne(id);
 		if (accommodation == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Accommodation not found.", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(accommodation, HttpStatus.OK);
 	}

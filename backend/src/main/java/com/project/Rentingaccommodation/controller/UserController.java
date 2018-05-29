@@ -25,6 +25,7 @@ import com.project.Rentingaccommodation.service.CityService;
 import com.project.Rentingaccommodation.service.UserService;
 import com.project.Rentingaccommodation.utils.PasswordUtil;
 import com.project.Rentingaccommodation.utils.SendMail;
+import com.project.Rentingaccommodation.utils.UserUtils;
 
 @RestController
 @RequestMapping(value="/api/users")
@@ -32,12 +33,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private CityService cityService;
-	
-	@Autowired
-	private JWTGenerator jwtGenerator;
 	
 	private static final Charset charset = Charset.forName("UTF-8");
 	
@@ -50,7 +48,7 @@ public class UserController {
 	public ResponseEntity<Object> getUser(@PathVariable Long id) {
 		User user = userService.findOne(id);
 		if (user == null) {
-			return new ResponseEntity<>(new String("User not found."), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
@@ -66,18 +64,19 @@ public class UserController {
 			user.getPassword() == null || user.getPassword() == "" ||
 			user.getQuestion() == null || user.getQuestion() == "" ||
 			user.getAnswer() == null || user.getAnswer() == "") {
-			return new ResponseEntity<>(new String("All fields are required."), HttpStatus.METHOD_NOT_ALLOWED);
-		}
-		if (user.getPassword().length() < 8) {
-			return new ResponseEntity<>(new String("Password must be at least 8 characters long."), HttpStatus.METHOD_NOT_ALLOWED);
+			return new ResponseEntity<>("All fields are required.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
-		User foundUser = userService.findByEmail(user.getEmail());
+		if (UserUtils.userExists(user)) {
+			return new ResponseEntity<>("User with this email address already exists.", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
+		if (user.getPassword().length() < 8) {
+			return new ResponseEntity<>("Password must be at least 8 characters long.", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
 		Charset charset = Charset.forName("UTF-8");
 		
-		if (foundUser != null) {
-			return new ResponseEntity<>(new String("User with this email already exists."), HttpStatus.FORBIDDEN);
-		}
 		String name = user.getName();
 		String surname = user.getSurname();
 		String email = user.getEmail();
@@ -98,17 +97,21 @@ public class UserController {
 	public ResponseEntity<Object> loginUser(@RequestBody User user) {
 		if (user.getEmail() == null || user.getEmail() == "" ||
 			user.getPassword() == null || user.getPassword() == "") {
-			return new ResponseEntity<>(new String("Email and password not provided."), HttpStatus.METHOD_NOT_ALLOWED);
+			return new ResponseEntity<>("Email and password not provided.", HttpStatus.NOT_ACCEPTABLE);
 		}
+		
 		User u = userService.findByEmail(user.getEmail());
 		if (u == null) {
-			return new ResponseEntity<>(new String("User not found."), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 		}
+		
 		String verifyHash = u.getPassword();
 		String verifyPass = user.getPassword();
+		
 		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset)) {
-			return new ResponseEntity<>(new String("Password is invalid."), HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("Password is invalid.", HttpStatus.UNAUTHORIZED);
 		}
+		
 		String token = generate(new JWTUser(u.getEmail()));
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
@@ -120,18 +123,17 @@ public class UserController {
 		if (passDTO.getOldPassword() == null || passDTO.getOldPassword() == "" ||
 			passDTO.getNewPassword() == null || passDTO.getNewPassword() == "" ||
 			passDTO.getToken() == null || passDTO.getToken() == "") {
-			return new ResponseEntity<>(new String("Old password, new password and token must be provided."), HttpStatus.METHOD_NOT_ALLOWED);
+			return new ResponseEntity<>("Old password, new password and token must be provided.", HttpStatus.FORBIDDEN);
 		}
 		
 		if (passDTO.getNewPassword().length() < 8) {
-			return new ResponseEntity<>(new String("Password must be at least 8 characters long."), HttpStatus.METHOD_NOT_ALLOWED);
+			return new ResponseEntity<>("Password must be at least 8 characters long.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
 		String oldPassword = passDTO.getOldPassword();
 		String newPassword = passDTO.getNewPassword();
 		
 		String body = testDecodeJWT(passDTO.getToken());
-		System.out.println(body);
 		JSONParser parser = new JSONParser(); 
 		JSONObject json = (JSONObject) parser.parse(body);
 		String email = (String) json.get("email");
@@ -140,23 +142,28 @@ public class UserController {
 		String verifyHash = loggedInUser.getPassword();
 		
 		if(!PasswordUtil.verify(verifyHash, oldPassword.toCharArray(), charset)) {
-			return new ResponseEntity<>(new String("Old password is incorrect."), HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("Old password is incorrect.", HttpStatus.FORBIDDEN);
 		}
 
 		String password = PasswordUtil.hash(newPassword.toCharArray(), charset);
 		
 		loggedInUser.setPassword(password);
 		userService.save(loggedInUser);
-		return new ResponseEntity<>(new String("Password is successfully changed."), HttpStatus.OK);
+		return new ResponseEntity<>("Password is successfully changed.", HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/question/{email}", method = RequestMethod.GET)
 	public ResponseEntity<Object> getQuestion(@PathVariable String email) throws ParseException {
+		if (email == null || email == "") {
+			return new ResponseEntity<>("Email address is required.", HttpStatus.FORBIDDEN);
+		}
+		
 		User user = userService.findByEmail(email);
 		if (user == null) {
 			return new ResponseEntity<>(new String("This user doesn't exist."), HttpStatus.NOT_FOUND);
 		}
-		String question = user.getQuestion();//.replaceAll("\\?", "%3F");
+		
+		String question = user.getQuestion();
 		String jsonString = "{\"question\":\""+question+"\"}";
 		JSONParser parser = new JSONParser(); 
 		JSONObject json = (JSONObject) parser.parse(jsonString);
@@ -167,17 +174,16 @@ public class UserController {
 	public ResponseEntity<Object> resetPassword(@RequestBody SecurityQuestionDTO questionDTO) throws ParseException {
 		if (questionDTO.getEmail() == null || questionDTO.getEmail() == "" ||
 			questionDTO.getAnswer() == null || questionDTO.getAnswer() == "") {
-			return new ResponseEntity<>(new String("Email and answer must be provided."), HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("Email and answer must be provided.", HttpStatus.FORBIDDEN);
 		}
 		String email = questionDTO.getEmail();
 		String answer = questionDTO.getAnswer();
 		User user = userService.findByEmail(email);
+		
 		if(!PasswordUtil.verify(user.getAnswer(), answer.toCharArray(), charset)) {
-			return new ResponseEntity<>(new String("Answer is incorrect."), HttpStatus.METHOD_NOT_ALLOWED);
+			return new ResponseEntity<>("Answer is incorrect.", HttpStatus.NOT_ACCEPTABLE);
 		}
-		/*JSONParser parser = new JSONParser(); 
-		JSONObject json = (JSONObject) parser.parse(email);*/
-		//String jsonEmail = (String) json.get("email");
+		
 		String randomPassword = SendMail.sendEmail("\""+email+"\"");
 		
 		String password = PasswordUtil.hash(randomPassword.toCharArray(), charset);
@@ -188,14 +194,9 @@ public class UserController {
 	
 	public String testDecodeJWT(String jwtToken){
         String[] split_string = jwtToken.split("\\.");
-//        String base64EncodedHeader = split_string[0];
         String base64EncodedBody = split_string[1];
-//        String base64EncodedSignature = split_string[2];
-
         Base64 base64Url = new Base64(true);
-//        String header = new String(base64Url.decode(base64EncodedHeader));
         String body = new String(base64Url.decode(base64EncodedBody));
-        
         return body;
     }
 	
@@ -203,14 +204,14 @@ public class UserController {
     	if (jwtUser.getEmail() == null) {
     		return "User with this email doesn't exist.";
     	}
-        return jwtGenerator.generate(jwtUser);
+        return JWTGenerator.generate(jwtUser);
     }
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
 		User user = userService.delete(id);
 		if (user == null) {
-			return new ResponseEntity<>(new String("User not found."), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}

@@ -48,6 +48,9 @@ public class User {
 	@Column(name="answer", columnDefinition="VARCHAR(100)", nullable=false)
 	private String answer;
 	
+	@Column(name="max_tries", columnDefinition="INT(11)", nullable=false)
+	private int max_tries = 0;
+	
 	@Enumerated(EnumType.STRING)
 	private UserStatus status;
 	
@@ -93,14 +96,6 @@ public class User {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-
-//	public byte[] getSalt() {
-//		return salt;
-//	}
-//
-//	public void setSalt(byte[] salt) {
-//		this.salt = salt;
-//	}
 
 	public String getPassword() {
 		return password;
@@ -165,7 +160,13 @@ public class User {
 	public void setAnswer(String answer) {
 		this.answer = answer;
 	}
-	
-	
+
+	public int getMax_tries() {
+		return max_tries;
+	}
+
+	public void setMax_tries(int max_tries) {
+		this.max_tries = max_tries;
+	}
 }
 

@@ -24,10 +24,10 @@ public class ApartmentController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	public ResponseEntity<Apartment> getAccommodation(@PathVariable Long id) {
+	public ResponseEntity<Object> getAccommodation(@PathVariable Long id) {
 		Apartment apartment = service.findOne(id);
 		if (apartment == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Apartment not found.", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(apartment, HttpStatus.OK);
 	}

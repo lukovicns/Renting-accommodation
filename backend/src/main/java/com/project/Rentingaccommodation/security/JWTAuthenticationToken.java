@@ -4,6 +4,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 public class JWTAuthenticationToken extends UsernamePasswordAuthenticationToken{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String token;
 
     public JWTAuthenticationToken(String token) {

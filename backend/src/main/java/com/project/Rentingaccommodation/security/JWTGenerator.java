@@ -15,16 +15,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JWTGenerator {
 	
 	@Autowired
-	private UserService userService;
+	private static UserService userService;
 
-    public String generate(JWTUser jwtUser) {
+    public static String generate(JWTUser jwtUser) {
 
     	Claims claims = Jwts.claims();
-        
         User user = userService.findByEmail(jwtUser.getEmail());
-        
-        if(user != null)
-        {
+        if(user != null) {
         	claims.put("email", jwtUser.getEmail());
     		claims.put("role", UserRoles.USER);
     		return Jwts.builder()
@@ -33,8 +30,6 @@ public class JWTGenerator {
                     .compact();
     		
         }
-        
         return "User with email " + jwtUser.getEmail() + " not found.";
-        
     }
 }
