@@ -21,6 +21,7 @@ import com.project.Rentingaccommodation.model.DTO.PasswordChangeDTO;
 import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JWTGenerator;
 import com.project.Rentingaccommodation.security.JWTUser;
+import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.CityService;
 import com.project.Rentingaccommodation.service.UserService;
 import com.project.Rentingaccommodation.utils.PasswordUtil;
@@ -33,6 +34,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private AdminService adminService;
 
 	@Autowired
 	private CityService cityService;
@@ -64,10 +68,10 @@ public class UserController {
 			user.getPassword() == null || user.getPassword() == "" ||
 			user.getQuestion() == null || user.getQuestion() == "" ||
 			user.getAnswer() == null || user.getAnswer() == "") {
-			return new ResponseEntity<>("All fields are required.", HttpStatus.NOT_ACCEPTABLE);
+			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
 		}
 		
-		if (UserUtils.userExists(user)) {
+		if (UserUtils.userExists(user.getEmail(), adminService, userService)) {
 			return new ResponseEntity<>("User with this email address already exists.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
@@ -99,16 +103,22 @@ public class UserController {
 			user.getPassword() == null || user.getPassword() == "") {
 			return new ResponseEntity<>("Email and password not provided.", HttpStatus.NOT_ACCEPTABLE);
 		}
-		
 		User u = userService.findByEmail(user.getEmail());
+		
 		if (u == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+		
+		if (u.getMax_tries() == 3) {
+			return new ResponseEntity<>("Max tries 3.", HttpStatus.FORBIDDEN);
 		}
 		
 		String verifyHash = u.getPassword();
 		String verifyPass = user.getPassword();
 		
 		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset)) {
+			u.setMax_tries(u.getMax_tries() + 1);
+			userService.save(u);
 			return new ResponseEntity<>("Password is invalid.", HttpStatus.UNAUTHORIZED);
 		}
 		

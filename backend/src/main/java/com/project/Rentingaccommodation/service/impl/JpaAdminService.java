@@ -19,38 +19,44 @@ public class JpaAdminService implements AdminService {
 	
 	@Override
 	public Admin findOne(Long id) {
-		// TODO Auto-generated method stub
+		for (Admin a : repository.findAll()) {
+			if (a.getId() == id) {
+				return a;
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public List<Admin> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAll();
 	}
 
 	@Override
 	public Admin save(Admin admin) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.save(admin);
 	}
 
 	@Override
 	public List<Admin> save(List<Admin> admins) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.saveAll(admins);
 	}
 
 	@Override
 	public Admin delete(Long id) {
-		// TODO Auto-generated method stub
+		Admin admin = findOne(id);
+		if (admin != null) {
+			repository.delete(admin);
+			return admin;
+		}
 		return null;
 	}
 
 	@Override
 	public void delete(List<Long> ids) {
-		// TODO Auto-generated method stub
-		
+		for (Long id : ids) {
+			repository.deleteById(id);
+		}
 	}
 
 	@Override
