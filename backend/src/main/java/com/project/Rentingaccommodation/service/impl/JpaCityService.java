@@ -1,12 +1,16 @@
 package com.project.Rentingaccommodation.service.impl;
 
 import java.util.List;
+
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.repository.CityRepository;
 import com.project.Rentingaccommodation.service.CityService;
 
+@Transactional
 @Service
 public class JpaCityService implements CityService {
 	

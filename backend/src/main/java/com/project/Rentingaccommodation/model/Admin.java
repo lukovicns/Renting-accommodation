@@ -17,10 +17,6 @@ public class Admin {
 	@Column(name="surname", columnDefinition="VARCHAR(50)", nullable=false)
 	private String surname;
 	
-//	@GeneratedValue
-//	@Column(name="salt",unique=true, nullable=false)
-//	private byte[] salt;
-	
 	@Column(name="password", columnDefinition="VARCHAR(100)", nullable=false)
 	private String password;
 	
@@ -31,9 +27,8 @@ public class Admin {
 		
 	}
 
-	public Admin(Long id, String name, String surname, String password, String email) {
+	public Admin(String name, String surname, String password, String email) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.password = password;
@@ -64,14 +59,6 @@ public class Admin {
 		this.surname = surname;
 	}
 
-//	public byte[] getSalt() {
-//		return salt;
-//	}
-//
-//	public void setSalt(byte[] salt) {
-//		this.salt = salt;
-//	}
-
 	public String getPassword() {
 		return password;
 	}
@@ -86,5 +73,11 @@ public class Admin {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Override
+	public String toString() {
+		return "Admin [id=" + id + ", name=" + name + ", surname=" + surname + ", password=" + password + ", email="
+				+ email + "]";
 	}
 }

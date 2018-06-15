@@ -12,12 +12,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
-public class JWTGenerator {
+public class JwtGenerator {
 	
 	@Autowired
-	private static UserService userService;
+	private UserService userService;
 
-    public static String generate(JWTUser jwtUser) {
+    public String generate(JwtUser jwtUser) {
 
     	Claims claims = Jwts.claims();
         User user = userService.findByEmail(jwtUser.getEmail());

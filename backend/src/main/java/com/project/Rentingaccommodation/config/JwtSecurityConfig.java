@@ -15,31 +15,29 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.project.Rentingaccommodation.security.JWTAuthenticationEntryPoint;
-import com.project.Rentingaccommodation.security.JWTAuthenticationProvider;
-import com.project.Rentingaccommodation.security.JWTAuthenticationTokenFilter;
-import com.project.Rentingaccommodation.security.JWTSuccessHandler;
+import com.project.Rentingaccommodation.security.JwtAuthenticationEntryPoint;
+import com.project.Rentingaccommodation.security.JwtAuthenticationProvider;
+import com.project.Rentingaccommodation.security.JwtAuthenticationTokenFilter;
+import com.project.Rentingaccommodation.security.JwtSuccessHandler;
 import com.project.Rentingaccommodation.security.SimpleCORSFilter;
 
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 @EnableWebSecurity
 @Configuration
-public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
+public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private JWTAuthenticationProvider authenticationProvider;
-	private JWTAuthenticationEntryPoint entryPoint;
+	private JwtAuthenticationProvider authenticationProvider;
+	private JwtAuthenticationEntryPoint entryPoint;
 	
 	@Bean
 	public AuthenticationManager authenticationManager() {
 		return new ProviderManager(Collections.singletonList(authenticationProvider));
 	}
-	
-	@Bean
-	public JWTAuthenticationTokenFilter authenticationTokenFilter() {
-		JWTAuthenticationTokenFilter filter = new JWTAuthenticationTokenFilter();
+
+	public JwtAuthenticationTokenFilter authenticationTokenFilter() {
+		JwtAuthenticationTokenFilter filter = new JwtAuthenticationTokenFilter();
 		filter.setAuthenticationManager(authenticationManager());
-		filter.setAuthenticationSuccessHandler(new JWTSuccessHandler());
+		filter.setAuthenticationSuccessHandler(new JwtSuccessHandler());
 		return filter;
 	}
 
@@ -48,13 +46,9 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
 	    http.csrf().disable()
 			.exceptionHandling().authenticationEntryPoint(entryPoint)
 			.and()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-			.authorizeRequests()
-			.antMatchers("/token/*").permitAll();
-//			.antMatchers(HttpMethod.POST, "/api/countries/").authenticated();
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(new SimpleCORSFilter(), ChannelProcessingFilter.class);
-	    http.addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//	    http.addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		http.headers().cacheControl();
 	}
 	
@@ -62,5 +56,4 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.GET, "/api/countries/*");
     }
-
 }

@@ -44,9 +44,8 @@ public class Review {
 		
 	}
 	
-	public Review(Long id, User user, Apartment room, String comment, String date, int rating, ReviewStatus status) {
+	public Review(User user, Apartment room, String comment, String date, int rating, ReviewStatus status) {
 		super();
-		this.id = id;
 		this.user = user;
 		this.room = room;
 		this.comment = comment;

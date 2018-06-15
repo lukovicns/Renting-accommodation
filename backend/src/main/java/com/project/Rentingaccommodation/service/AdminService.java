@@ -9,7 +9,5 @@ public interface AdminService {
 	Admin findOne(Long id);
 	Admin findByEmail(String email);
 	Admin save(Admin admin);
-	List<Admin> save(List<Admin> admins);
 	Admin delete(Long id);
-	void delete(List<Long> ids);
 }

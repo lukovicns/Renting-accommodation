@@ -1,12 +1,16 @@
 package com.project.Rentingaccommodation.service.impl;
 
 import java.util.List;
+
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.project.Rentingaccommodation.model.Country;
 import com.project.Rentingaccommodation.repository.CountryRepository;
 import com.project.Rentingaccommodation.service.CountryService;
 
+@Transactional
 @Service
 public class JpaCountryService implements CountryService {
 	

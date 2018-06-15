@@ -9,3 +9,13 @@
 hr {
   margin-bottom: 20px;
 }
+
+ul {
+  padding-left: 0;
+  margin-bottom: 0;
+  margin-top: 20px;
+}
+
+#toggleOptionsBtn {
+  margin-bottom: 20px;
+}

@@ -54,10 +54,9 @@ public class Apartment {
 		
 	}
 
-	public Apartment(Long id, String name, BedType type, String description, Accommodation accommodation, int size,
+	public Apartment(String name, BedType type, String description, Accommodation accommodation, int size,
 			int maxNumberOfGuests, int numberOfRooms) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.type = type;
 		this.description = description;
@@ -145,6 +144,13 @@ public class Apartment {
 
 	public void setImageList(List<String> imageList) {
 		this.imageList = imageList;
+	}
+
+	@Override
+	public String toString() {
+		return "Apartment [id=" + id + ", name=" + name + ", type=" + type + ", accommodation=" + accommodation
+				+ ", size=" + size + ", maxNumberOfGuests=" + maxNumberOfGuests + ", numberOfRooms=" + numberOfRooms
+				+ "]";
 	}
 }
 

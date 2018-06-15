@@ -3,7 +3,6 @@ package com.project.Rentingaccommodation.service;
 import java.util.List;
 
 import com.project.Rentingaccommodation.model.Accommodation;
-import com.project.Rentingaccommodation.model.Apartment;
 
 public interface AccommodationService {
 	Accommodation findOne(Long id);

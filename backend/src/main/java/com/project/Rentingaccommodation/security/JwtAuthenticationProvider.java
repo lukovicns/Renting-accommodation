@@ -12,35 +12,37 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class JWTAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+public class JwtAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     @Autowired
-    private JWTValidator validator;
+    private JwtValidator validator;
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
-    	
+
     }
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
 
-        JWTAuthenticationToken jwtAuthenticationToken = (JWTAuthenticationToken) usernamePasswordAuthenticationToken;
+        JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) usernamePasswordAuthenticationToken;
         String token = jwtAuthenticationToken.getToken();
 
-        JWTUser jwtUser = validator.validate(token);
+        JwtUser jwtUser = validator.validate(token);
 
         if (jwtUser == null) {
-            throw new RuntimeException("JWT token is incorrect.");
+            throw new RuntimeException("JWT Token is incorrect");
         }
 
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-                .commaSeparatedStringToAuthorityList(jwtUser.getRole().toString());
-        return new JWTUserDetails(jwtUser.getEmail(), jwtUser.getRole(), token, grantedAuthorities);
+                .commaSeparatedStringToAuthorityList(jwtUser.getRole());
+        return new JwtUserDetails(jwtUser.getEmail(), jwtUser.getRole(),
+                token,
+                grantedAuthorities);
     }
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return (JWTAuthenticationToken.class.isAssignableFrom(aClass));
+        return (JwtAuthenticationToken.class.isAssignableFrom(aClass));
     }
 }

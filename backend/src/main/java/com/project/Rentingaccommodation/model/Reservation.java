@@ -44,10 +44,9 @@ public class Reservation {
 		
 	}
 
-	public Reservation(Long id, User user, Apartment apartment, String startDate, String endDate, int price,
+	public Reservation(User user, Apartment apartment, String startDate, String endDate, int price,
 			ReservationStatus status) {
 		super();
-		this.id = id;
 		this.user = user;
 		this.apartment = apartment;
 		this.startDate = startDate;
@@ -110,5 +109,11 @@ public class Reservation {
 
 	public void setStatus(ReservationStatus status) {
 		this.status = status;
+	}
+
+	@Override
+	public String toString() {
+		return "Reservation [id=" + id + ", user=" + user + ", apartment=" + apartment + ", startDate=" + startDate
+				+ ", endDate=" + endDate + ", price=" + price + ", status=" + status + "]";
 	}
 }

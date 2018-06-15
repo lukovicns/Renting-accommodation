@@ -19,8 +19,8 @@ import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.DTO.PasswordChangeDTO;
 import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
-import com.project.Rentingaccommodation.security.JWTGenerator;
-import com.project.Rentingaccommodation.security.JWTUser;
+import com.project.Rentingaccommodation.security.JwtGenerator;
+import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.CityService;
 import com.project.Rentingaccommodation.service.UserService;
@@ -40,6 +40,9 @@ public class UserController {
 
 	@Autowired
 	private CityService cityService;
+	
+	@Autowired
+	private JwtGenerator jwtGenerator;
 	
 	private static final Charset charset = Charset.forName("UTF-8");
 	
@@ -68,11 +71,11 @@ public class UserController {
 			user.getPassword() == null || user.getPassword() == "" ||
 			user.getQuestion() == null || user.getQuestion() == "" ||
 			user.getAnswer() == null || user.getAnswer() == "") {
-			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("All fields are required (name, surname, email, street, phone, password, question, answer).", HttpStatus.FORBIDDEN);
 		}
 		
-		if (UserUtils.userExists(user.getEmail(), adminService, userService)) {
-			return new ResponseEntity<>("User with this email address already exists.", HttpStatus.NOT_ACCEPTABLE);
+		if (UserUtils.userExists(user.getEmail(), userService, adminService)) {
+			return new ResponseEntity<>("User with this email already exists.", HttpStatus.FORBIDDEN);
 		}
 		
 		if (user.getPassword().length() < 8) {
@@ -122,7 +125,7 @@ public class UserController {
 			return new ResponseEntity<>("Password is invalid.", HttpStatus.UNAUTHORIZED);
 		}
 		
-		String token = generate(new JWTUser(u.getEmail()));
+		String token = generate(new JwtUser(u.getEmail()));
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -210,11 +213,11 @@ public class UserController {
         return body;
     }
 	
-    public String generate(JWTUser jwtUser) {
+    public String generate(JwtUser jwtUser) {
     	if (jwtUser.getEmail() == null) {
     		return "User with this email doesn't exist.";
     	}
-        return JWTGenerator.generate(jwtUser);
+        return jwtGenerator.generate(jwtUser);
     }
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)

@@ -24,10 +24,6 @@ public class Agent {
 	@Column(name="surname", columnDefinition="VARCHAR(50)", nullable=false)
 	private String surname;
 	
-//	@GeneratedValue
-//	@Column(name="salt",unique=true, nullable=false)
-//	private byte[] salt;
-	
 	@Column(name="password", columnDefinition="VARCHAR(100)", nullable=false)
 	private String password;
 	
@@ -51,10 +47,9 @@ public class Agent {
 		
 	}
 	
-	public Agent(Long id, String name, String surname, String email, City city, String street,
+	public Agent(String name, String surname, String email, City city, String street,
 			String phone, int businessId) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.email = email;
@@ -87,14 +82,6 @@ public class Agent {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-
-//	public byte[] getSalt() {
-//		return salt;
-//	}
-//
-//	public void setSalt(byte[] salt) {
-//		this.salt = salt;
-//	}
 
 	public String getPassword() {
 		return password;
@@ -142,5 +129,12 @@ public class Agent {
 
 	public void setBusinessId(int businessId) {
 		this.businessId = businessId;
+	}
+
+	@Override
+	public String toString() {
+		return "Agent [id=" + id + ", name=" + name + ", surname=" + surname + ", password=" + password + ", email="
+				+ email + ", city=" + city + ", street=" + street + ", phone=" + phone + ", businessId=" + businessId
+				+ "]";
 	}
 }

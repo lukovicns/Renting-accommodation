@@ -32,9 +32,8 @@ public class City {
 		
 	}
 
-	public City(Long id, Country country, String name, String zipcode) {
+	public City(Country country, String name, String zipcode) {
 		super();
-		this.id = id;
 		this.country = country;
 		this.name = name;
 		this.zipcode = zipcode;

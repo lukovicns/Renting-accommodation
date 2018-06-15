@@ -35,9 +35,8 @@ public class PricePlan {
 		
 	}
 
-	public PricePlan(Long id, Apartment room, String startDate, String endDate, int price) {
+	public PricePlan(Apartment room, String startDate, String endDate, int price) {
 		super();
-		this.id = id;
 		this.room = room;
 		this.startDate = startDate;
 		this.endDate = endDate;
