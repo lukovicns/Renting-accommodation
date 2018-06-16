@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.project.Rentingaccommodation.security.JwtAuthenticationEntryPoint;
 import com.project.Rentingaccommodation.security.JwtAuthenticationProvider;
 import com.project.Rentingaccommodation.security.JwtAuthenticationTokenFilter;
