@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.Rentingaccommodation.model.Admin;
+import com.project.Rentingaccommodation.model.Agent;
+import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.repository.AdminRepository;
 import com.project.Rentingaccommodation.service.AdminService;
 
@@ -38,6 +40,11 @@ public class JpaAdminService implements AdminService {
 	}
 
 	@Override
+	public List<Admin> save(List<Admin> admins) {
+		return repository.saveAll(admins);
+	}
+
+	@Override
 	public Admin delete(Long id) {
 		Admin admin = findOne(id);
 		if (admin != null) {
@@ -45,6 +52,13 @@ public class JpaAdminService implements AdminService {
 			return admin;
 		}
 		return null;
+	}
+
+	@Override
+	public void delete(List<Long> ids) {
+		for (Long id : ids) {
+			repository.deleteById(id);
+		}
 	}
 
 	@Override
@@ -56,4 +70,23 @@ public class JpaAdminService implements AdminService {
 		}
 		return null;
 	}
+
+	@Override
+	public Agent createAgent(Agent agent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public User activateUser(User user, String activate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean deleteUser(User user) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

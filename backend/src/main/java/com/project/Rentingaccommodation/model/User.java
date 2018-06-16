@@ -18,7 +18,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id", updatable = false, nullable = false, insertable=false)
-	private Long id;
+	private Integer id;
 	
 	@Column(name="name", columnDefinition="VARCHAR(50)", nullable=false)
 	private String name;
@@ -73,11 +73,11 @@ public class User {
 		this.answer = answer;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
