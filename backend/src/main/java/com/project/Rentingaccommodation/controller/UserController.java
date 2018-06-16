@@ -52,7 +52,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	public ResponseEntity<Object> getUser(@PathVariable Long id) {
+	public ResponseEntity<Object> getUser(@PathVariable Integer id) {
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -221,7 +221,7 @@ public class UserController {
     }
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
 		User user = userService.delete(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
