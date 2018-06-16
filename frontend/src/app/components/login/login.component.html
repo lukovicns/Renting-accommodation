@@ -1,4 +1,10 @@
 <div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active">Login</li>
+    </ol>
+  </nav>
   <div class="container">
     <div *ngIf="errorMessage" class="alert alert-danger">
       {{ errorMessage }}

@@ -1,0 +1,30 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item"><a routerLink="/accommodations">Accommodations</a></li>
+      <li class="breadcrumb-item"><a routerLink="/accommodations/{{ accommodation.id }}">{{ accommodation.name | titlecase }}</a></li>
+      <li class="breadcrumb-item active">Make reservations</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h1>Make reservations</h1>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="reservationForm" (ngSubmit)="makeReservations()">
+          <div class="form-group">
+              <label for="startDate">Start date</label>
+              <input formControlName="startDate" type="text" class="form-control" id="startDate">
+          </div>
+          <div class="form-group">
+              <label for="endDate">Start date</label>
+              <input formControlName="endDate" type="text" class="form-control" id="endDate">
+          </div>
+          <button type="submit" class="btn btn-info btn-block" [disabled]="!reservationForm.valid">Make reservations</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

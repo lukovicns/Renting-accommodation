@@ -1,0 +1,48 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active">Reservations</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div *ngIf="reservations.length > 0; else content">
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Apartment</th>
+            <th scope="col">Check-in date</th>
+            <th scope="col">Check-out date</th>
+            <th scope="col">Price</th>
+            <th scope="col">Status</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let reservation of reservations">
+            <th scope="row">1</th>
+            <td>{{ apartment.name }}</td>
+            <td>{{ reservation.startDate }}</td>
+            <td>{{ reservation.endDate }}</td>
+            <td>{{ reservation.price }}</td>
+            <td>{{ reservation.status }}</td>
+            <td>
+              <input type="button" class="btn btn-warning btn-sm" value="Edit">
+            </td>
+            <td>
+              <form (ngSubmit)="removeReservation(reservation.id)">
+                <input type="submit" class="btn btn-danger btn-sm" value="Remove">
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #content>
+      <h1>You do not have any reservations yet!</h1>
+    </ng-template>
+    <div ></div>
+  </div>
+</div>

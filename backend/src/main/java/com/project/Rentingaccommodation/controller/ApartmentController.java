@@ -12,19 +12,19 @@ import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.service.ApartmentService;
 
 @RestController
-@RequestMapping(value="api/apartments/")
+@RequestMapping(value="api/apartments")
 public class ApartmentController {
 
 	@Autowired
 	private ApartmentService service;
 	
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public ResponseEntity<List<Apartment>> getAccommodations() {
+	public ResponseEntity<List<Apartment>> getApartments() {
 		return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	public ResponseEntity<Object> getAccommodation(@PathVariable Long id) {
+	public ResponseEntity<Object> getApartment(@PathVariable Long id) {
 		Apartment apartment = service.findOne(id);
 		if (apartment == null) {
 			return new ResponseEntity<>("Apartment not found.", HttpStatus.NOT_FOUND);
