@@ -20,7 +20,11 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
 import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
 import { AuthGuard } from './guards/auth.guard';
-import { SearchAccommodationComponent } from './components/search-accommodation/search-accommodation.component';
+import { MessageComponent } from './components/message/message.component';
+import { SearchApartmentsComponent } from './components/search-apartments/search-apartments.component';
+import { ReservationService } from './services/reservation.service';
+import { ReservationFormComponent } from './components/reservation-form/reservation-form.component';
+import { ReservationListComponent } from './components/reservation-list/reservation-list.component';
 
 
 @NgModule({
@@ -36,7 +40,11 @@ import { SearchAccommodationComponent } from './components/search-accommodation/
     ProfileComponent,
     RecoveryEmailComponent,
     RecoveryQuestionComponent,
-    SearchAccommodationComponent
+    SearchApartmentsComponent,
+    MessageComponent,
+    SearchApartmentsComponent,
+    ReservationFormComponent,
+    ReservationListComponent
   ],
   imports: [
     BrowserModule,
@@ -50,6 +58,7 @@ import { SearchAccommodationComponent } from './components/search-accommodation/
     UserService,
     AccommodationService,
     ApartmentService,
+    ReservationService,
     AuthGuard
   ],
   bootstrap: [AppComponent]

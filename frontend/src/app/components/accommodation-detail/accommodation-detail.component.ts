@@ -3,6 +3,7 @@ import { AccommodationService } from '../../services/accommodation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Accommodation } from '../../models/Accommodation';
 import { fadeIn } from '../../animations';
+import { FormBuilder, Validators } from '@angular/forms';
 // import { datepicker } from '../../../assets/js/script.js';
 
 @Component({
@@ -14,15 +15,29 @@ import { fadeIn } from '../../animations';
 export class AccommodationDetailComponent implements OnInit {
 
   private accommodationId: Number;
+  private showOwnerInfo: boolean = false;
+  private advancedOptions: boolean = false;
   private accommodation = {};
   private agent = {};
-  private showOwnerInfo: boolean = false;
 
   constructor(
     private accommodationService: AccommodationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder
   ) { }
+
+  searchForm = this.formBuilder.group({
+    city: ['', Validators.required],
+    persons: [0, Validators.compose([
+      Validators.required,
+      Validators.min(1)
+    ])]
+  });
+
+  messageForm = this.formBuilder.group({
+    content: ['', Validators.required]
+  });
 
   ngOnInit() {
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
@@ -36,5 +51,23 @@ export class AccommodationDetailComponent implements OnInit {
     }, err => {
       this.router.navigate(['**']);
     });
+  }
+
+  searchApartments() {
+    this.router.navigate(['/accommodations/'+ this.accommodationId + '/search'], {
+      queryParams: {
+        'city': this.searchForm.value['city'],
+        'persons': this.searchForm.value['persons']
+      }
+    })
+  }
+
+  sendMessage() {
+
+  }
+
+  toggleOptions() {
+    this.advancedOptions = !this.advancedOptions;
+    document.querySelector('#toggleOption').textContent = this.advancedOptions ? 'Hide' : 'Show';
   }
 }

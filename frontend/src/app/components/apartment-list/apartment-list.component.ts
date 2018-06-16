@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
 import { ApartmentService } from '../../services/apartment.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { ReservationService } from '../../services/reservation.service';
 
 @Component({
   selector: 'app-apartment-list',
@@ -11,15 +12,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class ApartmentListComponent implements OnInit {
 
-  private apartments = [];
+  private image: String = 'https://t-ec.bstatic.com/images/hotel/max1280x900/120/120747263.jpg';
   private accommodationId: Number;
   private advancedOptions = false;
-  private image: String = 'https://t-ec.bstatic.com/images/hotel/max1280x900/120/120747263.jpg';
-
-  constructor(private apartmentService: ApartmentService, private router: Router, private route: ActivatedRoute) { }
+  private apartments = [];
+  private reservations = [];
+  private apartment = {};
+  
+  constructor(
+    private apartmentService: ApartmentService,
+    private route: ActivatedRoute) { }
 
   ngOnInit() {
-    // document.querySelector('#showOption').textContent = 'Show';
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
     this.apartmentService.getApartments()
     .subscribe(res => {
@@ -29,11 +33,5 @@ export class ApartmentListComponent implements OnInit {
         }
       }
     });
-  }
-
-  toggleOptions() {
-    this.advancedOptions = !this.advancedOptions;
-    // let showOption = document.querySelector('#showOption');
-    // this.advancedOptions == true ? showOption.textContent = 'Hide' : showOption.textContent = 'Show';
   }
 }

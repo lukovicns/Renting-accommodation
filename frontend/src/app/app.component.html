@@ -11,7 +11,7 @@
         <a class="nav-link" routerLink="/accommodations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Accommodations</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="" *ngIf="userIsLoggedIn()">Reservations</a>
+        <a class="nav-link" *ngIf="userIsLoggedIn()" routerLink="/reservations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Reservations</a>
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">

@@ -7,103 +7,14 @@
   </nav>
   <div class="container">
     <div class="row">
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="card" id="search">
+      <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let accommodation of accommodations">
+        <div class="card">
+          <img class="card-img-top" src="http://www.yourdictionary.com/images/definitions/lg/10096.accommodation.jpg" alt="Card image cap">
           <div class="card-body">
-            <h3>Search for accommodations</h3>
-            <hr>
-            <form [formGroup]="accommodationForm" (ngSubmit)="searchAccommodations()">
-              <div class="form-group">
-                <label for="city">City</label>
-                <input id="city" name="city" formControlName="city" type="text" class="form-control" placeholder="Enter city">
-              </div>
-              <div class="form-group">
-                <label for="startDate">Check-in date</label>
-                  <input type="text" class="form-control" id="startDate"/>
-                  <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar">
-                      </span>
-                  </span>
-              </div>
-              <div class="form-group">
-                <label for="endDate">Check-out date</label>
-                <input type="text" class="form-control" id="endDate"/>
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar">
-                    </span>
-                </span>
-              </div>
-              <div class="form-group">
-                <label for="persons">Number of persons (min. 1)</label>
-                <input type="number" class="form-control" formControlName="persons" id="persons" min="0">
-              </div>
-              <button id="toggleOptionsBtn" class="btn btn-link" (click)="toggleOptions()"><span id="toggleOption"></span> advanced options</button>
-              <div *ngIf="advancedOptions">
-                <div class="form-group">
-                  <label for="type">Accommodation type</label>
-                  <select id="type" name="type" class="form-control">
-                    <option value="1">Hotel</option>
-                    <option value="2">Bed & breakfast</option>
-                    <option value="3">Apartment</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="category">Accommodation category</label>
-                  <select id="category" name="category" class="form-control">
-                    <option value="2">1-5 stars</option>
-                    <option value="1">Uncategorized</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="wifi">
-                  <label for="wifi">Wifi</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="breakfast">
-                  <label for="breakfast">Breakfast</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="halfBoard">
-                  <label for="halfBoard">Half board</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="fullBoard">
-                  <label for="fullBoard">Full board</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="television">
-                  <label for="television">TV</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="miniKitchen">
-                  <label for="miniKitchen">Mini-kitchen</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="kitchen">
-                  <label for="kitchen">Kitchen</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="privateBathroom">
-                  <label for="privateBathroom">Prihvate bathroom</label>
-                </div>
-              </div>
-              <input type="submit" class="btn btn-info btn-block" value="Search accommodations" [disabled]="!accommodationForm.valid">
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-8 col-md-6">
-        <div class="row">
-          <div class="col-lg-6" *ngFor="let accommodation of accommodations">
-            <div class="card">
-              <img class="card-img-top" src="http://www.yourdictionary.com/images/definitions/lg/10096.accommodation.jpg" alt="Card image cap">
-              <div class="card-body">
-                <h5 class="card-title">{{ accommodation.name }}</h5>
-                <p class="card-text">{{ accommodation.street }}, {{ accommodation.city.name }}</p>
-                <p class="card-text">{{ accommodation.description }}</p>
-                <a class="btn btn-primary" routerLink="{{ accommodation.id }}">Read more</a>
-              </div>
-            </div>
+            <h5 class="card-title">{{ accommodation.name }}</h5>
+            <p class="card-text">{{ accommodation.street }}, {{ accommodation.city.name }}</p>
+            <p class="card-text">{{ accommodation.description }}</p>
+            <a class="btn btn-primary" routerLink="{{ accommodation.id }}">Read more</a>
           </div>
         </div>
       </div>
