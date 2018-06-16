@@ -1,3 +1,4 @@
+
 package com.project.Rentingaccommodation.service.impl;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class JpaUserService implements UserService {
 	private UserRepository repository;
 	
 	@Override
-	public User findOne(Long id) {
+	public User findOne(Integer id) {
 		for (User u : repository.findAll()) {
 			if (u.getId() == id) {
 				return u;
@@ -44,7 +45,7 @@ public class JpaUserService implements UserService {
 	}
 
 	@Override
-	public User delete(Long id) {
+	public User delete(Integer id) {
 		User user = findOne(id);
 		if (user != null) {
 			repository.delete(user);
@@ -54,9 +55,9 @@ public class JpaUserService implements UserService {
 	}
 
 	@Override
-	public void delete(List<Long> ids) {
-		for (Long id : ids) {
-			repository.deleteById(id);
+	public void delete(List<Integer> ids) {
+		for (Integer id : ids) {
+			//repository.deleteById(id);
 		}
 	}
 
