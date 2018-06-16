@@ -21,7 +21,7 @@ import com.project.Rentingaccommodation.service.AccommodationCatService;
 
 @RestController
 @RequestMapping("/accomodation-service")
-@CrossOrigin(origins = "http://localhost:3306", maxAge = 3600, allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 public class AccommodationCategoryController {
 
 	@Autowired
