@@ -38,11 +38,6 @@ public class JpaAdminService implements AdminService {
 	}
 
 	@Override
-	public List<Admin> save(List<Admin> admins) {
-		return repository.saveAll(admins);
-	}
-
-	@Override
 	public Admin delete(Long id) {
 		Admin admin = findOne(id);
 		if (admin != null) {
@@ -50,13 +45,6 @@ public class JpaAdminService implements AdminService {
 			return admin;
 		}
 		return null;
-	}
-
-	@Override
-	public void delete(List<Long> ids) {
-		for (Long id : ids) {
-			repository.deleteById(id);
-		}
 	}
 
 	@Override
@@ -68,5 +56,4 @@ public class JpaAdminService implements AdminService {
 		}
 		return null;
 	}
-
 }

@@ -20,6 +20,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
 import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
 import { AuthGuard } from './guards/auth.guard';
+import { SearchAccommodationComponent } from './components/search-accommodation/search-accommodation.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { AuthGuard } from './guards/auth.guard';
     ApartmentListComponent,
     ProfileComponent,
     RecoveryEmailComponent,
-    RecoveryQuestionComponent
+    RecoveryQuestionComponent,
+    SearchAccommodationComponent
   ],
   imports: [
     BrowserModule,

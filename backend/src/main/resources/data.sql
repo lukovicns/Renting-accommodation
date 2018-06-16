@@ -18,5 +18,8 @@ insert into apartment (apartment_id, name, bed_type_id, description, accommodati
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (2, 'Room 2', 1, 'Room 2 description', 2, 80, 4, 4);
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (3, 'Room 3', 1, 'Room 3 description', 1, 50, 2, 2);
 
+insert into user (user_id, name, surname, password, email, city_id, street, phone, question, answer, max_tries) values (1, 'Test', 'Test', 'passpass', 'test@test.com', 1, 'Test street', '0640000000', 'Test question', 'Test answer', 0);
 insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id) values (1, 'Goran', 'Goranovic', 'passpass', 'g@g.com', 1, 'Narodnog fronta 1', '0640000000', 2);
 insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');
+
+insert into reservation (reservation_id, user_id, apartment_id, start_date, end_date, price) values (1, 1, 1, '2018-07-16', '2018-07-26', 150);

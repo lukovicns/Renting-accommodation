@@ -23,9 +23,8 @@ public class AdditionalService {
 		
 	}
 
-	public AdditionalService(Long id, String name) {
+	public AdditionalService(String name) {
 		super();
-		this.id = id;
 		this.name = name;
 	}
 

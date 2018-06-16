@@ -30,9 +30,8 @@ public class ApartmentService {
 		
 	}
 
-	public ApartmentService(Long id, Apartment apartment, AdditionalService additionalService) {
+	public ApartmentService(Apartment apartment, AdditionalService additionalService) {
 		super();
-		this.id = id;
 		this.apartment = apartment;
 		this.additionalService = additionalService;
 	}

@@ -1,18 +1,27 @@
 <div [@fadeIn]>
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
       <li class="breadcrumb-item"><a routerLink="/accommodations">Accommodations</a></li>
       <li class="breadcrumb-item active">{{ accommodation.name | titlecase }}</li>
     </ol>
   </nav>
   <div class="container">
     <div class="row">
-      <div class="col-lg-5">
+      <div class="col-lg-4 col-md-5 col-sm-6">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ accommodation.name }}</h5>
             <hr>
             <p class="card-text">{{ accommodation.description }}</p>
+            <hr>
+            <a class="btn btn-info" data-toggle="collapse" href="#agentInfoCollapse" role="button" aria-expanded="false" aria-controls="agentInfoCollapse">Agent info</a>
+            <ul class="list-group" class="collapse" id="agentInfoCollapse">
+              <li class="list-group-item"><strong>Name:&nbsp;</strong>{{ agent.name }}</li>
+              <li class="list-group-item"><strong>Surname:&nbsp;</strong>{{ agent.surname }}</li>
+              <li class="list-group-item"><strong>Email address:&nbsp;</strong>{{ agent.email }}</li>
+              <li class="list-group-item"><strong>Phone number:&nbsp;</strong>{{ agent.phone }}</li>
+            </ul>
           </div>
         </div>
       </div>

@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -149,5 +148,11 @@ public class Accommodation {
 
 	public void setImageList(List<String> imageList) {
 		this.imageList = imageList;
+	}
+
+	@Override
+	public String toString() {
+		return "Accommodation [id=" + id + ", name=" + name + ", type=" + type + ", city=" + city + ", street=" + street
+				+ ", category=" + category + ", agent=" + agent + "]";
 	}
 }

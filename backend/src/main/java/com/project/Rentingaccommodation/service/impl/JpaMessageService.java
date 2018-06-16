@@ -6,8 +6,6 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.project.Rentingaccommodation.model.Country;
 import com.project.Rentingaccommodation.model.Message;
 import com.project.Rentingaccommodation.repository.MessageRepository;
 import com.project.Rentingaccommodation.service.MessageService;
@@ -27,8 +25,7 @@ public class JpaMessageService implements MessageService {
 
 	@Override
 	public List<Message> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAll();
 	}
 
 	@Override
@@ -44,7 +41,7 @@ public class JpaMessageService implements MessageService {
 	}
 
 	@Override
-	public Country delete(Long id) {
+	public Message delete(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}

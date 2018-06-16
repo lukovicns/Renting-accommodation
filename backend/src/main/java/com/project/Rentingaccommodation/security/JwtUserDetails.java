@@ -6,20 +6,18 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.project.Rentingaccommodation.model.UserRoles;
-
-public class JWTUserDetails implements UserDetails {
+public class JwtUserDetails implements UserDetails {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String email;
-	private UserRoles role;
+	private String role;
 	private String token;
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public JWTUserDetails(String email, UserRoles role, String token, List<GrantedAuthority> grantedAuthorities) {
+	public JwtUserDetails(String email, String role, String token, List<GrantedAuthority> grantedAuthorities) {
 	    this.email = email;
 	    this.role = role;
 	    this.token = token;
@@ -71,11 +69,11 @@ public class JWTUserDetails implements UserDetails {
 		this.email = email;
 	}
 
-	public UserRoles getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(UserRoles role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 

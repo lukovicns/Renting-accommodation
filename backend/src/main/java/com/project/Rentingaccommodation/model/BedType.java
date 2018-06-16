@@ -23,9 +23,8 @@ public class BedType {
 		
 	}
 
-	public BedType(Long id, String name) {
+	public BedType(String name) {
 		super();
-		this.id = id;
 		this.name = name;
 	}
 

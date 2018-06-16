@@ -48,9 +48,8 @@ public class Message {
 		
 	}
 
-	public Message(Long id, User user, Agent agent, Apartment room, String date, String text, MessageStatus status, Direction direction) {
+	public Message(User user, Agent agent, Apartment room, String date, String text, MessageStatus status, Direction direction) {
 		super();
-		this.id = id;
 		this.user = user;
 		this.agent = agent;
 		this.room = room;

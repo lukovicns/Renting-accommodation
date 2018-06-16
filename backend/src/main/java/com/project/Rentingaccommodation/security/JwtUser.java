@@ -1,17 +1,15 @@
 package com.project.Rentingaccommodation.security;
 
-import com.project.Rentingaccommodation.model.UserRoles;
-
-public class JWTUser {
+public class JwtUser {
 	
     private String email;
-    private UserRoles role;
+    private String role;
 	
-    public JWTUser() {
+    public JwtUser() {
     	
     }
     
-	public JWTUser(String email) {
+	public JwtUser(String email) {
 		super();
 		this.email = email;
 	}
@@ -24,11 +22,11 @@ public class JWTUser {
 		this.email = email;
 	}
 
-	public UserRoles getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(UserRoles role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 }

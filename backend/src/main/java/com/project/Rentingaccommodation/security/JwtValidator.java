@@ -7,18 +7,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 @Component
-public class JWTValidator {
+public class JwtValidator {
 
     private String secret = "secretKey";
 
-    public JWTUser validate(String token) {
-    	JWTUser jwtUser = null;
+    public JwtUser validate(String token) {
+    	JwtUser jwtUser = null;
         try {
             Claims body = Jwts.parser()
                     .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
-            jwtUser = new JWTUser((String) body.get("email"));
+            jwtUser = new JwtUser((String) body.get("email"));
 
         }
         catch (Exception e) {

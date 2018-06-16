@@ -39,7 +39,7 @@ public class CityController {
 		if (city.getName() == null || city.getName() == "" ||
 			city.getZipcode() == null || city.getZipcode() == "" ||
 			city.getCountry() == null) {
-			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("All fields are required (name, zipcode, country).", HttpStatus.FORBIDDEN);
 		}
 		for (City c : service.findAll()) {
 			if (c.getName().equals(city.getName()) && c.getCountry().equals(city.getCountry())) {
@@ -55,7 +55,7 @@ public class CityController {
 		if (city.getName() == null || city.getName() == "" ||
 			city.getZipcode() == null || city.getZipcode() == "" ||
 			city.getCountry() == null) {
-			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("All fields are required (name, zipcode, country).", HttpStatus.FORBIDDEN);
 		}
 		City foundCity = service.findOne(id);
 		if (foundCity != null) {

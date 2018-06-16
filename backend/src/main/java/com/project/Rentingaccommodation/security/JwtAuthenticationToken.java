@@ -2,7 +2,7 @@ package com.project.Rentingaccommodation.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-public class JWTAuthenticationToken extends UsernamePasswordAuthenticationToken{
+public class JwtAuthenticationToken extends UsernamePasswordAuthenticationToken{
 
 	/**
 	 * 
@@ -10,7 +10,7 @@ public class JWTAuthenticationToken extends UsernamePasswordAuthenticationToken{
 	private static final long serialVersionUID = 1L;
 	private String token;
 
-    public JWTAuthenticationToken(String token) {
+    public JwtAuthenticationToken(String token) {
         super(null, null);
         this.token = token;
     }

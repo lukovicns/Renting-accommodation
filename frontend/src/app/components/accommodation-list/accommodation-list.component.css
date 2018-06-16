@@ -18,3 +18,8 @@ label {
 button {
   margin-top: 20px;
 }
+
+.btn.btn-link {
+  margin-top: 0px;
+  margin-bottom: 20px;
+}

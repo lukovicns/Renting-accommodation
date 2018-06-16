@@ -54,7 +54,7 @@ public class CountryController {
 	public ResponseEntity<Object> updateCountry(@PathVariable Long id, @RequestBody Country country) {
 		if (country.getCode() == null || country.getCode() == "" ||
 			country.getName() == null || country.getName() == "") {
-			return new ResponseEntity<>("All fields are required.", HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("All fields are required (code, name).", HttpStatus.FORBIDDEN);
 		}
 		Country foundCountry = service.findOne(id);
 		if (foundCountry != null) {
