@@ -14,4 +14,5 @@ public interface ReservationService {
 	Reservation delete(Long id);
 	boolean isAvailable(Apartment apartment, String startDate, String endDate);
 	List<Reservation> findUserReservations(String email);
+	List<Apartment> findByQueryParams(String city, String startDate, String endDate);
 }

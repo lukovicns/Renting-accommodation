@@ -13,7 +13,7 @@ import com.project.Rentingaccommodation.repository.ReviewRepository;
 import com.project.Rentingaccommodation.repository.UserRepository;
 
 
-
+@Transactional
 @Service
 public class ReviewService {
 
@@ -38,7 +38,6 @@ public class ReviewService {
     	return this.reviewRepository.findByAllowed(allowed);
     }
     
-    @Transactional
     public Review createReview(Review review) {
         if(review.getGrade() > 5 || review.getGrade() < 1){
             return null;

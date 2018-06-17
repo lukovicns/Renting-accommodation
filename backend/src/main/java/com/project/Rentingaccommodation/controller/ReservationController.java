@@ -14,26 +14,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Reservation;
 import com.project.Rentingaccommodation.model.ReservationStatus;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.security.JwtValidator;
-import com.project.Rentingaccommodation.service.ApartmentService;
 import com.project.Rentingaccommodation.service.ReservationService;
 import com.project.Rentingaccommodation.service.UserService;
 
 @RestController
-@RequestMapping(value="api/reservations")
+@RequestMapping(value="/api/reservations")
 public class ReservationController {
 
 	@Autowired
 	private ReservationService service;
-	
-	@Autowired
-	private ApartmentService apartmentService;
 	
 	@Autowired
 	private UserService userService;
@@ -49,6 +47,28 @@ public class ReservationController {
 			if (jwtUser != null) {
 				List<Reservation> userReservations = service.findUserReservations(jwtUser.getEmail());
 				return new ResponseEntity<>(userReservations, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Token not provided.", HttpStatus.FORBIDDEN);
+		}
+	}
+	
+	@RequestMapping(value="/search", method=RequestMethod.GET)
+	public ResponseEntity<Object> searchUserReservations(
+			@RequestHeader("Authorization") String authHeader, @RequestParam("city") String city,
+			@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
+		try {
+			String token = authHeader.split(" ")[1].trim();
+			JwtUser jwtUser = jwtValidator.validate(token);
+			if (jwtUser != null) {
+				if (city == null || city == "" || startDate == null || city == "" || endDate == null || endDate == "") {
+					return new ResponseEntity<>("All query parameters are required (city, startDate, endDate).", HttpStatus.FORBIDDEN);
+				} else {
+					List<Apartment> queryApartments = service.findByQueryParams(city, startDate, endDate);
+				}
+				return new ResponseEntity<>(null, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
@@ -105,16 +125,16 @@ public class ReservationController {
 				}
 				
 				// Make reservation of first apartment.
-				Apartment apartment = apartmentService.findOne(1l);
+//				Apartment apartment = apartmentService.findOne(1l);
 				
 				// Check if apartment is available in that period.
-				if (!service.isAvailable(apartment, reservation.getStartDate(), reservation.getEndDate())) {
+				if (!service.isAvailable(reservation.getApartment(), reservation.getStartDate(), reservation.getEndDate())) {
 					return new ResponseEntity<>("Apartment is not available at the given period.", HttpStatus.FORBIDDEN);
 				}
 				
 				Reservation newReservation = new Reservation(
 					user,
-					apartment,
+					reservation.getApartment(),
 					reservation.getStartDate(),
 					reservation.getEndDate(),
 					150,
@@ -130,6 +150,73 @@ public class ReservationController {
 		}
 	}
 	
+	// PUT METHOD - Nije zavrseno
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	public ResponseEntity<Object> editReservation(@RequestParam Long id, @RequestBody Reservation reservation, @RequestHeader("Authorization") String authHeader) {
+		try {
+			String token = authHeader.split(" ")[1].trim();
+			JwtUser jwtUser = jwtValidator.validate(token);
+			if (jwtUser != null) {
+				if (reservation.getStartDate() == null || reservation.getStartDate() == "" ||
+					reservation.getEndDate() == null || reservation.getEndDate() == "") {
+					return new ResponseEntity<>("All fields are required (start date, end date).", HttpStatus.FORBIDDEN);
+				}
+				
+				User user = userService.findByEmail(jwtUser.getEmail());
+				if (user == null) {
+					return new ResponseEntity<>("User doesnt exist.", HttpStatus.FORBIDDEN);
+				}
+				
+//				Pattern pattern = Pattern.compile("^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$");
+				Pattern pattern = Pattern.compile("^[0-3]?[0-9]/[0-3]?[0-9]/(?:[0-9]{2})?[0-9]{2}$");
+				Matcher startDateMatcher = pattern.matcher(reservation.getStartDate());
+				Matcher endDateMatcher = pattern.matcher(reservation.getEndDate());
+				
+				// Check date formats.
+				if (!startDateMatcher.find()) {
+					return new ResponseEntity<>("Start date must be in format dd/MM/yyyy.", HttpStatus.FORBIDDEN);
+				}
+				if (!endDateMatcher.find()) {
+					return new ResponseEntity<>("End date must be in format dd/MM/yyyy.", HttpStatus.FORBIDDEN);
+				}
+				
+				// Check if dates are past dates.
+				SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+				Date startDate = dateFormatter.parse(reservation.getStartDate());
+				Date endDate = dateFormatter.parse(reservation.getEndDate());
+				if (startDate.before(new Date()) || endDate.before(new Date())) {
+					return new ResponseEntity<>("You must enter future dates.", HttpStatus.FORBIDDEN);
+				}
+				
+				// Check if start date is before end date.
+				if (!startDate.before(endDate)) {
+					return new ResponseEntity<>("Start date must be before end date.", HttpStatus.FORBIDDEN);
+				}
+				
+				// Make reservation of first apartment.
+//				Apartment apartment = apartmentService.findOne(1l);
+				
+				Reservation newReservation = service.findOne(id);
+				newReservation.setApartment(reservation.getApartment());
+				newReservation.setStartDate(reservation.getStartDate());
+				newReservation.setEndDate(reservation.getEndDate());
+				newReservation.setPrice(reservation.getPrice());
+				
+				// Check if apartment is available in that period.
+				if (!service.isAvailable(newReservation.getApartment(), newReservation.getStartDate(), newReservation.getEndDate())) {
+					return new ResponseEntity<>("Apartment is not available at the given period.", HttpStatus.FORBIDDEN);
+				}
+				
+				service.save(newReservation);
+				return new ResponseEntity<>(newReservation, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Token not provided.", HttpStatus.FORBIDDEN);
+		}
+	}
+	// DELETE METHOD
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteReservation(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
 		try {

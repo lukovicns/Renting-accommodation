@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Accommodation } from '../../models/Accommodation';
 import { fadeIn } from '../../animations';
 import { FormBuilder, Validators } from '@angular/forms';
-// import { datepicker } from '../../../assets/js/script.js';
+import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -32,7 +32,9 @@ export class AccommodationDetailComponent implements OnInit {
     persons: [0, Validators.compose([
       Validators.required,
       Validators.min(1)
-    ])]
+    ])],
+    startDate: [getFormattedDate(), Validators.required],
+    endDate: [getFormattedDate(), Validators.required]
   });
 
   messageForm = this.formBuilder.group({
@@ -40,6 +42,7 @@ export class AccommodationDetailComponent implements OnInit {
   });
 
   ngOnInit() {
+    datepicker();
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
     this.accommodationService.getAccommodation(this.accommodationId)
     .subscribe(res => {
@@ -57,7 +60,9 @@ export class AccommodationDetailComponent implements OnInit {
     this.router.navigate(['/accommodations/'+ this.accommodationId + '/search'], {
       queryParams: {
         'city': this.searchForm.value['city'],
-        'persons': this.searchForm.value['persons']
+        'persons': this.searchForm.value['persons'],
+        'startDate': this.searchForm.value['startDate'],
+        'endDate': this.searchForm.value['endDate']
       }
     })
   }
