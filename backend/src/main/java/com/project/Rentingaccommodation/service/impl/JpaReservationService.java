@@ -40,7 +40,7 @@ public class JpaReservationService implements ReservationService {
 	}
 	
 	@Override
-	public Reservation findOne(long id) {
+	public Reservation findOne(Long id) {
 		for (Reservation reservation : findAll()) {
 			if (reservation.getId() == id) {
 				return reservation;

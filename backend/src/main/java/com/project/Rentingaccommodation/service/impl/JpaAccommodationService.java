@@ -32,25 +32,11 @@ public class JpaAccommodationService implements AccommodationService {
 
 	@Override
 	public Accommodation save(Accommodation accommodation) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.save(accommodation);
 	}
 
 	@Override
-	public List<Accommodation> save(List<Accommodation> accommodations) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Accommodation delete(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void delete(List<Long> ids) {
-		// TODO Auto-generated method stub
-		
+	public void delete(Accommodation accommodation) {
+		repository.delete(accommodation);
 	}
 }

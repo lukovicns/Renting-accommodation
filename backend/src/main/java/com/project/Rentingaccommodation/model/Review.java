@@ -26,8 +26,8 @@ public class Review {
 	private User user;
 	
 	@OneToOne
-	@JoinColumn(name="room_id")
-	private Apartment room;
+	@JoinColumn(name="apartment_id")
+	private Apartment apartment;
 	
 	@Column(name="comment", columnDefinition="VARCHAR(999)")
 	private String comment;
@@ -52,10 +52,10 @@ public class Review {
 		
 	}
 	
-	public Review(User user, Apartment room, String comment, String date, int rating, ReviewStatus status) {
+	public Review(User user, Apartment apartment, String comment, String date, int rating, ReviewStatus status) {
 		super();
 		this.user = user;
-		this.room = room;
+		this.apartment = apartment;
 		this.comment = comment;
 		this.date = date;
 		this.rating = rating;
@@ -78,12 +78,12 @@ public class Review {
 		this.user = user;
 	}
 
-	public Apartment getRoom() {
-		return room;
+	public Apartment getApartment() {
+		return apartment;
 	}
 
-	public void setRoom(Apartment room) {
-		this.room = room;
+	public void setApartment(Apartment apartment) {
+		this.apartment = apartment;
 	}
 
 	public String getComment() {

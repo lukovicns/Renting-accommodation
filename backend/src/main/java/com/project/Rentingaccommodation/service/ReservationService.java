@@ -9,7 +9,7 @@ public interface ReservationService {
 
 	List<Reservation> findAll();
 	List<Reservation> findByApartmentId(long id);
-	Reservation findOne(long id);
+	Reservation findOne(Long id);
 	void save(Reservation reservation);
 	Reservation delete(Long id);
 	boolean isAvailable(Apartment apartment, String startDate, String endDate);

@@ -6,5 +6,5 @@ import com.project.Rentingaccommodation.model.Admin;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Long> {
-	
+
 }

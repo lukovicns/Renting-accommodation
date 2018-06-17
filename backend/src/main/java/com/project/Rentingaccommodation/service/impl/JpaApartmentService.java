@@ -35,26 +35,11 @@ public class JpaApartmentService implements ApartmentService {
 
 	@Override
 	public Apartment save(Apartment apartment) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.save(apartment);
 	}
-
+	
 	@Override
-	public List<Apartment> save(List<Apartment> apartments) {
+	public void delete(Apartment apartment) {
 		// TODO Auto-generated method stub
-		return null;
 	}
-
-	@Override
-	public Apartment delete(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void delete(List<Long> ids) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

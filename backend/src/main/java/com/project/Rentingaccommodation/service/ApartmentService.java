@@ -9,7 +9,5 @@ public interface ApartmentService {
 	Apartment findOne(Long id);
 	List<Apartment> findAll();
 	Apartment save(Apartment apartment);
-	List<Apartment> save(List<Apartment> apartments);
-	Apartment delete(Long id);
-	void delete(List<Long> ids);
+	void delete(Apartment apartment);
 }

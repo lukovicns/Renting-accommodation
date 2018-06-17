@@ -20,7 +20,7 @@ public class JpaUserService implements UserService {
 	private UserRepository repository;
 	
 	@Override
-	public User findOne(Integer id) {
+	public User findOne(Long id) {
 		for (User u : repository.findAll()) {
 			if (u.getId() == id) {
 				return u;
@@ -40,25 +40,8 @@ public class JpaUserService implements UserService {
 	}
 
 	@Override
-	public List<User> save(List<User> users) {
-		return repository.saveAll(users);
-	}
-
-	@Override
-	public User delete(Integer id) {
-		User user = findOne(id);
-		if (user != null) {
-			repository.delete(user);
-			return user;	
-		}
-		return null;
-	}
-
-	@Override
-	public void delete(List<Integer> ids) {
-		for (Integer id : ids) {
-			//repository.deleteById(id);
-		}
+	public void delete(User user) {
+		repository.delete(user);
 	}
 
 	@Override

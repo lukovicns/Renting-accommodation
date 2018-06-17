@@ -8,9 +8,9 @@ import com.project.Rentingaccommodation.model.AccommodationType;
 import java.util.List;
 
 @Repository
-public interface AccommodationTypeRepository  extends JpaRepository<AccommodationType, Integer> {
+public interface AccommodationTypeRepository  extends JpaRepository<AccommodationType, Long> {
 
-    public List<AccommodationType> findByIdIn(List<Integer> ids);
+    public List<AccommodationType> findByIdIn(List<Long> ids);
 
 }
 

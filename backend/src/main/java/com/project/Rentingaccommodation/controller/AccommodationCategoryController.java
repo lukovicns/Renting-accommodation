@@ -5,52 +5,66 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Rentingaccommodation.model.AccommodationCategory;
-import com.project.Rentingaccommodation.service.AccommodationCatService;
+import com.project.Rentingaccommodation.service.AccommodationCategoryService;
 
 @RestController
-@RequestMapping("/api/accomodation-service")
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
+@RequestMapping(value = "/api/categories")
 public class AccommodationCategoryController {
 
 	@Autowired
-	private AccommodationCatService accomodationCatService;
+	private AccommodationCategoryService service;
 	
-	@PostMapping
-	public ResponseEntity<AccommodationCategory> save(@RequestBody AccommodationCategory as) {
-		AccommodationCategory accommodationCategory = this.accomodationCatService.save(as);
-		if (accommodationCategory != null) return new ResponseEntity<>(accommodationCategory, HttpStatus.CREATED);
-		return new ResponseEntity<>(accommodationCategory, HttpStatus.BAD_REQUEST);
+	@RequestMapping(value="", method=RequestMethod.GET)
+	public ResponseEntity<List<AccommodationCategory>> getCategories() {
+		return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
 	}
 	
-	@SuppressWarnings("rawtypes")
-	@DeleteMapping("/{id}")
-	public ResponseEntity delete(@PathVariable String id) {
-		boolean deleted = this.accomodationCatService.delete(id);
-		if (deleted) return new ResponseEntity(HttpStatus.OK);
-		return new ResponseEntity(HttpStatus.BAD_REQUEST);
+	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	public ResponseEntity<Object> getCategory(@PathVariable Long id) {
+		AccommodationCategory category = service.findOne(id);
+		if (category == null) {
+			return new ResponseEntity<>("Accommodation category not found.", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(category, HttpStatus.OK);
 	}
 	
-	@PutMapping
-	public ResponseEntity<AccommodationCategory> update(@RequestBody AccommodationCategory as) {
-		AccommodationCategory accomodationCategory = this.accomodationCatService.save(as);
-		if (accomodationCategory != null) return new ResponseEntity<>(accomodationCategory, HttpStatus.OK);
-		return new ResponseEntity<>(accomodationCategory, HttpStatus.BAD_REQUEST);
+	@RequestMapping(value="", method=RequestMethod.POST)
+	public ResponseEntity<Object> addAccommodationCategory(@RequestBody AccommodationCategory data) {
+		if (data.getName() == null || data.getName() == "") {
+			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
+		}
+		AccommodationCategory category = new AccommodationCategory(data.getName());
+		service.save(category);
+		return new ResponseEntity<>(category, HttpStatus.OK);
 	}
 	
-	@GetMapping
-	public ResponseEntity<List<AccommodationCategory>> getAll() {
-		return new ResponseEntity<>(this.accomodationCatService.getAll(), HttpStatus.OK);
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	public ResponseEntity<Object> updateAccommodationCategory(@PathVariable Long id, @RequestBody AccommodationCategory data) {
+		if (data.getName() == null || data.getName() == "") {
+			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
+		}
+		AccommodationCategory category = service.findOne(id);
+		if (category == null) {
+			return new ResponseEntity<>("Category not found.", HttpStatus.NOT_FOUND);
+		}
+		category.setName(data.getName());
+		return new ResponseEntity<>(service.save(category), HttpStatus.OK);
 	}
 	
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	public ResponseEntity<Object> delete(@PathVariable Long id) {
+		AccommodationCategory category = service.findOne(id);
+		if (category == null) {
+			return new ResponseEntity<>("Category not found.", HttpStatus.NOT_FOUND);
+		}
+		service.delete(category);
+		return new ResponseEntity<>(category, HttpStatus.OK);
+	}
 }

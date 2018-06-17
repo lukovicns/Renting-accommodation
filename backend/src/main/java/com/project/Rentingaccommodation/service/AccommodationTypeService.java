@@ -7,7 +7,8 @@ import com.project.Rentingaccommodation.model.AccommodationType;
 
 public interface AccommodationTypeService {
 
-	AccommodationType save(AccommodationType at);
-	boolean delete(String id);
-	List<AccommodationType> getAll();
+	AccommodationType findOne(Long id);
+	List<AccommodationType> findAll();
+	AccommodationType save(AccommodationType type);
+	void delete(AccommodationType type);
 }

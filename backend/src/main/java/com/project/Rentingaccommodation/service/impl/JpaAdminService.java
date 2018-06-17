@@ -1,13 +1,11 @@
 package com.project.Rentingaccommodation.service.impl;
+
 import java.util.List;
 
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.project.Rentingaccommodation.model.Admin;
-import com.project.Rentingaccommodation.model.Agent;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.repository.AdminRepository;
 import com.project.Rentingaccommodation.service.AdminService;
@@ -21,9 +19,9 @@ public class JpaAdminService implements AdminService {
 	
 	@Override
 	public Admin findOne(Long id) {
-		for (Admin a : repository.findAll()) {
-			if (a.getId() == id) {
-				return a;
+		for (Admin admin : repository.findAll()) {
+			if (admin.getId() == id) {
+				return admin;
 			}
 		}
 		return null;
@@ -40,25 +38,8 @@ public class JpaAdminService implements AdminService {
 	}
 
 	@Override
-	public List<Admin> save(List<Admin> admins) {
-		return repository.saveAll(admins);
-	}
-
-	@Override
-	public Admin delete(Long id) {
-		Admin admin = findOne(id);
-		if (admin != null) {
-			repository.delete(admin);
-			return admin;
-		}
-		return null;
-	}
-
-	@Override
-	public void delete(List<Long> ids) {
-		for (Long id : ids) {
-			repository.deleteById(id);
-		}
+	public void delete(Admin admin) {
+		repository.delete(admin);
 	}
 
 	@Override
@@ -72,21 +53,12 @@ public class JpaAdminService implements AdminService {
 	}
 
 	@Override
-	public Agent createAgent(Agent agent) {
-		// TODO Auto-generated method stub
-		return null;
+	public User activateUser(User user) {
+		return user;
 	}
 
 	@Override
-	public User activateUser(User user, String activate) {
-		// TODO Auto-generated method stub
+	public User deactivateUser(User user) {
 		return null;
 	}
-
-	@Override
-	public boolean deleteUser(User user) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }
