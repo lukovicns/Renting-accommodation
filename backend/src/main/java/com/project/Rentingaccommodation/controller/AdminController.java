@@ -19,7 +19,7 @@ import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.impl.ReviewService;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admins")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 public class AdminController {
 

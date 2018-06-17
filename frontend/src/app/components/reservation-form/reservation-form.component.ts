@@ -5,6 +5,7 @@ import { ApartmentService } from '../../services/apartment.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReservationService } from '../../services/reservation.service';
+import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
 
 @Component({
   selector: 'app-reservation-form',
@@ -23,17 +24,13 @@ export class ReservationFormComponent implements OnInit {
     private accommodationService: AccommodationService,
     private reservationService: ReservationService,
     private apartmentService: ApartmentService,
-    private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router
   ) { }
 
-  reservationForm = this.formBuilder.group({
-    startDate: ['', Validators.required],
-    endDate: ['', Validators.required]
-  });
-
   ngOnInit() {
+    datepicker();
+
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
     this.apartmentId = parseInt(this.route.snapshot.params['apartmentId']);
 
@@ -51,7 +48,12 @@ export class ReservationFormComponent implements OnInit {
   }
 
   makeReservations() {
-    this.reservationService.makeReservations(this.reservationForm.value)
+    const reservation = {
+      'apartment': this.apartment,
+      'startDate': document.querySelector('#startDate')['value'],
+      'endDate': document.querySelector('#endDate')['value']
+    }
+    this.reservationService.makeReservations(reservation)
     .subscribe(res => {
       this.router.navigate(['reservations']);
     }, err => {

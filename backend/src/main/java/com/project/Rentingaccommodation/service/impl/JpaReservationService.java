@@ -99,4 +99,9 @@ public class JpaReservationService implements ReservationService {
 		}
 		return true;
 	}
+
+	@Override
+	public List<Apartment> findByQueryParams(String city, String startDate, String endDate) {
+		return null;
+	}
 }

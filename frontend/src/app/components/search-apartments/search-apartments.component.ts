@@ -25,7 +25,9 @@ export class SearchApartmentsComponent implements OnInit {
     this.accommodationService.getAccommodation(this.accommodationId)
     .subscribe(res => this.accommodation = res);
     if (this.route.snapshot.params['city'] === null ||
-        this.route.snapshot.queryParams['persons'] == null) {
+        this.route.snapshot.queryParams['persons'] == null ||
+        this.route.snapshot.queryParams['startDate'] == null ||
+        this.route.snapshot.queryParams['startDate'] == null) {
         this.router.navigate(['accommodations/' + this.accommodationId]);
     }
   }
