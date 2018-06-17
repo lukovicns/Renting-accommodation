@@ -9,7 +9,7 @@ public class JwtUser {
     	
     }
     
-	public JwtUser(String email) {
+	public JwtUser(String email, String role) {
 		super();
 		this.email = email;
 	}

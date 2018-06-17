@@ -16,9 +16,8 @@
               <div class="card-body">
                 <p class="card-text">{{ accommodation.description }}</p>
                 <hr>
-                <a class="btn btn-info" data-toggle="collapse" href="#agentInfoCollapse" role="button" aria-expanded="false" aria-controls="agentInfoCollapse">Agent info</a>
-                <a class="btn btn-success" routerLink="/accommodations/{{ accommodation.id }}/message">Send a message</a>
-                <ul class="list-group" class="collapse" id="agentInfoCollapse">
+                <a class="btn btn-info" data-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse">Agent info</a>
+                <ul class="list-group collapse" id="collapse">
                   <li class="list-group-item"><strong>Name:&nbsp;</strong>{{ agent.name }}</li>
                   <li class="list-group-item"><strong>Surname:&nbsp;</strong>{{ agent.surname }}</li>
                   <li class="list-group-item"><strong>Email address:&nbsp;</strong>{{ agent.email }}</li>
@@ -26,91 +25,17 @@
                 </ul>
               </div>
             </div>
-          </div>
-          <div class="col-lg-12 col-md-12">
-            <div class="card" id="search">
+            <div class="card">
+              <h5 class="card-header">Send a message</h5>
               <div class="card-body">
-                <h3>Search for apartments</h3>
-                <hr>
-                <form [formGroup]="searchForm" (ngSubmit)="searchApartments()">
-                  <div class="form-group">
-                    <label for="city">City</label>
-                    <input id="city" name="city" formControlName="city" type="text" class="form-control" placeholder="Enter city">
-                  </div>
-                  <div class="form-group">
-                    <label for="startDate">Check-in date</label>
-                      <input type="text" class="form-control" formControlName="startDate" id="startDate" data-toggle="datepicker"/>
-                      <span class="input-group-addon">
-                          <span class="glyphicon glyphicon-calendar">
-                          </span>
-                      </span>
-                  </div>
-                  <div class="form-group">
-                    <label for="endDate">Check-out date</label>
-                    <input type="text" class="form-control" id="endDate" formControlName="endDate" data-toggle="datepicker"/>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar">
-                        </span>
-                    </span>
-                  </div>
-                  <div class="form-group">
-                    <label for="persons">Number of persons (min. 1)</label>
-                    <input type="number" class="form-control" formControlName="persons" id="persons" min="0">
-                  </div>
-                  <button type="button" class="btn btn-link" id="toggleOptionsBtn" (click)="toggleOptions()"><span id="toggleOption">Show</span> advanced options</button>
-                  <div *ngIf="advancedOptions">
-                    <div class="form-group">
-                      <label for="type">Accommodation type</label>
-                      <select id="type" name="type" class="form-control">
-                        <option value="1">Hotel</option>
-                        <option value="2">Bed & breakfast</option>
-                        <option value="3">Apartment</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="category">Accommodation category</label>
-                      <select id="category" name="category" class="form-control">
-                        <option value="2">1-5 stars</option>
-                        <option value="1">Uncategorized</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <input type="checkbox" id="wifi">
-                      <label for="wifi">Wifi</label>
-                    </div>
-                    <div class="form-group">
-                      <input type="checkbox" id="breakfast">
-                      <label for="breakfast">Breakfast</label>
-                    </div>
-                    <div class="form-group">
-                      <input type="checkbox" id="halfBoard">
-                      <label for="halfBoard">Half board</label>
-                    </div>
-                    <div class="form-group">
-                      <input type="checkbox" id="fullBoard">
-                      <label for="fullBoard">Full board</label>
-                    </div>
-                    <div class="form-group">
-                      <input type="checkbox" id="television">
-                      <label for="television">TV</label>
-                    </div>
-                    <div class="form-group">
-                      <input type="checkbox" id="miniKitchen">
-                      <label for="miniKitchen">Mini-kitchen</label>
-                    </div>
-                    <div class="form-group">
-                      <input type="checkbox" id="kitchen">
-                      <label for="kitchen">Kitchen</label>
-                    </div>
-                    <div class="form-group">
-                      <input type="checkbox" id="privateBathroom">
-                      <label for="privateBathroom">Prihvate bathroom</label>
-                    </div>
-                  </div>
-                  <input type="submit" class="btn btn-info btn-block" value="Search apartments" [disabled]="!searchForm.valid">
+                <form (ngSubmit)="sendMessage()">
+                  <textarea id="message" class="form-control" cols="30" rows="5" placeholder="Enter your message here"></textarea>
+                  <button type="submit" class="btn btn-success">Send message</button>
                 </form>
               </div>
             </div>
+          </div>
+          <div class="col-lg-12 col-md-12">
           </div>
         </div>
       </div>

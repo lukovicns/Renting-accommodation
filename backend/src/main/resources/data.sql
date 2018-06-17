@@ -22,4 +22,4 @@ insert into user (user_id, name, surname, password, email, city_id, street, phon
 insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id) values (1, 'Goran', 'Goranovic', 'passpass', 'g@g.com', 1, 'Narodnog fronta 1', '0640000000', 2);
 insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');
 
-insert into reservation (reservation_id, user_id, apartment_id, start_date, end_date, price) values (1, 1, 1, '2018-07-16', '2018-07-26', 150);
+insert into reservation (reservation_id, user_id, apartment_id, start_date, end_date, price) values (1, 1, 1, '16/07/2018', '26/07/2018', 150);

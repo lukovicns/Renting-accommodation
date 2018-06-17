@@ -21,7 +21,8 @@ export class ApartmentListComponent implements OnInit {
   
   constructor(
     private apartmentService: ApartmentService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
     this.accommodationId = parseInt(this.route.snapshot.params['id']);

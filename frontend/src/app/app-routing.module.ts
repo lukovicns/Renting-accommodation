@@ -10,7 +10,6 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
 import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
 import { AuthGuard } from './guards/auth.guard';
-import { MessageComponent } from './components/message/message.component';
 import { SearchApartmentsComponent } from './components/search-apartments/search-apartments.component';
 import { ReservationFormComponent } from './components/reservation-form/reservation-form.component';
 import { ReservationListComponent } from './components/reservation-list/reservation-list.component';
@@ -22,7 +21,6 @@ const routes: Routes = [
       { path: ':id', children: [
         { path: '', component: AccommodationDetailComponent },
         { path: 'search', component: SearchApartmentsComponent },
-        { path: 'message', component: MessageComponent, canActivate: [AuthGuard] },
         { path: 'apartments/:apartmentId/make-reservation', component: ReservationFormComponent, canActivate: [AuthGuard] }
       ] }
     ]

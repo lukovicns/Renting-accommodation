@@ -16,4 +16,8 @@ export class ApartmentService {
   getApartment(apartmentId) {
     return this.http.get<Apartment>(this.url + apartmentId);
   }
+
+  getApartmentsByQueryParams(accommodationId, city, persons, startDate, endDate) {
+    throw new Error("Method not implemented.");
+  }
 }

@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Reservation;
 import com.project.Rentingaccommodation.model.ReservationStatus;
 import com.project.Rentingaccommodation.model.User;
@@ -55,28 +53,6 @@ public class ReservationController {
 		}
 	}
 	
-	@RequestMapping(value="/search", method=RequestMethod.GET)
-	public ResponseEntity<Object> searchUserReservations(
-			@RequestHeader("Authorization") String authHeader, @RequestParam("city") String city,
-			@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
-		try {
-			String token = authHeader.split(" ")[1].trim();
-			JwtUser jwtUser = jwtValidator.validate(token);
-			if (jwtUser != null) {
-				if (city == null || city == "" || startDate == null || city == "" || endDate == null || endDate == "") {
-					return new ResponseEntity<>("All query parameters are required (city, startDate, endDate).", HttpStatus.FORBIDDEN);
-				} else {
-					List<Apartment> queryApartments = service.findByQueryParams(city, startDate, endDate);
-				}
-				return new ResponseEntity<>(null, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
-			}
-		} catch (Exception e) {
-			return new ResponseEntity<>("Token not provided.", HttpStatus.FORBIDDEN);
-		}
-	}
-	
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ResponseEntity<List<Reservation>> getAllReservations() {
 		return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
@@ -89,10 +65,11 @@ public class ReservationController {
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
 				if (reservation.getStartDate() == null || reservation.getStartDate() == "" ||
-					reservation.getEndDate() == null || reservation.getEndDate() == "") {
-					return new ResponseEntity<>("All fields are required (start date, end date).", HttpStatus.FORBIDDEN);
+					reservation.getEndDate() == null || reservation.getEndDate() == "" ||
+					reservation.getApartment() == null) {
+					return new ResponseEntity<>("All fields are required (apartment, start date, end date).", HttpStatus.FORBIDDEN);
 				}
-				
+
 				User user = userService.findByEmail(jwtUser.getEmail());
 				if (user == null) {
 					return new ResponseEntity<>("User doesnt exist.", HttpStatus.FORBIDDEN);

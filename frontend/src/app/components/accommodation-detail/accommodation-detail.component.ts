@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Accommodation } from '../../models/Accommodation';
 import { fadeIn } from '../../animations';
 import { FormBuilder, Validators } from '@angular/forms';
-import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -16,7 +15,8 @@ export class AccommodationDetailComponent implements OnInit {
 
   private accommodationId: Number;
   private showOwnerInfo: boolean = false;
-  private advancedOptions: boolean = false;
+  private agentInfoBtn: boolean = false;
+  private sendMessageBtn: boolean = false;
   private accommodation = {};
   private agent = {};
 
@@ -27,22 +27,11 @@ export class AccommodationDetailComponent implements OnInit {
     private formBuilder: FormBuilder
   ) { }
 
-  searchForm = this.formBuilder.group({
-    city: ['', Validators.required],
-    persons: [0, Validators.compose([
-      Validators.required,
-      Validators.min(1)
-    ])],
-    startDate: [getFormattedDate(), Validators.required],
-    endDate: [getFormattedDate(), Validators.required]
-  });
-
   messageForm = this.formBuilder.group({
     content: ['', Validators.required]
   });
 
   ngOnInit() {
-    datepicker();
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
     this.accommodationService.getAccommodation(this.accommodationId)
     .subscribe(res => {
@@ -56,23 +45,17 @@ export class AccommodationDetailComponent implements OnInit {
     });
   }
 
-  searchApartments() {
-    this.router.navigate(['/accommodations/'+ this.accommodationId + '/search'], {
-      queryParams: {
-        'city': this.searchForm.value['city'],
-        'persons': this.searchForm.value['persons'],
-        'startDate': this.searchForm.value['startDate'],
-        'endDate': this.searchForm.value['endDate']
-      }
-    })
-  }
-
   sendMessage() {
 
   }
 
-  toggleOptions() {
-    this.advancedOptions = !this.advancedOptions;
-    document.querySelector('#toggleOption').textContent = this.advancedOptions ? 'Hide' : 'Show';
+  showAgentInfo() {
+    this.agentInfoBtn = !this.agentInfoBtn;
+    document.getElementsByClassName('toggle-components')[0].setAttribute('id', 'agentInfoCollapse');
+  }
+
+  showTextArea() {
+    this.sendMessageBtn = !this.sendMessageBtn;
+    document.getElementsByClassName('toggle-components')[0].setAttribute('id', 'sendMessageCollapse');
   }
 }

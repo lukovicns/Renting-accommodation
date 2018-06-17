@@ -18,7 +18,7 @@ public class JwtValidator {
                     .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
-            jwtUser = new JwtUser((String) body.get("email"));
+            jwtUser = new JwtUser((String) body.get("email"), (String) body.get("role"));
 
         }
         catch (Exception e) {

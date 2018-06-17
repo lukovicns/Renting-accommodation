@@ -29,7 +29,7 @@ public class JpaReservationService implements ReservationService {
 	}
 
 	@Override
-	public List<Reservation> findByApartmentId(long id) {
+	public List<Reservation> findByApartmentId(Long id) {
 		List<Reservation> apartmentReservations = new ArrayList<Reservation>();
 		for (Reservation reservation : findAll()) {
 			if (reservation.getApartment().getId() == id) {
@@ -77,8 +77,10 @@ public class JpaReservationService implements ReservationService {
 
 	@Override
 	public boolean isAvailable(Apartment apartment, String startDate, String endDate) {
-		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		for (Reservation reservation : findByApartmentId(apartment.getId())) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+		List<Reservation> activeReservations = findByApartmentId(apartment.getId());
+		System.out.println(activeReservations);
+		for (Reservation reservation : activeReservations) {
 			if (reservation.getApartment().getId() == apartment.getId()) {
 				// Check in-between dates.
 				try {
@@ -98,10 +100,5 @@ public class JpaReservationService implements ReservationService {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public List<Apartment> findByQueryParams(String city, String startDate, String endDate) {
-		return null;
 	}
 }

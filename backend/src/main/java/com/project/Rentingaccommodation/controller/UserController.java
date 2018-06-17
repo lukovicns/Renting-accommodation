@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.model.User;
+import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.model.DTO.PasswordChangeDTO;
 import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JwtGenerator;
@@ -122,20 +123,20 @@ public class UserController {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 		}
 		
-		if (u.getMax_tries() == 3) {
-			return new ResponseEntity<>("Max tries 3.", HttpStatus.FORBIDDEN);
-		}
+//		if (u.getMax_tries() == 3) {
+//			return new ResponseEntity<>("Max tries 3.", HttpStatus.FORBIDDEN);
+//		}
 		
 		String verifyHash = u.getPassword();
 		String verifyPass = user.getPassword();
 		
 		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset)) {
-			u.setMax_tries(u.getMax_tries() + 1);
-			userService.save(u);
+//			u.setMax_tries(u.getMax_tries() + 1);
+//			userService.save(u);
 			return new ResponseEntity<>("Password is invalid.", HttpStatus.UNAUTHORIZED);
 		}
 		
-		String token = generate(new JwtUser(u.getEmail()));
+		String token = generate(new JwtUser(u.getEmail(), UserRoles.USER.toString()));
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -227,6 +228,6 @@ public class UserController {
     	if (jwtUser.getEmail() == null) {
     		return "User with this email doesn't exist.";
     	}
-        return jwtGenerator.generate(jwtUser);
+        return jwtGenerator.generateUser(jwtUser);
     }
 }
