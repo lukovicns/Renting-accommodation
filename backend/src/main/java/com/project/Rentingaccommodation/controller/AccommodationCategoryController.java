@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.Rentingaccommodation.model.AccommodationCategory;
 import com.project.Rentingaccommodation.service.AccommodationCatService;
 
-
 @RestController
 @RequestMapping("/api/accomodation-service")
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
