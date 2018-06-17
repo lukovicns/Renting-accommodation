@@ -8,8 +8,8 @@ import * as decode from 'jwt-decode';
 export class UserService {
 
   private data = {};
-  private url: string = 'http://localhost:8080/api/users/';
-  private tokenUrl: string = 'http://localhost:8080/token/';
+  private url: string = 'http://localhost:8081/api/users/';
+  private tokenUrl: string = 'http://localhost:8081/token/';
   private email: string;
 
   constructor(private http: HttpClient) { }

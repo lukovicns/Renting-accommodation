@@ -5,7 +5,7 @@ import { Reservation } from '../models/Reservation';
 @Injectable()
 export class ReservationService {
 
-  private url: string = 'http://localhost:8080/api/reservations/'
+  private url: string = 'http://localhost:8081/api/reservations/'
   private headers = new HttpHeaders()
     .append('Content-Type', 'application/json')
     .append('Authorization', 'Bearer ' + localStorage.getItem('token'));
