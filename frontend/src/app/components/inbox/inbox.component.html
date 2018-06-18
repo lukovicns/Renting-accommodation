@@ -1,0 +1,70 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active">Inbox</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a id="received" class="nav-link active" (click)="receivedTabActive()">Received</a>
+          </li>
+          <li class="nav-item">
+            <a id="sent" class="nav-link" (click)="sentTabActive()">Sent</a>
+          </li>
+        </ul>
+        <table class="table" *ngIf="receivedTab && receivedMessages && receivedMessages.length > 0">
+          <thead class="thead-light">
+            <tr>
+              <th scope="row">From</th>
+              <th scope="row">Content</th>
+              <th scope="row">Date</th>
+              <th scope="row">Time</th>
+              <th scope="row">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let message of receivedMessages">
+              <td>{{ message.agent?.email }}</td>
+              <td>{{ message.text | truncate: 12: true }}</td>
+              <td>{{ message.date }}</td>
+              <td>{{ message.time }}</td>
+              <td>
+                <a (click)="deleteReceivedMessage(message)">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="table" *ngIf="sentTab && sentMessages && sentMessages.length > 0">
+          <thead class="thead-light">
+            <tr>
+              <th scope="row">To</th>
+              <th scope="row">Content</th>
+              <th scope="row">Date</th>
+              <th scope="row">Time</th>
+              <th scope="row">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let message of sentMessages">
+              <td>{{ message.agent?.email }}</td>
+              <td>{{ message.text | truncate: 12: true }}</td>
+              <td>{{ message.date }}</td>
+              <td>{{ message.time }}</td>
+              <td>
+                <a (click)="deleteSentMessage(message)">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

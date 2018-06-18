@@ -16,16 +16,29 @@
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a class="nav-link" *ngIf="!userIsLoggedIn()" routerLink="/register" routerLinkActive="active">Register</a>
+        <a class="nav-link" *ngIf="!userIsLoggedIn()" routerLink="/register" routerLinkActive="active">
+          <i class="fas fa-user-plus"></i>&nbsp;&nbsp;Register
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="!userIsLoggedIn()" routerLink="/login" routerLinkActive="active">Login</a>
+        <a class="nav-link" *ngIf="!userIsLoggedIn()" routerLink="/login" routerLinkActive="active">
+          <i class="fas fa-power-off"></i>&nbsp;Login
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="userIsLoggedIn()" routerLink="/profile" routerLinkActive="active">Profile</a>
+        <a class="nav-link" *ngIf="userIsLoggedIn()" routerLink="/inbox" routerLinkActive="active">
+          <i class="far fa-envelope fa-lg"></i>&nbsp;Inbox
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="userIsLoggedIn()" (click)="logout()" id="logout">Logout</a>
+        <a class="nav-link" *ngIf="userIsLoggedIn()" routerLink="/profile" routerLinkActive="active">
+          <i class="fas fa-user"></i>&nbsp;Profile
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" *ngIf="userIsLoggedIn()" (click)="logout()" id="logout">
+          <i class="fas fa-power-off"></i>&nbsp;Logout
+        </a>
       </li>
     </ul>
   </div>
