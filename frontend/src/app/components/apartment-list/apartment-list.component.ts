@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { fadeIn } from '../../animations';
 import { ApartmentService } from '../../services/apartment.service';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ReservationService } from '../../services/reservation.service';
+import { fadeIn } from '../../animations';
+import { UserService } from '../../services/user.service';
+import { MessageService } from '../../services/message.service';
 
 @Component({
   selector: 'app-apartment-list',
@@ -12,7 +13,7 @@ import { ReservationService } from '../../services/reservation.service';
 })
 export class ApartmentListComponent implements OnInit {
 
-  private image: String = 'https://t-ec.bstatic.com/images/hotel/max1280x900/120/120747263.jpg';
+  private image: string = 'https://t-ec.bstatic.com/images/hotel/max1280x900/120/120747263.jpg';
   private accommodationId: Number;
   private advancedOptions = false;
   private apartments = [];
@@ -21,18 +22,30 @@ export class ApartmentListComponent implements OnInit {
   
   constructor(
     private apartmentService: ApartmentService,
+    private userService: UserService,
+    private messageService: MessageService,
     private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
-    this.apartmentService.getApartments()
+    this.apartmentService.getApartments(this.accommodationId)
     .subscribe(res => {
-      for (let i = 0; i < res.length; i++) {
-        if (res[i].accommodation['id'] == this.accommodationId) {
-          this.apartments.push(res[i]);
-        }
-      }
+      this.apartments = res;
     });
+  }
+
+  sendMessage() {
+    // const messageContent = document.querySelector('#messageContent').textContent;
+    // this.userService.getCurrentUser(), this.agent, messageContent
+    // const data = {
+    //   'apartment': 
+    // }
+    // this.messageService.sendMessage(data)
+    // .subscribe(res => {
+    //   console.log(res);
+    // }, err => {
+    //   console.log(err);
+    // })
   }
 }

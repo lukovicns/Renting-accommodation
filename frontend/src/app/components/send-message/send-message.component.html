@@ -1,0 +1,31 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item"><a routerLink="/accommodations">Accommodations</a></li>
+      <li class="breadcrumb-item"><a routerLink="/accommodations/{{ accommodation.id }}">{{ accommodation.name }}</a></li>
+      <li class="breadcrumb-item active">Send message</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="alert alert-success" *ngIf="messageSent">
+      You have successfully sent message to {{ accommodation.agent?.email }}.
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Send message</h3>
+      </div>
+      <div class="card-body">
+        Recipient: {{ accommodation.agent?.email }}
+        <hr>
+        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+          <div class="form-group">
+            <label for="content">Message content</label>
+            <textarea id="content" name="content" formControlName="content" class="form-control" cols="30" rows="10" placeholder="Enter your message here"></textarea>
+          </div>
+          <button type="submit" class="btn btn-info" [disabled]="!messageForm.valid">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

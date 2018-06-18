@@ -1,7 +1,7 @@
+import { UserService } from '../../services/user.service';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
-import { FormBuilder, Validators } from '@angular/forms';
-import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
 
 @Component({

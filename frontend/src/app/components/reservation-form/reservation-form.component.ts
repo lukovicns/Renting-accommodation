@@ -1,11 +1,10 @@
+import { AccommodationService } from '../../services/accommodation.service';
+import { ReservationService } from '../../services/reservation.service';
+import { ApartmentService } from '../../services/apartment.service';
+import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
-import { AccommodationService } from '../../services/accommodation.service';
-import { ApartmentService } from '../../services/apartment.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
-import { ReservationService } from '../../services/reservation.service';
-import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
 
 @Component({
   selector: 'app-reservation-form',

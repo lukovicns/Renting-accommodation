@@ -136,7 +136,7 @@ public class UserController {
 			return new ResponseEntity<>("Password is invalid.", HttpStatus.UNAUTHORIZED);
 		}
 		
-		String token = generate(new JwtUser(u.getEmail(), UserRoles.USER.toString()));
+		String token = generate(new JwtUser(u.getId(), u.getEmail(), UserRoles.USER.toString()));
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
 		return new ResponseEntity<>(response, HttpStatus.OK);

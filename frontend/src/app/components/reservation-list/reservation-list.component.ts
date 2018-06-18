@@ -1,6 +1,6 @@
+import { ReservationService } from '../../services/reservation.service';
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
-import { ReservationService } from '../../services/reservation.service';
 
 @Component({
   selector: 'app-reservation-list',

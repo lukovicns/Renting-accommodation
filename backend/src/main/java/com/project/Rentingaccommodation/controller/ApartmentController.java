@@ -11,13 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.project.Rentingaccommodation.model.Accommodation;
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.security.JwtValidator;
-import com.project.Rentingaccommodation.service.AccommodationService;
 import com.project.Rentingaccommodation.service.ApartmentService;
 import com.project.Rentingaccommodation.service.CityService;
 
@@ -27,9 +24,6 @@ public class ApartmentController {
 
 	@Autowired
 	private ApartmentService service;
-
-	@Autowired
-	private AccommodationService accommodationService;
 	
 	@Autowired
 	private CityService cityService;
@@ -51,27 +45,28 @@ public class ApartmentController {
 		return new ResponseEntity<>(apartment, HttpStatus.OK);
 	}
 	
+	@RequestMapping(value="/accommodation/{id}", method=RequestMethod.GET)
+	public ResponseEntity<Object> getApartmentByAccommodationId(@PathVariable Long id) {
+		return new ResponseEntity<>(service.findByAccommodationId(id), HttpStatus.OK);
+	}
+	
 	@RequestMapping(value="/search", method=RequestMethod.GET)
 	public ResponseEntity<Object> searchApartments(@RequestHeader("Authorization") String authHeader,
-			@RequestParam("accommodation") Long accommodationId, @RequestParam("city") Long cityId, @RequestParam("persons") int persons,
+			@RequestParam("city") Long cityId, @RequestParam("persons") int persons,
 			@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				if (Long.valueOf(accommodationId) == null || Long.valueOf(accommodationId) == 0 || Long.valueOf(cityId) == null || Long.valueOf(cityId) == 0 ||
-					startDate == null || startDate == "" || endDate == null || endDate == "" || Integer.valueOf(persons) == null || Integer.valueOf(persons) == 0) {
+				if (Long.valueOf(cityId) == null || Long.valueOf(cityId) == 0 || startDate == null || startDate == "" || endDate == null ||
+					endDate == "" || Integer.valueOf(persons) == null || Integer.valueOf(persons) == 0) {
 					return new ResponseEntity<>("All query parameters are required (city, startDate, endDate, persons).", HttpStatus.FORBIDDEN);
 				} else {
 					City city = cityService.findOne(cityId);
 					if (city == null) {
 						return new ResponseEntity<>("City not found.", HttpStatus.NOT_FOUND);
 					}
-					Accommodation accommodation = accommodationService.findByCity(city);
-					if (accommodation == null) {
-						return new ResponseEntity<>("Accommodation not found.", HttpStatus.NOT_FOUND);
-					}
-					List<Apartment> queryApartments = service.findByQueryParams(accommodation, startDate, endDate, persons);
+					List<Apartment> queryApartments = service.findByQueryParams(city, startDate, endDate, persons);
 					return new ResponseEntity<>(queryApartments, HttpStatus.OK);
 				}
 			} else {

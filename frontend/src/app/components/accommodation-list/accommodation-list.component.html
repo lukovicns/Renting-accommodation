@@ -7,7 +7,7 @@
   </nav>
   <div class="container">
     <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm-6">
+      <div class="col-lg-4 col-md-5 col-sm-6">
         <div class="card" id="search">
           <div class="card-body">
             <h3>Search for apartments</h3>
@@ -15,7 +15,7 @@
             <form [formGroup]="searchForm" (ngSubmit)="searchApartments()">
               <div class="form-group">
                 <label for="city">City</label>
-                <input id="city" name="city" formControlName="city" type="text" class="form-control" placeholder="Enter city">
+                <input id="city" name="city" formControlName="city" type="text" class="form-control" placeholder="Enter city name">
               </div>
               <div class="form-group">
                 <label for="startDate">Check-in date</label>
@@ -92,9 +92,9 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-8 col-md-8 col-sm-6">
+      <div class="col-lg-8 col-md-7 col-sm-6">
         <div class="row">
-          <div class="col-lg-6 col-md-6 col-sm-6" *ngFor="let accommodation of accommodations">
+          <div class="col-lg-6 col-md-12 col-sm-12" *ngFor="let accommodation of accommodations">
             <div class="card">
               <img class="card-img-top" src="http://www.yourdictionary.com/images/definitions/lg/10096.accommodation.jpg" alt="Card image cap">
               <div class="card-body">

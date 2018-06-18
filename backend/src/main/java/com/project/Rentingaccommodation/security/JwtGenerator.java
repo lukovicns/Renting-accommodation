@@ -22,7 +22,7 @@ public class JwtGenerator {
     	Claims claims = Jwts.claims();
         User user = userService.findByEmail(jwtUser.getEmail());
         if(user != null) {
-//        	claims.put("id", jwtUser.getId());
+        	claims.put("id", jwtUser.getId());
         	claims.put("email", jwtUser.getEmail());
     		claims.put("role", UserRoles.USER);
     		return Jwts.builder()

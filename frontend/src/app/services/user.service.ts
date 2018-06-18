@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../models/User';
-import { ResponseType } from '@angular/http';
 import * as decode from 'jwt-decode';
 
 @Injectable()

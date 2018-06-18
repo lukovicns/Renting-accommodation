@@ -1,9 +1,10 @@
+import { AccommodationService } from '../../services/accommodation.service';
+import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
-import { AccommodationService } from '../../services/accommodation.service';
 import { Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
-import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
+import { CityService } from '../../services/city.service';
 
 @Component({
   selector: 'app-accommodation-list',
@@ -18,6 +19,7 @@ export class AccommodationListComponent implements OnInit {
 
   constructor(
     private accommodationService: AccommodationService,
+    private cityService: CityService,
     private formBuilder: FormBuilder,
     private router: Router
   ) { }
@@ -39,14 +41,17 @@ export class AccommodationListComponent implements OnInit {
   });
 
   searchApartments() {
-    // this.router.navigate(['/accommodations/'+ this.accommodationId + '/search'], {
-    //   queryParams: {
-    //     'city': this.searchForm.value['city'],
-    //     'persons': this.searchForm.value['persons'],
-    //     'startDate': this.searchForm.value['startDate'],
-    //     'endDate': this.searchForm.value['endDate']
-    //   }
-    // })
+    this.cityService.getCityByName(this.searchForm.value['city'])
+    .subscribe(res => {
+      this.router.navigate(['/accommodations/search'], {
+        queryParams: {
+          'city': res['id'],
+          'persons': this.searchForm.value['persons'],
+          'startDate': this.searchForm.value['startDate'],
+          'endDate': this.searchForm.value['endDate']
+        }
+      })
+    });
   }
 
   toggleOptions() {

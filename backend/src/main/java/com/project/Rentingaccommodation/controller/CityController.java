@@ -34,6 +34,15 @@ public class CityController {
 		return new ResponseEntity<>(city, HttpStatus.OK);
 	}
 	
+	@RequestMapping(value="/name/{name}", method=RequestMethod.GET)
+	public ResponseEntity<Object> getCityByName(@PathVariable String name) {
+		City city = service.findByName(name);
+		if (city == null) {
+			return new ResponseEntity<>("City not found.", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(city, HttpStatus.OK);
+	}
+	
 	@RequestMapping(value="", method=RequestMethod.POST)
 	public ResponseEntity<Object> addCity(@RequestBody City city) {
 		if (city.getName() == null || city.getName() == "" ||

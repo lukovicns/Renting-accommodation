@@ -29,11 +29,14 @@ public class Message {
 	private Agent agent;
 	
 	@OneToOne
-	@JoinColumn(name="room_id")
-	private Apartment room;
+	@JoinColumn(name="apartment_id")
+	private Apartment apartment;
 	
 	@Column(name="date", nullable=false)
 	private String date;
+	
+	@Column(name="time", nullable=false)
+	private String time;
 	
 	@Column(name="message_text", columnDefinition="VARCHAR(999)", nullable=false)
 	private String text;
@@ -48,12 +51,13 @@ public class Message {
 		
 	}
 
-	public Message(User user, Agent agent, Apartment room, String date, String text, MessageStatus status, Direction direction) {
+	public Message(User user, Agent agent, Apartment apartment, String date, String time, String text, MessageStatus status, Direction direction) {
 		super();
 		this.user = user;
 		this.agent = agent;
-		this.room = room;
+		this.apartment = apartment;
 		this.date = date;
+		this.time = time;
 		this.text = text;
 		this.status = status;
 		this.direction = direction;
@@ -83,12 +87,12 @@ public class Message {
 		this.agent = agent;
 	}
 
-	public Apartment getRoom() {
-		return room;
+	public Apartment getApartment() {
+		return apartment;
 	}
 
-	public void setRoom(Apartment room) {
-		this.room = room;
+	public void setApartment(Apartment apartment) {
+		this.apartment = apartment;
 	}
 
 	public String getDate() {
@@ -97,6 +101,14 @@ public class Message {
 
 	public void setDate(String date) {
 		this.date = date;
+	}
+	
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
 	}
 
 	public String getText() {

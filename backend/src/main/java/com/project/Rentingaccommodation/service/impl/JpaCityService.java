@@ -21,6 +21,16 @@ public class JpaCityService implements CityService {
 	public City findOne(Long id) {
 		return repository.getOne(id);
 	}
+	
+	@Override
+	public City findByName(String name) {
+		for (City city : repository.findAll()) {
+			if (city.getName().toLowerCase().equals(name.toLowerCase())) {
+				return city;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public List<City> findAll() {

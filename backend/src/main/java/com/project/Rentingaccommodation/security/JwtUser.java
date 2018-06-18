@@ -2,6 +2,7 @@ package com.project.Rentingaccommodation.security;
 
 public class JwtUser {
 	
+	private Long id;
     private String email;
     private String role;
 	
@@ -9,9 +10,19 @@ public class JwtUser {
     	
     }
     
-	public JwtUser(String email, String role) {
+	public JwtUser(Long id, String email, String role) {
 		super();
+		this.id = id;
 		this.email = email;
+		this.role = role;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getEmail() {

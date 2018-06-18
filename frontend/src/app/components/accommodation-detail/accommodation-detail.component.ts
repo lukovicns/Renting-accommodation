@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
 import { AccommodationService } from '../../services/accommodation.service';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Accommodation } from '../../models/Accommodation';
-import { fadeIn } from '../../animations';
+import { UserService } from '../../services/user.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { fadeIn } from '../../animations';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -22,9 +23,10 @@ export class AccommodationDetailComponent implements OnInit {
 
   constructor(
     private accommodationService: AccommodationService,
-    private router: Router,
+    private userService: UserService,
+    private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private router: Router
   ) { }
 
   messageForm = this.formBuilder.group({
@@ -45,17 +47,8 @@ export class AccommodationDetailComponent implements OnInit {
     });
   }
 
-  sendMessage() {
-
-  }
-
   showAgentInfo() {
     this.agentInfoBtn = !this.agentInfoBtn;
     document.getElementsByClassName('toggle-components')[0].setAttribute('id', 'agentInfoCollapse');
-  }
-
-  showTextArea() {
-    this.sendMessageBtn = !this.sendMessageBtn;
-    document.getElementsByClassName('toggle-components')[0].setAttribute('id', 'sendMessageCollapse');
   }
 }
