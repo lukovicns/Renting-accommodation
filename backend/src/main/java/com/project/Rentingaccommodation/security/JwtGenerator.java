@@ -18,7 +18,6 @@ public class JwtGenerator {
 	private UserService userService;
 
     public String generateUser(JwtUser jwtUser) {
-
     	Claims claims = Jwts.claims();
         User user = userService.findByEmail(jwtUser.getEmail());
         if(user != null) {
@@ -33,4 +32,15 @@ public class JwtGenerator {
         }
         return "User with email " + jwtUser.getEmail() + " not found.";
     }
+
+	public String generateAdmin(JwtUser jwtUser) {
+    	Claims claims = Jwts.claims();
+    	claims.put("id", jwtUser.getId());
+    	claims.put("email", jwtUser.getEmail());
+		claims.put("role", UserRoles.ADMIN);
+		return Jwts.builder()
+                .setClaims(claims)
+                .signWith(SignatureAlgorithm.HS512, "secretKey")
+                .compact();
+	}
 }

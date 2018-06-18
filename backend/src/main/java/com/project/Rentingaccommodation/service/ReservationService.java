@@ -12,6 +12,7 @@ public interface ReservationService {
 	Reservation findOne(Long id);
 	void save(Reservation reservation);
 	Reservation delete(Long id);
-	boolean isAvailable(Apartment apartment, String startDate, String endDate);
 	List<Reservation> findUserReservations(String email);
+	boolean isAvailable(Apartment apartment, String startDate, String endDate);
+	boolean checkDates(String startDate, String endDate);
 }

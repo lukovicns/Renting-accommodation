@@ -15,7 +15,7 @@ import { CityService } from '../../services/city.service';
 export class AccommodationListComponent implements OnInit {
 
   private accommodations = [];
-  private advancedOptions: boolean = false;
+  private advancedOptions: boolean;
 
   constructor(
     private accommodationService: AccommodationService,
@@ -26,6 +26,7 @@ export class AccommodationListComponent implements OnInit {
 
   ngOnInit() {
     datepicker();
+    this.advancedOptions = false;
     this.accommodationService.getAccommodations()
     .subscribe(res => this.accommodations = res);
   }
@@ -35,22 +36,25 @@ export class AccommodationListComponent implements OnInit {
     persons: [0, Validators.compose([
       Validators.required,
       Validators.min(1)
-    ])],
-    startDate: [getFormattedDate(), Validators.required],
-    endDate: [getFormattedDate(), Validators.required]
+    ])]
   });
 
   searchApartments() {
     this.cityService.getCityByName(this.searchForm.value['city'])
     .subscribe(res => {
-      this.router.navigate(['/accommodations/search'], {
-        queryParams: {
-          'city': res['id'],
-          'persons': this.searchForm.value['persons'],
-          'startDate': this.searchForm.value['startDate'],
-          'endDate': this.searchForm.value['endDate']
-        }
-      })
+      const queryParams = {
+        'city': res['id'],
+        'persons': this.searchForm.value['persons'],
+        'startDate': document.querySelector('#startDate')['value'],
+        'endDate': document.querySelector('#endDate')['value']
+      }
+      if (this.advancedOptions) {
+        queryParams['type'] = document.querySelector('#type')['value'];
+        queryParams['category'] = document.querySelector('#category')['value'];
+      }
+      this.router.navigate(['/accommodations/search'], { queryParams: queryParams });
+    }, err => {
+      console.log(err);
     });
   }
 

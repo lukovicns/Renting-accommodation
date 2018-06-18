@@ -1,5 +1,37 @@
 <div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Agents</li>
+    </ol>
+  </nav>
   <div class="container">
-    <h1>Agents</h1>
+    <table class="table" *ngIf="agents && agents.length > 0; else agentsNotFound">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Business id</th>
+          <th scope="col">Name</th>
+          <th scope="col">Surname</th>
+          <th scope="col">Email</th>
+          <th scope="col">City</th>
+          <th scope="col">Street</th>
+          <th scope="col">Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let agent of agents">
+          <th scope="row">{{ agent.businessId }}</th>
+          <td>{{ agent.name }}</td>
+          <td>{{ agent.surname }}</td>
+          <td>{{ agent.email }}</td>
+          <td>{{ agent.city?.name }}</td>
+          <td>{{ agent.street }}</td>
+          <td>{{ agent.phone }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #agentsNotFound>
+      <h1>There are no agents yet!</h1>
+    </ng-template>
   </div>
 </div>

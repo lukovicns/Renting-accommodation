@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-login',
@@ -11,9 +12,13 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  errorMessage: String = null;
+  errorMessage: String;
 
-  constructor(private formBuilder: FormBuilder, private router: Router) { }
+  constructor(
+    private adminService: AdminService,
+    private formBuilder: FormBuilder,
+    private router: Router
+  ) { }
 
   loginForm = this.formBuilder.group({
     email: ['', Validators.compose([
@@ -27,9 +32,20 @@ export class LoginComponent implements OnInit {
   });
 
   ngOnInit() {
+    if (this.adminService.getCurrentAdmin()) {
+      this.router.navigate(['/']);
+    }
   }
 
   login() {
-    
+    this.adminService.loginAdmin(this.loginForm.value)
+    .subscribe(res => {
+      if (!!res['token']) {
+        localStorage.setItem('token', res['token']);
+        this.router.navigate(['/']);
+      }
+    }, err => {
+      this.errorMessage = err.error;
+    })
   }
 }

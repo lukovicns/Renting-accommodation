@@ -1,5 +1,52 @@
 <div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Users</li>
+    </ol>
+  </nav>
   <div class="container">
-    <h1>Users</h1>
+    <table class="table" *ngIf="users && users.length > 0; else usersNotFound">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Surname</th>
+          <th scope="col">Email</th>
+          <th scope="col">City</th>
+          <th scope="col">Street</th>
+          <th scope="col">Phone</th>
+          <th scope="col">Question</th>
+          <th scope="col">Status</th>
+          <th scope="col">Activate/Deactivate</th>
+          <th scope="col">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ user.name }}</td>
+          <td>{{ user.surname }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.city?.name }}</td>
+          <td>{{ user.street }}</td>
+          <td>{{ user.phone }}</td>
+          <td>{{ user.question }}</td>
+          <td>{{ user.status }}</td>
+          <td *ngIf="user.status === 'ACTIVATED'">
+              <button class="btn btn-warning btn-sm" (click)="blockUser(user.id)">Block user</button>
+          </td>
+          <td *ngIf="user.status === 'BLOCKED'">
+            <button class="btn btn-success btn-sm" (click)="activateUser(user.id)">Activate user</button>
+          </td>
+          <td>
+            <button class="btn btn-danger btn-sm">Delete user</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #usersNotFound>
+      <h1>There are no users yet!</h1>
+    </ng-template>
   </div>
 </div>

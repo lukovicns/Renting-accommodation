@@ -20,13 +20,25 @@ export class ApartmentService {
     return this.http.get<Apartment>(this.url + apartmentId);
   }
 
-  getApartmentsByQueryParams(city, persons, startDate, endDate) {
+  getApartmentsByBasicQueryParams(city, persons, startDate, endDate) {
     return this.http.get<Apartment[]>(this.url + 'search', { params: {
       'city': city,
       'persons': persons,
       'startDate': startDate,
       'endDate': endDate
-      }, headers: this.headers
+      }
+    });
+  }
+
+  getApartmentsByAdvancedQueryParams(city, persons, startDate, endDate, type, category) {
+    return this.http.get<Apartment[]>(this.url + 'advanced-search', { params: {
+      'city': city,
+      'persons': persons,
+      'startDate': startDate,
+      'endDate': endDate,
+      'type': type,
+      'category': category
+      }
     });
   }
 }

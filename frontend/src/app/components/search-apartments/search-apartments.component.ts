@@ -28,16 +28,25 @@ export class SearchApartmentsComponent implements OnInit {
     const persons = this.route.snapshot.queryParams['persons'];
     const startDate = this.route.snapshot.queryParams['startDate'];
     const endDate = this.route.snapshot.queryParams['endDate'];
+    const type = this.route.snapshot.queryParams['type'];
+    const category = this.route.snapshot.queryParams['category'];
     if (city == null || city == "" || persons == null || persons == "" ||
         startDate == null || startDate == "" || endDate == null || endDate == "") {
         this.router.navigate(['accommodations']);
       } else {
         this.cityService.getCity(city)
         .subscribe(res => {
-          this.apartmentService.getApartmentsByQueryParams(res['id'], persons, startDate, endDate)
-          .subscribe(resp => {
-            this.apartments = resp;
-          })
+          if (type == null && category == null) {
+            this.apartmentService.getApartmentsByBasicQueryParams(res['id'], persons, startDate, endDate)
+            .subscribe(resp => {
+              this.apartments = resp;
+            })
+          } else {
+            this.apartmentService.getApartmentsByAdvancedQueryParams(res['id'], persons, startDate, endDate, type, category)
+            .subscribe(resp => {
+              this.apartments = resp;
+            })
+          }
         }, err => {
           this.router.navigate(['accommodations']);
         })

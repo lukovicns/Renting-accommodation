@@ -101,4 +101,19 @@ public class JpaReservationService implements ReservationService {
 		}
 		return true;
 	}
+
+	@Override
+	public boolean checkDates(String startDate, String endDate) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			Date start = dateFormatter.parse(startDate);
+			Date end = dateFormatter.parse(endDate);
+			System.out.println(start);
+			System.out.println(end);
+			return start.compareTo(end) >= 0 ? false : true;
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

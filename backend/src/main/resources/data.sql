@@ -5,8 +5,8 @@ insert into country (country_id, country_code, country_name) values (3, 'SLO', '
 insert into city (city_id, country_id, name, zipcode) values (1, 1, 'Novi Sad', '21000');
 insert into city (city_id, country_id, name, zipcode) values (2, 1, 'Beograd', '11000');
 
-insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (1, 'hotel');
-insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (2, 'Private accommodation');
+insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (1, 'Hotel');
+insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (2, 'Apartment');
 
 insert into accommodation_category (accommodation_category_id, accommodation_category_name) values (1, '1-5 stars');
 insert into accommodation_category (accommodation_category_id, accommodation_category_name) values (2, 'Uncategorized');
@@ -28,7 +28,4 @@ insert into apartment (apartment_id, name, bed_type_id, description, accommodati
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (4, 'Smestaj Petrovic 1', 2, 'Smestaj Petrovic 1 description', 4, 30, 2, 2);
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (5, 'Smestaj Petrovic 2', 2, 'Smestaj Petrovic 2 description', 4, 70, 4, 3);
 
-insert into user (user_id, name, surname, password, email, city_id, street, phone, question, answer, max_tries) values (1, 'Test', 'Test', 'passpass', 'test@test.com', 1, 'Test street', '0640000000', 'Test question', 'Test answer', 0);
 insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');
-
-insert into reservation (reservation_id, user_id, apartment_id, start_date, end_date, price) values (1, 1, 1, '16/07/2018', '26/07/2018', 150);

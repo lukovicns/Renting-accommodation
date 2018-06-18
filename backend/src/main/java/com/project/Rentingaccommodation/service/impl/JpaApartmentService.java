@@ -6,6 +6,9 @@ import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.project.Rentingaccommodation.model.AccommodationCategory;
+import com.project.Rentingaccommodation.model.AccommodationType;
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.repository.ApartmentRepository;
@@ -57,12 +60,27 @@ public class JpaApartmentService implements ApartmentService {
 	public void delete(Apartment apartment) {
 		// TODO Auto-generated method stub
 	}
-
+	
 	@Override
 	public List<Apartment> findByQueryParams(City city, String startDate, String endDate, int persons) {
 		List<Apartment> availableApartments = new ArrayList<Apartment>();
 		for (Apartment apartment : findAll()) {
-			if (reservationService.isAvailable(apartment, startDate, endDate) && apartment.getAccommodation().getCity().getId() == city.getId()) {
+			if (reservationService.isAvailable(apartment, startDate, endDate) &&
+				apartment.getAccommodation().getCity().getId() == city.getId()) {
+				availableApartments.add(apartment);
+			}
+		}
+		return availableApartments;
+	}
+
+	@Override
+	public List<Apartment> findByQueryParams(City city, String startDate, String endDate, int persons, AccommodationType type, AccommodationCategory category) {
+		List<Apartment> availableApartments = new ArrayList<Apartment>();
+		for (Apartment apartment : findAll()) {
+			if (reservationService.isAvailable(apartment, startDate, endDate) &&
+				apartment.getAccommodation().getCity().getId() == city.getId() &&
+				apartment.getAccommodation().getType().getId() == type.getId() &&
+				apartment.getAccommodation().getCategory().getId() == category.getId()) {
 				availableApartments.add(apartment);
 			}
 		}

@@ -19,7 +19,7 @@
               </div>
               <div class="form-group">
                 <label for="startDate">Check-in date</label>
-                  <input type="text" class="form-control" formControlName="startDate" id="startDate" data-toggle="datepicker"/>
+                  <input type="text" class="form-control" id="startDate" data-toggle="datepicker"/>
                   <span class="input-group-addon">
                       <span class="glyphicon glyphicon-calendar">
                       </span>
@@ -27,7 +27,7 @@
               </div>
               <div class="form-group">
                 <label for="endDate">Check-out date</label>
-                <input type="text" class="form-control" id="endDate" formControlName="endDate" data-toggle="datepicker"/>
+                <input type="text" class="form-control" id="endDate" data-toggle="datepicker"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar">
                     </span>
@@ -41,7 +41,7 @@
               <div *ngIf="advancedOptions">
                 <div class="form-group">
                   <label for="type">Accommodation type</label>
-                  <select id="type" name="type" class="form-control">
+                  <select id="type" class="form-control">
                     <option value="1">Hotel</option>
                     <option value="2">Bed & breakfast</option>
                     <option value="3">Apartment</option>
@@ -49,9 +49,9 @@
                 </div>
                 <div class="form-group">
                   <label for="category">Accommodation category</label>
-                  <select id="category" name="category" class="form-control">
-                    <option value="2">1-5 stars</option>
-                    <option value="1">Uncategorized</option>
+                  <select id="category" class="form-control">
+                    <option value="1">1-5 stars</option>
+                    <option value="2">Uncategorized</option>
                   </select>
                 </div>
                 <div class="form-group">
