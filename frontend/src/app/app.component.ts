@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './services/user.service';
+import { ReservationService } from './services/reservation.service';
 
 @Component({
   selector: 'app-root',
@@ -8,14 +9,28 @@ import { UserService } from './services/user.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+
+  private userReservations = [];
+
   ngOnInit() {
     this.userIsLoggedIn();
+    this.setUserReservations();
   }
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(
+    private reservationService: ReservationService,
+    private userService: UserService,
+    private router: Router,
+  ) { }
 
   userIsLoggedIn() {
     return this.userService.getCurrentUser() != null;
+  }
+
+  setUserReservations() {
+    this.reservationService.getUserReservations()
+    .subscribe(res => {
+    })
   }
 
   logout() {

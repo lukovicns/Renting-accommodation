@@ -30,7 +30,11 @@ export class MessageService {
   }
 
   deleteSentMessage(message) {
-    return this.http.delete<Message>(this.url + message.id + '/delete-sent');
+    return this.http.delete<Message>(this.url + message.id + '/delete-user-sent');
+  }
+
+  deleteReceivedMessage(message) {
+    return this.http.delete<Message>(this.url + message.id + '/delete-user-received');
   }
 
   markAsRead(userId, messageId) {

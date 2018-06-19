@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Reservation;
+import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.repository.ReservationRepository;
 import com.project.Rentingaccommodation.service.ReservationService;
 
@@ -43,6 +44,16 @@ public class JpaReservationService implements ReservationService {
 	public Reservation findOne(Long id) {
 		for (Reservation reservation : findAll()) {
 			if (reservation.getId() == id) {
+				return reservation;
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public Reservation findUserReservationByApartmentId(User user, Long apartmentId) {
+		for (Reservation reservation : findUserReservations(user.getEmail())) {
+			if (reservation.getApartment().getId() == apartmentId) {
 				return reservation;
 			}
 		}

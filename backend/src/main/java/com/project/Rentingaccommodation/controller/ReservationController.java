@@ -53,6 +53,23 @@ public class ReservationController {
 		}
 	}
 	
+	@RequestMapping(value="/user/{apartmentId}", method=RequestMethod.GET)
+	public ResponseEntity<Object> getUserReservationByApartmentId(@RequestHeader("Authorization") String authHeader, @PathVariable Long apartmentId) {
+		try {
+			String token = authHeader.split(" ")[1].trim();
+			JwtUser jwtUser = jwtValidator.validate(token);
+			if (jwtUser != null) {
+				User user = userService.findOne(jwtUser.getId());
+				Reservation reservation = service.findUserReservationByApartmentId(user, apartmentId);
+				return new ResponseEntity<>(reservation, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Token not provided.", HttpStatus.FORBIDDEN);
+		}
+	}
+	
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ResponseEntity<List<Reservation>> getAllReservations() {
 		return new ResponseEntity<>(service.findAll(), HttpStatus.OK);

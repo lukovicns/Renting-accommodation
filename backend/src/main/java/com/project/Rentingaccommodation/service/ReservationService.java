@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Reservation;
+import com.project.Rentingaccommodation.model.User;
 
 public interface ReservationService {
 
@@ -15,4 +16,5 @@ public interface ReservationService {
 	List<Reservation> findUserReservations(String email);
 	boolean isAvailable(Apartment apartment, String startDate, String endDate);
 	boolean checkDates(String startDate, String endDate);
+	Reservation findUserReservationByApartmentId(User user, Long apartmentId);
 }

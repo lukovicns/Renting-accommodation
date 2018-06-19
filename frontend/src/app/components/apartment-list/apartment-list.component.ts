@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { fadeIn } from '../../animations';
 import { UserService } from '../../services/user.service';
 import { MessageService } from '../../services/message.service';
+import { ReservationService } from '../../services/reservation.service';
 
 @Component({
   selector: 'app-apartment-list',
@@ -22,8 +23,6 @@ export class ApartmentListComponent implements OnInit {
   
   constructor(
     private apartmentService: ApartmentService,
-    private userService: UserService,
-    private messageService: MessageService,
     private route: ActivatedRoute
   ) { }
 

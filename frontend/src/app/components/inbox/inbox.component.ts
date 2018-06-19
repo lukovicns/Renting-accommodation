@@ -59,18 +59,13 @@ export class InboxComponent implements OnInit {
     document.querySelector('#sent').classList.add('active');
   }
 
-  showReceivedMessage(message) {
-    // const user = this.userService.getCurrentUser();
-    // this.messageService.getReceivedMessage(user.id, message.id)
-    // .subscribe(res => {
-      
-    // }, err => {
-
-    // });
-  }
-
   deleteReceivedMessage(message) {
-
+    this.messageService.deleteReceivedMessage(message)
+    .subscribe(res => {
+      this.initReceivedMessages();
+    }, err => {
+      console.log(err);
+    })
   }
 
   deleteSentMessage(message) {

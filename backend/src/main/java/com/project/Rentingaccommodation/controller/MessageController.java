@@ -75,6 +75,19 @@ public class MessageController {
 		return new ResponseEntity<>(service.findUserSentMessages(user), HttpStatus.OK);
 	}
 	
+	@RequestMapping(value="/user/{id}/sent/{messageId}", method=RequestMethod.GET)
+	public ResponseEntity<Object> getUserSentMessage(@PathVariable Long id, @PathVariable Long messageId) {
+		User user = userService.findOne(id);
+		if (user == null) {
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+		Message message = service.findUserSentMessage(user, messageId);
+		if (message == null) {
+			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(message, HttpStatus.OK);
+	}
+	
 	@RequestMapping(value="/user/{id}/received", method=RequestMethod.GET)
 	public ResponseEntity<Object> getUserReceivedMessages(@PathVariable Long id) {
 		User user = userService.findOne(id);
@@ -218,7 +231,7 @@ public class MessageController {
 		}
 	}
 	
-	@RequestMapping(value="/{id}/delete-sent", method=RequestMethod.DELETE)
+	@RequestMapping(value="/{id}/delete-user-sent", method=RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteUserSentMessage(@PathVariable Long id) {
 		Message message = service.findOne(id);
 		if (message == null) {
@@ -233,6 +246,60 @@ public class MessageController {
 			return new ResponseEntity<>(service.save(message), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@RequestMapping(value="/{id}/delete-user-received", method=RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteUserReceivedMessage(@PathVariable Long id) {
+		Message message = service.findOne(id);
+		if (message == null) {
+			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
+		}
+		User user = message.getUser();
+		if (user == null) {
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+		if (message.getDirection().equals(Direction.AGENT_TO_USER)) {
+			message.setStatus(MessageStatus.DELETED_FOR_USER);
+			return new ResponseEntity<>(service.save(message), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@RequestMapping(value="/{id}/delete-agent-sent", method=RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteAgentSentMessage(@PathVariable Long id) {
+		Message message = service.findOne(id);
+		if (message == null) {
+			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
+		}
+		Agent agent = message.getAgent();
+		if (agent == null) {
+			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+		}
+		if (message.getDirection().equals(Direction.AGENT_TO_USER)) {
+			message.setStatus(MessageStatus.DELETED_FOR_AGENT);
+			return new ResponseEntity<>(service.save(message), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@RequestMapping(value="/{id}/delete-agent-received", method=RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteAgentReceivedMessage(@PathVariable Long id) {
+		Message message = service.findOne(id);
+		if (message == null) {
+			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
+		}
+		Agent agent = message.getAgent();
+		if (agent == null) {
+			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+		}
+		if (message.getDirection().equals(Direction.USER_TO_AGENT)) {
+			message.setStatus(MessageStatus.DELETED_FOR_AGENT);
+			return new ResponseEntity<>(service.save(message), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
 		}
 	}
 }

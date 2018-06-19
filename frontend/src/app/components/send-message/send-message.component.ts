@@ -6,6 +6,7 @@ import { AccommodationService } from '../../services/accommodation.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { MessageService } from '../../services/message.service';
+import { ReservationService } from '../../services/reservation.service';
 
 @Component({
   selector: 'app-send-message',
@@ -23,6 +24,7 @@ export class SendMessageComponent implements OnInit {
 
   constructor(
     private accommodationService: AccommodationService,
+    private reservationService: ReservationService,
     private apartmentService: ApartmentService,
     private messageService: MessageService,
     private userService: UserService,
@@ -36,18 +38,27 @@ export class SendMessageComponent implements OnInit {
   })
 
   ngOnInit() {
-    this.accommodationId = parseInt(this.route.snapshot.params['id']);
-    this.apartmentId = parseInt(this.route.snapshot.params['apartmentId']);
-    this.accommodationService.getAccommodation(this.accommodationId)
-    .subscribe(res => this.accommodation = res,
-      err => {
-      this.router.navigate(['/accommodations'])
-    })
-    this.apartmentService.getApartment(this.apartmentId)
-    .subscribe(res => this.apartment = res,
-      err => {
-      this.router.navigate(['/accommodations/' + this.accommodationId]);
-    });
+      this.accommodationId = parseInt(this.route.snapshot.params['id']);
+      this.apartmentId = parseInt(this.route.snapshot.params['apartmentId']);
+      this.reservationService.getUserReservationByApartmentId(this.apartmentId)
+      .subscribe(res => {
+        if (res != null) {
+          this.accommodationService.getAccommodation(this.accommodationId)
+          .subscribe(res => this.accommodation = res,
+            err => {
+            this.router.navigate(['/accommodations'])
+          })
+          this.apartmentService.getApartment(this.apartmentId)
+          .subscribe(res => this.apartment = res,
+            err => {
+            this.router.navigate(['/accommodations/' + this.accommodationId]);
+          });
+        } else {
+          this.router.navigate(['/accommodations/' + this.accommodationId + '/apartments/' + this.apartmentId])
+        }
+      }, err => {
+        console.log(err);
+      })
   }
 
   sendMessage() {

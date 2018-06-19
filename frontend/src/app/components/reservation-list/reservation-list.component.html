@@ -23,7 +23,7 @@
         <tbody>
           <tr *ngFor="let reservation of reservations">
             <th scope="row">1</th>
-            <td>{{ reservation.apartment.name }}</td>
+            <td><a routerLink="/accommodations/{{ reservation.apartment?.accommodation?.id }}/apartments/{{ reservation.apartment?.id }}">{{ reservation.apartment?.name }}</a></td>
             <td>{{ reservation.startDate }}</td>
             <td>{{ reservation.endDate }}</td>
             <td>{{ reservation.price }}</td>

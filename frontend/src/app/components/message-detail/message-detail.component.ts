@@ -26,24 +26,30 @@ export class MessageDetailComponent implements OnInit {
   ngOnInit() {
     this.messageDirection = this.route.snapshot.params['direction'];
     this.messageId = this.route.snapshot.params['id'];
-    if (this.messageDirection.toLowerCase() !== 'sent' && this.messageDirection.toLowerCase() !== 'received') {
-      this.router.navigate(['inbox']);
-    } else {
+    if (this.messageDirection == 'received') {
       this.messageService.getReceivedMessage(this.userService.getCurrentUser()['id'], this.messageId)
       .subscribe(res => {
         this.message = res;
         this.markAsRead(this.message);
       }, err => {
-        this.router.navigate(['inbox']);
+        console.log(err);
       })
-
+    } else if (this.messageDirection == 'sent') {
+      this.messageService.getSentMessage(this.userService.getCurrentUser()['id'], this.messageId)
+      .subscribe(res => {
+        this.message = res;
+      }, err => {
+        console.log(err);
+      })
+    } else {
+      this.router.navigate(['inbox']);
     }
   }
 
   markAsRead(message) {
     this.messageService.markAsRead(this.userService.getCurrentUser()['id'], message.id)
     .subscribe(res => {
-      console.log(res);
+
     }, err => {
       console.log(err);
     })

@@ -10,6 +10,8 @@ export class ReservationService {
     .append('Content-Type', 'application/json')
     .append('Authorization', 'Bearer ' + localStorage.getItem('token'));
   
+  private userReservations = [];
+
   constructor(private http: HttpClient) { }
   
   getReservations() {
@@ -18,6 +20,10 @@ export class ReservationService {
 
   getUserReservations() {
     return this.http.get<Reservation[]>(this.url + 'user', { headers: this.headers });
+  }
+
+  getUserReservationByApartmentId(apartmentId) {
+    return this.http.get<Reservation>(this.url + 'user/' + apartmentId, { headers: this.headers });
   }
 
   makeReservations(reservation) {
