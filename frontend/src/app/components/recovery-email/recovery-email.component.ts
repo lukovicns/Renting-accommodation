@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 })
 export class RecoveryEmailComponent implements OnInit {
 
+  private errorMessage: String;
+
   constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
 
    recoveryForm = this.formBuilder.group({
@@ -29,6 +31,12 @@ export class RecoveryEmailComponent implements OnInit {
 
   next() {
     this.userService.setEmail(this.recoveryForm.value['email']);
-    this.router.navigate(['question']);
+    this.userService.getUserByEmail(this.userService.getEmail())
+    .subscribe(res => {
+      this.router.navigate(['question']);
+    }, err => {
+      this.errorMessage = err['error'];
+      this.recoveryForm.reset();
+    })
   }
 }

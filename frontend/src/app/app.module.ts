@@ -29,6 +29,10 @@ import { SendMessageComponent } from './components/send-message/send-message.com
 import { InboxComponent } from './components/inbox/inbox.component';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { CityService } from './services/city.service';
+import { AdditionalServiceService } from './services/additional-service.service';
+import { ApartmentDetailComponent } from './components/apartment-detail/apartment-detail.component';
+import { ApartmentAdditionalServiceService } from './services/apartment-additional-service.service';
+import { MessageDetailComponent } from './components/message-detail/message-detail.component';
 
 
 @NgModule({
@@ -50,7 +54,9 @@ import { CityService } from './services/city.service';
     ReservationListComponent,
     SendMessageComponent,
     InboxComponent,
-    TruncatePipe
+    TruncatePipe,
+    ApartmentDetailComponent,
+    MessageDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -67,6 +73,8 @@ import { CityService } from './services/city.service';
     ReservationService,
     MessageService,
     CityService,
+    AdditionalServiceService,
+    ApartmentAdditionalServiceService,
     AuthGuard
   ],
   bootstrap: [AppComponent]

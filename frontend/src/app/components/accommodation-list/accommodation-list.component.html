@@ -54,37 +54,9 @@
                     <option value="2">Uncategorized</option>
                   </select>
                 </div>
-                <div class="form-group">
-                  <input type="checkbox" id="wifi">
-                  <label for="wifi">Wifi</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="breakfast">
-                  <label for="breakfast">Breakfast</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="halfBoard">
-                  <label for="halfBoard">Half board</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="fullBoard">
-                  <label for="fullBoard">Full board</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="television">
-                  <label for="television">TV</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="miniKitchen">
-                  <label for="miniKitchen">Mini-kitchen</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="kitchen">
-                  <label for="kitchen">Kitchen</label>
-                </div>
-                <div class="form-group">
-                  <input type="checkbox" id="privateBathroom">
-                  <label for="privateBathroom">Prihvate bathroom</label>
+                <div class="form-group" *ngFor="let service of additionalServices">
+                  <input type="checkbox" id="{{ service.id }}">
+                  <label for="{{ service.id }}">{{ service.name }}</label>
                 </div>
               </div>
               <input type="submit" class="btn btn-info btn-block" value="Search apartments" [disabled]="!searchForm.valid">

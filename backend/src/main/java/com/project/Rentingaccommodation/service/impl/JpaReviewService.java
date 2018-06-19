@@ -6,113 +6,22 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.project.Rentingaccommodation.model.Review;
 import com.project.Rentingaccommodation.model.ReviewStatus;
-import com.project.Rentingaccommodation.repository.AccommodationRepository;
+import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.repository.ReviewRepository;
-import com.project.Rentingaccommodation.repository.UserRepository;
 import com.project.Rentingaccommodation.service.ReviewService;
-
 
 @Transactional
 @Service
 public class JpaReviewService implements ReviewService {
 
     @Autowired
-    ReviewRepository reviewRepository;
-
-    @Autowired
-    AccommodationRepository accomodationRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
-//    public Review allowReview(Review review, boolean allow) {
-//    	Optional<Review> optional = this.reviewRepository.findById(review.getId());
-//    	if (!optional.isPresent()) return null;
-//    	Review r = optional.get();
-//    	r.setAllowed(allow);
-//    	return this.reviewRepository.save(r);
-//    }
-//    
-//    public List<Review> getReviewsByAllowed(boolean allowed) {
-//    	return this.reviewRepository.findByAllowed(allowed);
-//    }
-//    
-//    public Review createReview(Review review) {
-//        if(review.getGrade() > 5 || review.getGrade() < 1){
-//            return null;
-//        }
-//
-//        if(accomodationRepository.getOne(review.getAccommodation().getId()) == null){
-//            return null;
-//        }
-//
-//        if(userRepository.getOne(review.getUser().getEmail()) == null){
-//            return null;
-//        }
-//
-//        if(review.isAllowed() != null && review.isAllowed()){
-//            return null;
-//        }
-//
-//        return reviewRepository.save(review);
-//    }
-//
-//    public Review editReview(Review review) {
-//        if(review.getGrade() > 5 || review.getGrade() < 1){
-//            return null;
-//        }
-//
-//        if(accomodationRepository.getOne(review.getAccommodation().getId()) == null){
-//            return null;
-//        }
-//
-//        if(userRepository.getOne(review.getUser().getEmail()) == null){
-//            return null;
-//        }
-//
-//        if(review.isAllowed() == null) {
-//            return null;
-//        }
-//
-//        return reviewRepository.save(review);
-//    }
-//
-//    public Review getReview(int reviewId) {
-//        return reviewRepository.getOne(reviewId);
-//    }
-//
-//    public List<Review> getAllReviewsForPlace(int accommodationId) {
-//        return  reviewRepository.findByAccommodationId(accommodationId);
-//    }
-//    
-//    public List<Review> getAll(){
-//    	return this.reviewRepository.findAll();
-//    }
-//
-//    public void deleteReview(int reviewId) {
-//        reviewRepository.deleteById(reviewId);
-//    }
-
-    public double calculateAverageGrade(Long accommodationId) {
-        List<Review> reviews = getAllReviewsForPlace(accommodationId);
-        if(reviews.size() > 0) {
-            double sum = 0.0;
-            for (Review r : reviews) {
-                sum += r.getGrade();
-            }
-
-            return sum / reviews.size();
-        }
-
-        return 0.0;
-    }
+    ReviewRepository repository;
 
 	@Override
 	public Review findOne(Long id) {
-		for (Review review : reviewRepository.findAll()) {
+		for (Review review : repository.findAll()) {
 			if (review.getId() == id) {
 				return review;
 			}
@@ -122,38 +31,71 @@ public class JpaReviewService implements ReviewService {
 
 	@Override
 	public List<Review> findAll() {
-		return reviewRepository.findAll();
+		return repository.findAll();
+	}
+	
+	@Override
+	public List<Review> findApprovedReviews() {
+		List<Review> approvedReviews = new ArrayList<Review>();
+		for (Review review : findAll()) {
+			if (review.getStatus().equals(ReviewStatus.APPROVED)) {
+				approvedReviews.add(review);
+			}
+		}
+		return approvedReviews;
 	}
 
 	@Override
+	public List<Review> findDeclinedReviews() {
+		List<Review> declinedReviews = new ArrayList<Review>();
+		for (Review review : findAll()) {
+			if (review.getStatus().equals(ReviewStatus.DECLINED)) {
+				declinedReviews.add(review);
+			}
+		}
+		return declinedReviews;
+	}
+	
+	@Override
+	public List<Review> findWaitingReviews() {
+		List<Review> waitingReviews = new ArrayList<Review>();
+		for (Review review : findAll()) {
+			if (review.getStatus().equals(ReviewStatus.WAITING)) {
+				waitingReviews.add(review);
+			}
+		}
+		return waitingReviews;
+	}
+	
+	@Override
+	public List<Review> findUserReviews(User user) {
+		List<Review> userReviews = new ArrayList<Review>();
+		for (Review review : findAll()) {
+			if (review.getUser().getId() == user.getId()) {
+				userReviews.add(review);
+			}
+		}
+		return userReviews;
+	}
+	
+	@Override
+	public List<Review> findApartmentReviews(Long id) {
+		List<Review> apartmentReviews = new ArrayList<Review>();
+		for (Review review : findAll()) {
+			if (review.getApartment().getId() == id) {
+				apartmentReviews.add(review);
+			}
+		}
+		return apartmentReviews;
+	}
+	
+	@Override
 	public Review save(Review review) {
-		return reviewRepository.save(review);
+		return repository.save(review);
 	}
 
 	@Override
 	public void delete(Review review) {
-		reviewRepository.delete(review);
-	}
-
-	@Override
-	public List<Review> getNotAllowedReviews() {
-		List<Review> notAllowedReviews = new ArrayList<Review>();
-		for (Review review : reviewRepository.findAll()) {
-			if (review.getStatus().equals(ReviewStatus.DECLINED)) {
-				notAllowedReviews.add(review);
-			}
-		}
-		return notAllowedReviews;
-	}
-
-	@Override
-	public List<Review> getAllReviewsForPlace(Long id) {
-		List<Review> reviews = new ArrayList<Review>();
-		for (Review review : reviewRepository.findAll()) {
-			if (review.getApartment().getId() == id) {
-				reviews.add(review);
-			}
-		}
-		return reviews;
+		repository.delete(review);
 	}
 }

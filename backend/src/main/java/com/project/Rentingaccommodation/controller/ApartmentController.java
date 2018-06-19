@@ -63,7 +63,7 @@ public class ApartmentController {
 	public ResponseEntity<Object> searchForApartments(@RequestParam("city") Long cityId,
 		@RequestParam("persons") int persons, @RequestParam("startDate") String startDate,
 		@RequestParam("endDate") String endDate) {
-		if (Long.valueOf(cityId) == null || Long.valueOf(cityId) == 0 || startDate == null || startDate == "" || endDate == null ||
+		if (cityId == null || Long.valueOf(cityId) == 0 || startDate == null || startDate == "" || endDate == null ||
 			endDate == "" || Integer.valueOf(persons) == null || Integer.valueOf(persons) == 0) {
 			return new ResponseEntity<>("All query parameters are required (city, startDate, endDate, persons).", HttpStatus.FORBIDDEN);
 		} else {
@@ -86,9 +86,9 @@ public class ApartmentController {
 	public ResponseEntity<Object> advancedSearchForApartments(@RequestParam("city") Long cityId, @RequestParam("persons") int persons,
 		@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate, @RequestParam("type") Long typeId,
 		@RequestParam("category") Long categoryId) {
-		if (Long.valueOf(cityId) == null || Long.valueOf(cityId) == 0 || startDate == null || startDate == "" || endDate == null ||
-			endDate == "" || Integer.valueOf(persons) == null || Integer.valueOf(persons) == 0 || Long.valueOf(typeId) == null ||
-			Long.valueOf(typeId) == 0 || Long.valueOf(categoryId) == null || Long.valueOf(categoryId) == 0) {
+		if (cityId == null || Long.valueOf(cityId) == 0 || startDate == null || startDate == "" || endDate == null ||
+			endDate == "" || Integer.valueOf(persons) == null || Integer.valueOf(persons) == 0 || typeId == null ||
+			Long.valueOf(typeId) == 0 || categoryId == null || Long.valueOf(categoryId) == 0) {
 			return new ResponseEntity<>("All query parameters are required (city, startDate, endDate, persons, type id, category id).", HttpStatus.FORBIDDEN);
 		} else {
 			City city = cityService.findOne(cityId);

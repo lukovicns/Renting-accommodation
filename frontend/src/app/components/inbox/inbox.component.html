@@ -16,7 +16,7 @@
             <a id="sent" class="nav-link" (click)="sentTabActive()">Sent</a>
           </li>
         </ul>
-        <table class="table" *ngIf="receivedTab && receivedMessages && receivedMessages.length > 0">
+        <table class="table" *ngIf="receivedTab">
           <thead class="thead-light">
             <tr>
               <th scope="row">From</th>
@@ -27,11 +27,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let message of receivedMessages">
-              <td>{{ message.agent?.email }}</td>
-              <td>{{ message.text | truncate: 12: true }}</td>
-              <td>{{ message.date }}</td>
-              <td>{{ message.time }}</td>
+            <tr *ngFor="let message of receivedMessages" [ngClass]="message.status === 'UNREAD' ? 'unread' : 'read'">
+              <td class="message-status">{{ message.agent?.email }}</td>
+              <td class="message-status"><a routerLink="/inbox/received/{{ message.id }}">{{ message.text | truncate: 30 }}</a></td>
+              <td class="message-status">{{ message.date }}</td>
+              <td class="message-status">{{ message.time }}</td>
               <td>
                 <a (click)="deleteReceivedMessage(message)">
                   <i class="fas fa-trash"></i>
@@ -40,7 +40,7 @@
             </tr>
           </tbody>
         </table>
-        <table class="table" *ngIf="sentTab && sentMessages && sentMessages.length > 0">
+        <table class="table" *ngIf="sentTab">
           <thead class="thead-light">
             <tr>
               <th scope="row">To</th>

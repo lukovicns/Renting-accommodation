@@ -14,6 +14,7 @@ import { fadeIn } from '../../animations';
 })
 export class ReservationFormComponent implements OnInit {
 
+  private errorMessage: String;
   private accommodationId: Number;
   private apartmentId: Number;
   private accommodation = {};
@@ -56,7 +57,7 @@ export class ReservationFormComponent implements OnInit {
     .subscribe(res => {
       this.router.navigate(['reservations']);
     }, err => {
-      console.log(err);
+      this.errorMessage = err['error'];
     })
   }
 }

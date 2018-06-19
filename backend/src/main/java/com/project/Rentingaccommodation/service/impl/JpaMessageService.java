@@ -150,6 +150,46 @@ public class JpaMessageService implements MessageService {
 	}
 
 	@Override
+	public Message findUserSentMessage(User user, Long id) {
+		for (Message message : findUserSentMessages(user)) {
+			if (message.getId() == id) {
+				return message;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Message findUserReceivedMessage(User user, Long id) {
+		for (Message message : findUserReceivedMessages(user)) {
+			if (message.getId() == id) {
+				return message;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Message findAgentSentMessage(Agent agent, Long id) {
+		for (Message message : findAgentSentMessages(agent)) {
+			if (message.getId() == id) {
+				return message;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Message findAgentReceivedMessage(Agent agent, Long id) {
+		for (Message message : findAgentReceivedMessages(agent)) {
+			if (message.getId() == id) {
+				return message;
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public Message sendMessageToUser(User user, Agent agent, Apartment apartment, String date, String time, String text) {
 		Message message = new Message(user, agent, apartment, date, time, text, MessageStatus.UNREAD, Direction.AGENT_TO_USER);
 		return repository.save(message);
@@ -206,5 +246,4 @@ public class JpaMessageService implements MessageService {
 		// TODO Auto-generated method stub
 		
 	}
-
 }

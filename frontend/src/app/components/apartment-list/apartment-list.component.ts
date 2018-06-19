@@ -34,18 +34,4 @@ export class ApartmentListComponent implements OnInit {
       this.apartments = res;
     });
   }
-
-  sendMessage() {
-    // const messageContent = document.querySelector('#messageContent').textContent;
-    // this.userService.getCurrentUser(), this.agent, messageContent
-    // const data = {
-    //   'apartment': 
-    // }
-    // this.messageService.sendMessage(data)
-    // .subscribe(res => {
-    //   console.log(res);
-    // }, err => {
-    //   console.log(err);
-    // })
-  }
 }

@@ -15,7 +15,7 @@ import { MessageService } from '../../services/message.service';
 })
 export class SendMessageComponent implements OnInit {
 
-  private messageSent: boolean;
+  private successMessage: String;
   private accommodationId: Number;
   private apartmentId: Number;
   private accommodation = {};
@@ -36,7 +36,6 @@ export class SendMessageComponent implements OnInit {
   })
 
   ngOnInit() {
-    this.messageSent = false;
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
     this.apartmentId = parseInt(this.route.snapshot.params['apartmentId']);
     this.accommodationService.getAccommodation(this.accommodationId)
@@ -60,8 +59,7 @@ export class SendMessageComponent implements OnInit {
     }
     this.messageService.sendMessage(data)
     .subscribe(res => {
-      console.log(res);
-      this.messageSent = true;
+      this.successMessage = 'You have successfully sent message to ' + this.accommodation['agent'].email;
       this.messageForm.reset();
     }, err => {
       console.log(err);

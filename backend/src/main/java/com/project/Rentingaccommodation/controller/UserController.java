@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserRoles;
+import com.project.Rentingaccommodation.model.UserStatus;
 import com.project.Rentingaccommodation.model.DTO.PasswordChangeDTO;
 import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JwtGenerator;
@@ -61,13 +62,12 @@ public class UserController {
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
-		User user = userService.findOne(id);
+	@RequestMapping(value="/email/{email}", method=RequestMethod.GET)
+	public ResponseEntity<Object> getUserByEmail(@PathVariable String email) {
+		User user = userService.findByEmail(email);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 		}
-		userService.delete(user);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 	
@@ -76,13 +76,13 @@ public class UserController {
 		if (user.getName() == null || user.getName() == "" ||
 			user.getSurname() == null || user.getSurname() == "" ||
 			user.getEmail() == null || user.getEmail() == "" ||
-//			user.getCity() == null ||
+			user.getCity() == null ||
 			user.getStreet() == null || user.getStreet() == "" ||
 			user.getPhone() == null || user.getPhone() == "" ||
 			user.getPassword() == null || user.getPassword() == "" ||
 			user.getQuestion() == null || user.getQuestion() == "" ||
 			user.getAnswer() == null || user.getAnswer() == "") {
-			return new ResponseEntity<>("All fields are required (name, surname, email, street, phone, password, question, answer).", HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("All fields are required (name, surname, email, city, street, phone, password, question, answer).", HttpStatus.FORBIDDEN);
 		}
 		
 		if (UserUtils.userExists(user.getEmail(), userService, adminService)) {
@@ -98,7 +98,7 @@ public class UserController {
 		String name = user.getName();
 		String surname = user.getSurname();
 		String email = user.getEmail();
-		City city = cityService.findOne(Long.valueOf(1));
+		City city = cityService.findOne(user.getCity().getId());
 		String street = user.getStreet();
 		String phone = user.getPhone();
 		String password = PasswordUtil.hash(user.getPassword().toCharArray(), charset);
@@ -121,6 +121,10 @@ public class UserController {
 		
 		if (u == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+		
+		if (u.getStatus().equals(UserStatus.BLOCKED)) {
+			return new ResponseEntity<>("This user is blocked.", HttpStatus.FORBIDDEN);
 		}
 		
 //		if (u.getMax_tries() == 3) {
@@ -213,6 +217,16 @@ public class UserController {
 		String password = PasswordUtil.hash(randomPassword.toCharArray(), charset);
 		user.setPassword(password);
 		userService.save(user);
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
+		User user = userService.findOne(id);
+		if (user == null) {
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+		userService.delete(user);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 	

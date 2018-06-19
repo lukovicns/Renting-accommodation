@@ -16,6 +16,8 @@ import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SendMessageComponent } from './components/send-message/send-message.component';
 import { InboxComponent } from './components/inbox/inbox.component';
+import { ApartmentDetailComponent } from './components/apartment-detail/apartment-detail.component';
+import { MessageDetailComponent } from './components/message-detail/message-detail.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -24,9 +26,12 @@ const routes: Routes = [
       { path: 'search', component: SearchApartmentsComponent },
       { path: ':id', children: [
         { path: '', component: AccommodationDetailComponent },
-        { path: 'apartments/:apartmentId', children: [
-          { path: 'make-reservation', component: ReservationFormComponent, canActivate: [AuthGuard] },
-          { path: 'send-message', component: SendMessageComponent, canActivate: [AuthGuard] }
+        { path: 'apartments', children: [
+          { path: ':apartmentId', children: [
+            { path: '', component: ApartmentDetailComponent },
+            { path: 'make-reservation', component: ReservationFormComponent, canActivate: [AuthGuard] },
+            { path: 'send-message', component: SendMessageComponent, canActivate: [AuthGuard] }
+          ] },
         ] }
       ] }
     ]
@@ -37,7 +42,10 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'inbox', component: InboxComponent, canActivate: [AuthGuard] },
+  { path: 'inbox', canActivate: [AuthGuard], children: [
+    { path: '', component: InboxComponent },
+    { path: ':direction/:id', component: MessageDetailComponent }
+  ] },
   { path: 'recovery', component: RecoveryEmailComponent},
   { path: 'question', component: RecoveryQuestionComponent},
   { path: '**', component: PageNotFoundComponent }

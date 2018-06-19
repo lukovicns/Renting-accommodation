@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
 import { Router } from '@angular/router';
+import { CityService } from '../../services/city.service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,12 @@ export class RegisterComponent implements OnInit {
 
   errorMessage: String;
 
-  constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
+  constructor(
+    private userService: UserService,
+    private cityService: CityService,
+    private formBuilder: FormBuilder,
+    private router: Router
+  ) { }
 
   registerForm = this.formBuilder.group({
     email: ['', Validators.compose([
@@ -51,12 +57,28 @@ export class RegisterComponent implements OnInit {
     if (this.registerForm.value['password1'] != this.registerForm.value['password2']) {
       this.errorMessage = 'Passwords don\t match!';
     } else {
-      this.userService.registerUser(this.registerForm.value)
+      this.cityService.getCityByName(this.registerForm.value['city'])
       .subscribe(res => {
-          this.router.navigate(['login']);
-        }, err => {
-          this.errorMessage = err['error'];
-      });
+        const data = {
+          'name': this.registerForm.value.name,
+          'surname': this.registerForm.value.surname,
+          'password': this.registerForm.value.password1,
+          'email': this.registerForm.value.email,
+          'city': res,
+          'street': this.registerForm.value.street,
+          'phone': this.registerForm.value.phone,
+          'question': this.registerForm.value.question,
+          'answer': this.registerForm.value.answer
+        };
+        this.userService.registerUser(data)
+        .subscribe(resp => {
+            this.router.navigate(['login']);
+          }, err => {
+            this.errorMessage = err['error'];
+        });
+      }, err => {
+        this.errorMessage = err['error'];
+      })
     }
   }
 }

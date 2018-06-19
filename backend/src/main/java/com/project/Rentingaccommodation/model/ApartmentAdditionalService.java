@@ -10,12 +10,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="apartment_service")
-public class ApartmentService {
+@Table(name="apartment_additional_service")
+public class ApartmentAdditionalService {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "apartment_service_id", updatable = false, nullable = false, insertable=false)
+	@Column(name = "apartment_additional_service_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
 	@OneToOne
@@ -26,11 +26,11 @@ public class ApartmentService {
 	@JoinColumn(name="additional_service_id")
 	private AdditionalService additionalService;
 	
-	public ApartmentService() {
+	public ApartmentAdditionalService() {
 		
 	}
 
-	public ApartmentService(Apartment apartment, AdditionalService additionalService) {
+	public ApartmentAdditionalService(Apartment apartment, AdditionalService additionalService) {
 		super();
 		this.apartment = apartment;
 		this.additionalService = additionalService;

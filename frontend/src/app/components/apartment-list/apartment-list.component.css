@@ -2,6 +2,19 @@
   margin-bottom: 20px;
 }
 
+.card-body {
+  padding: 0.80rem;
+}
+
 img {
   max-width: 100%;
+}
+
+.apartmentInfo {
+  margin-top: 20px;
+}
+
+a.btn {
+  margin-right: 3px;
+  margin-bottom: 7px;
 }

@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,7 +18,7 @@ public class Review {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "review_id", updatable = false, nullable = false, insertable=false)
-	private int id;
+	private Long id;
 	
 	@OneToOne
 	@JoinColumn(name="user_id")
@@ -35,38 +34,34 @@ public class Review {
 	@Column(name="date", columnDefinition="VARCHAR(50)", nullable=false)
 	private String date;
 	
-	@Column(name="rating", nullable=false)
-	private int rating;
+	@Column(name="time", columnDefinition="VARCHAR(50)", nullable=false)
+	private String time;
 	
 	@Enumerated(EnumType.STRING)
 	private ReviewStatus status;
 	
-	protected int grade;
-	protected Boolean allowed;
-	
-	@ManyToOne
-	protected Accommodation accommodation;
-	
+//	@ManyToOne
+//	protected Accommodation accommodation;
 
 	public Review() {
 		
 	}
 	
-	public Review(User user, Apartment apartment, String comment, String date, int rating, ReviewStatus status) {
+	public Review(User user, Apartment apartment, String comment, String date, String time) {
 		super();
 		this.user = user;
 		this.apartment = apartment;
 		this.comment = comment;
 		this.date = date;
-		this.rating = rating;
-		this.status = status;
+		this.time = time;
+		this.status = ReviewStatus.WAITING;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -102,12 +97,12 @@ public class Review {
 		this.date = date;
 	}
 
-	public int getRating() {
-		return rating;
+	public String getTime() {
+		return time;
 	}
 
-	public void setRating(int rating) {
-		this.rating = rating;
+	public void setTime(String time) {
+		this.time = time;
 	}
 
 	public ReviewStatus getStatus() {
@@ -116,29 +111,5 @@ public class Review {
 
 	public void setStatus(ReviewStatus status) {
 		this.status = status;
-	}
-	
-	public int getGrade() {
-		return grade;
-	}
-
-	public void setGrade(int grade) {
-		this.grade = grade;
-	}
-
-	public Boolean isAllowed() {
-		return allowed;
-	}
-
-	public void setAllowed(Boolean allowed) {
-		this.allowed = allowed;
-	}
-
-	public Accommodation getAccommodation() {
-		return accommodation;
-	}
-
-	public void setAccommodation(Accommodation accommodation) {
-		this.accommodation = accommodation;
 	}
 }

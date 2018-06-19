@@ -23,9 +23,24 @@ insert into bed_type (bed_type_id, bed_type_name) values (1, 'King size bed');
 insert into bed_type (bed_type_id, bed_type_name) values (2, 'Small bed');
 
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (1, 'Room 1', 1, 'Room 1 description', 1, 80, 4, 4);
-insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (2, 'Room 2', 1, 'Room 2 description', 2, 80, 4, 4);
-insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (3, 'Room 3', 1, 'Room 3 description', 1, 50, 2, 2);
+insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (2, 'Room 2', 1, 'Room 2 description', 1, 80, 4, 4);
+insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (3, 'Room 3', 1, 'Room 3 description', 2, 50, 2, 2);
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (4, 'Smestaj Petrovic 1', 2, 'Smestaj Petrovic 1 description', 4, 30, 2, 2);
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (5, 'Smestaj Petrovic 2', 2, 'Smestaj Petrovic 2 description', 4, 70, 4, 3);
 
 insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');
+
+insert into additional_service(additional_service_id, additional_service_name) values (1, 'Parking');
+insert into additional_service(additional_service_id, additional_service_name) values (2, 'Wifi');
+insert into additional_service(additional_service_id, additional_service_name) values (3, 'Breakfast');
+insert into additional_service(additional_service_id, additional_service_name) values (4, 'Half-board');
+insert into additional_service(additional_service_id, additional_service_name) values (5, 'Full-board');
+insert into additional_service(additional_service_id, additional_service_name) values (6, 'TV');
+insert into additional_service(additional_service_id, additional_service_name) values (7, 'Mini kitchen/kitchen');
+insert into additional_service(additional_service_id, additional_service_name) values (8, 'Private bathroom');
+
+insert into apartment_additional_service(apartment_additional_service_id, apartment_id, additional_service_id) values (1, 1, 1);
+insert into apartment_additional_service(apartment_additional_service_id, apartment_id, additional_service_id) values (2, 1, 2);
+insert into apartment_additional_service(apartment_additional_service_id, apartment_id, additional_service_id) values (3, 1, 3);
+insert into apartment_additional_service(apartment_additional_service_id, apartment_id, additional_service_id) values (4, 2, 1);
+insert into apartment_additional_service(apartment_additional_service_id, apartment_id, additional_service_id) values (5, 2, 2);

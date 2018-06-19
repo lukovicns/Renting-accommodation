@@ -28,8 +28,8 @@ export class ReservationListComponent implements OnInit {
     });
   }
 
-  removeReservation(reservationId) {
-    this.reservationService.removeReservation(reservationId)
+  cancelReservation(reservationId) {
+    this.reservationService.cancelReservation(reservationId)
     .subscribe(res => {
       this.getReservations();
     }, err => {

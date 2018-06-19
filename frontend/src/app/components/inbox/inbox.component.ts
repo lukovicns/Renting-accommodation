@@ -15,6 +15,7 @@ export class InboxComponent implements OnInit {
   private sentTab: boolean = false;
   private receivedMessages = [];
   private sentMessages = [];
+  private message = {};
 
   constructor(
     private messageService: MessageService,
@@ -49,13 +50,23 @@ export class InboxComponent implements OnInit {
     this.receivedTab = true;
     document.querySelector('#sent').classList.remove('active');
     document.querySelector('#received').classList.add('active');
-  } 
+  }
 
   sentTabActive() {
     this.receivedTab = false;
     this.sentTab = true;
     document.querySelector('#received').classList.remove('active');
     document.querySelector('#sent').classList.add('active');
+  }
+
+  showReceivedMessage(message) {
+    // const user = this.userService.getCurrentUser();
+    // this.messageService.getReceivedMessage(user.id, message.id)
+    // .subscribe(res => {
+      
+    // }, err => {
+
+    // });
   }
 
   deleteReceivedMessage(message) {

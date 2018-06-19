@@ -24,7 +24,7 @@ export class ReservationService {
     return this.http.post(this.url, reservation, { headers: this.headers });
   }
 
-  removeReservation(reservationId) {
+  cancelReservation(reservationId) {
     return this.http.delete<Reservation>(this.url + reservationId, { headers: this.headers });
   }
 }

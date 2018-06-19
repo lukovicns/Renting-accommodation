@@ -15,7 +15,7 @@ export class AdminService {
 
   getCurrentAdmin() {
     let payload = null;
-    if (localStorage.length !== 0) {
+    if (localStorage.getItem('token') != null) {
       payload = decode(localStorage.getItem('token'));
     }
     return payload;
@@ -24,7 +24,6 @@ export class AdminService {
   loginAdmin(admin) {
     return this.http.post<Admin>(this.url + 'login', admin);
   }
-
   
   blockUser(userId) {
     return this.http.put<User>(this.url + 'block-user/' + userId, "B");

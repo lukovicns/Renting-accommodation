@@ -18,26 +18,15 @@ export class UserService {
   }
   
   registerUser(user) {
-    this.data = {
-      'name': user.name,
-      'surname': user.surname,
-      'password': user.password1,
-      'street': user.street,
-      'phone': user.phone,
-      'email': user.email,
-      'question': user.question,
-      'answer': user.answer
-    };
-    return this.http.post<User>(this.url + 'register', this.data);
+    return this.http.post<User>(this.url + 'register', user);
   }
 
   getCurrentUser() {
-    let payload;
-    if (localStorage.length !== 0) {
+    let payload = null;
+    if (localStorage.getItem('token') != null) {
       payload = decode(localStorage.getItem('token'));
-      return payload;
     }
-    return null;
+    return payload;
   }
 
   changePassword(passwords) {
@@ -51,7 +40,7 @@ export class UserService {
   }
 
   resetPassword(sqDTO) {
-    return this.http.post(this.url + 'resetPassword', sqDTO);
+    return this.http.post(this.url + 'reset', sqDTO);
   }
 
   getQuestion(email) {
@@ -72,5 +61,9 @@ export class UserService {
 
   getUsers() {
     return this.http.get(this.url);
+  }
+
+  getUserByEmail(email) {
+    return this.http.get(this.url + 'email/' + email);
   }
 }

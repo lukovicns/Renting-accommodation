@@ -24,20 +24,20 @@ public class JpaApartmentService implements ApartmentService {
 	
 	@Autowired
 	private ReservationService reservationService;
+
+	@Override
+	public List<Apartment> findAll() {
+		return repository.findAll();
+	}
 	
 	@Override
 	public Apartment findOne(Long id) {
-		for (Apartment a : repository.findAll()) {
+		for (Apartment a : findAll()) {
 			if (a.getId() == id) {
 				return a;
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public List<Apartment> findAll() {
-		return repository.findAll();
 	}
 
 	@Override
@@ -66,7 +66,8 @@ public class JpaApartmentService implements ApartmentService {
 		List<Apartment> availableApartments = new ArrayList<Apartment>();
 		for (Apartment apartment : findAll()) {
 			if (reservationService.isAvailable(apartment, startDate, endDate) &&
-				apartment.getAccommodation().getCity().getId() == city.getId()) {
+				apartment.getAccommodation().getCity().getId() == city.getId() &&
+				apartment.getMaxNumberOfGuests() >= persons) {
 				availableApartments.add(apartment);
 			}
 		}
@@ -79,6 +80,7 @@ public class JpaApartmentService implements ApartmentService {
 		for (Apartment apartment : findAll()) {
 			if (reservationService.isAvailable(apartment, startDate, endDate) &&
 				apartment.getAccommodation().getCity().getId() == city.getId() &&
+				apartment.getMaxNumberOfGuests() >= persons &&
 				apartment.getAccommodation().getType().getId() == type.getId() &&
 				apartment.getAccommodation().getCategory().getId() == category.getId()) {
 				availableApartments.add(apartment);

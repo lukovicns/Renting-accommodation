@@ -2,6 +2,11 @@
   margin-top: 50px;
 }
 
+.card {
+  margin-bottom: 20px;
+  margin: 0 auto;
+}
+
 .nav-link {
   cursor: pointer;
 }
@@ -23,7 +28,15 @@ table {
   margin-top: 5px;
 }
 
-td a {
+a i {
   cursor: pointer;
-  color: rgb(122, 0, 0);
+  color: rgb(180, 0, 0);
+}
+
+.unread {
+  font-weight: 600;
+}
+
+.read {
+  font-weight: normal;
 }

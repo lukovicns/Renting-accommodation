@@ -4,11 +4,15 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { LoginComponent } from './components/login/login.component';
 import { AgentListComponent } from './components/agent-list/agent-list.component';
 import { AuthGuard } from './guards/auth.guard';
+import { ApproveAgentsComponent } from './components/approve-agents/approve-agents.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'users', pathMatch: 'full' },
   { path: 'users', component: UserListComponent, canActivate: [AuthGuard] },
-  { path: 'agents', component: AgentListComponent, canActivate: [AuthGuard] },
+  { path: 'agents', canActivate: [AuthGuard], children: [
+    { path: '', component: AgentListComponent },
+    { path: 'approve', component: ApproveAgentsComponent }
+  ] },
   { path: 'login', component: LoginComponent }
 ];
 

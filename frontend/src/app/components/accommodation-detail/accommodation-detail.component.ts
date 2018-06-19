@@ -1,6 +1,5 @@
 import { AccommodationService } from '../../services/accommodation.service';
 import { Accommodation } from '../../models/Accommodation';
-import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
@@ -23,7 +22,6 @@ export class AccommodationDetailComponent implements OnInit {
 
   constructor(
     private accommodationService: AccommodationService,
-    private userService: UserService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router

@@ -7,6 +7,9 @@
     </ol>
   </nav>
   <div class="container">
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
     <div class="card">
       <div class="card-header">
         <h1>Recovery question</h1>

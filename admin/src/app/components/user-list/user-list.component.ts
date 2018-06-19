@@ -34,7 +34,6 @@ export class UserListComponent implements OnInit {
   blockUser(userId) {
     this.adminService.blockUser(userId)
     .subscribe(res => {
-      console.log(res);
       this.initUsers();
     }, err => {
       console.log(err);
@@ -44,7 +43,6 @@ export class UserListComponent implements OnInit {
   activateUser(userId) {
     this.adminService.activateUser(userId)
     .subscribe(res => {
-      console.log(res);
       this.initUsers();
     }, err => {
       console.log(err);
@@ -54,7 +52,6 @@ export class UserListComponent implements OnInit {
   deleteUser(userId) {
     this.adminService.deleteUser(userId)
     .subscribe(res => {
-      console.log(res);
       this.initUsers();
     }, err => {
       console.log(err);

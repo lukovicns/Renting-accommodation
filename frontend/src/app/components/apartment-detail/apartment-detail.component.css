@@ -1,0 +1,16 @@
+.card {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.card-body {
+  padding: 0.80rem;
+}
+
+.container {
+  margin-top: 50px;
+}
+
+ul.list-group {
+  margin-top: 15px;
+}

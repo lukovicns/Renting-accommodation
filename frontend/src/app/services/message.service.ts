@@ -16,11 +16,24 @@ export class MessageService {
   getSentMessages(userId) {
     return this.http.get<Message[]>(this.url + 'user/' + userId + '/sent');
   }
+
   getReceivedMessages(userId) {
     return this.http.get<Message[]>(this.url + 'user/' + userId + '/received');
   }
 
+  getSentMessage(userId, messageId) {
+    return this.http.get<Message>(this.url + 'user/' + userId + '/sent/' + messageId);
+  }
+
+  getReceivedMessage(userId, messageId) {
+    return this.http.get<Message>(this.url + 'user/' + userId + '/received/' + messageId);
+  }
+
   deleteSentMessage(message) {
     return this.http.delete<Message>(this.url + message.id + '/delete-sent');
+  }
+
+  markAsRead(userId, messageId) {
+    return this.http.put<Message>(this.url + 'user/' + userId + '/received/' + messageId + '/mark-as-read', null);
   }
 }

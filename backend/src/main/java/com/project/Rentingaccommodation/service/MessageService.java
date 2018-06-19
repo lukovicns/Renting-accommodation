@@ -26,6 +26,12 @@ public interface MessageService {
 	List<Message> findUserUnreadMessages(User user);
 	List<Message> findAgentUnreadMessages(Agent agent);
 	
+	Message findUserSentMessage(User user, Long id);
+	Message findUserReceivedMessage(User user, Long id);
+	
+	Message findAgentSentMessage(Agent agent, Long id);
+	Message findAgentReceivedMessage(Agent agent, Long id);
+	
 	Message sendMessageToUser(User user, Agent agent, Apartment apartment, String date, String time, String text);
 	Message sendMessageToAgent(User user, Agent agent, Apartment apartment, String date, String time, String text);
 	

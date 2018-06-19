@@ -84,6 +84,33 @@ public class MessageController {
 		return new ResponseEntity<>(service.findUserReceivedMessages(user), HttpStatus.OK);
 	}
 	
+	@RequestMapping(value="/user/{id}/received/{messageId}", method=RequestMethod.GET)
+	public ResponseEntity<Object> getUserReceivedMessage(@PathVariable Long id, @PathVariable Long messageId) {
+		User user = userService.findOne(id);
+		if (user == null) {
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+		Message message = service.findUserReceivedMessage(user, messageId);
+		if (message == null) {
+			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(message, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/user/{id}/received/{messageId}/mark-as-read", method=RequestMethod.PUT)
+	public ResponseEntity<Object> markAsReadUserReceivedMessage(@PathVariable Long id, @PathVariable Long messageId) {
+		User user = userService.findOne(id);
+		if (user == null) {
+			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		}
+		Message message = service.findUserReceivedMessage(user, messageId);
+		if (message == null) {
+			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
+		}
+		message.setStatus(MessageStatus.READ);
+		return new ResponseEntity<>(service.save(message), HttpStatus.OK);
+	}
+	
 	@RequestMapping(value="/agent/{id}/sent", method=RequestMethod.GET)
 	public ResponseEntity<Object> getAgentSentMessages(@PathVariable Long id) {
 		Agent agent = agentService.findOne(id);
@@ -104,9 +131,9 @@ public class MessageController {
 	
 	@RequestMapping(value="/user-to-agent", method=RequestMethod.POST)
 	public ResponseEntity<Object> sendMessageToAgent(@RequestBody SendMessage data) {
-		if (Long.valueOf(data.getApartment()) == null || Long.valueOf(data.getApartment()) == 0 ||
-			Long.valueOf(data.getUser()) == null || Long.valueOf(data.getUser()) == 0 ||
-			Long.valueOf(data.getAgent()) == null || Long.valueOf(data.getAgent()) == 0 ||
+		if (data.getApartment() == null || Long.valueOf(data.getApartment()) == 0 ||
+			data.getUser() == null || Long.valueOf(data.getUser()) == 0 ||
+			data.getAgent() == null || Long.valueOf(data.getAgent()) == 0 ||
 			data.getText() == null || data.getText() == "") {
 			return new ResponseEntity<>("All fields are required(apartment id, user id, agent id, text).", HttpStatus.FORBIDDEN);
 		}
@@ -114,14 +141,15 @@ public class MessageController {
 		User user = userService.findOne(data.getUser());
 		Agent agent = agentService.findOne(data.getAgent());
 		
+		if (apartment == null) {
+			return new ResponseEntity<>("Apartment not found.", HttpStatus.NOT_FOUND);
+		}
+		
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 		}
 		if (agent == null) {
 			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
-		}
-		if (apartment == null) {
-			return new ResponseEntity<>("Apartment not found.", HttpStatus.NOT_FOUND);
 		}
 		
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -136,9 +164,9 @@ public class MessageController {
 	
 	@RequestMapping(value="/agent-to-user", method=RequestMethod.POST)
 	public ResponseEntity<Object> sendMessageToUser(@RequestBody SendMessage data) {
-		if (Long.valueOf(data.getApartment()) == null || Long.valueOf(data.getApartment()) == 0 ||
-			Long.valueOf(data.getUser()) == null || Long.valueOf(data.getUser()) == 0 ||
-			Long.valueOf(data.getAgent()) == null || Long.valueOf(data.getAgent()) == 0 ||
+		if (data.getApartment() == null || Long.valueOf(data.getApartment()) == 0 ||
+			data.getUser() == null || Long.valueOf(data.getUser()) == 0 ||
+			data.getAgent() == null || Long.valueOf(data.getAgent()) == 0 ||
 			data.getText() == null || data.getText() == "") {
 			return new ResponseEntity<>("All fields are required(apartment id, user id, agent id, text).", HttpStatus.FORBIDDEN);
 		}
@@ -173,7 +201,7 @@ public class MessageController {
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
 				Message message = service.findOne(id);
-				Admin admin = adminService.findOne(jwtUser.getId());
+//				Admin admin = adminService.findOne(jwtUser.getId());
 //				if (admin == null) {
 //					return new ResponseEntity<>("User with this token doesn't have admin permissions.", HttpStatus.NOT_FOUND);
 //				}

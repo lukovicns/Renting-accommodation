@@ -16,7 +16,11 @@ export class RecoveryQuestionComponent implements OnInit {
   question;
   errorMessage: String;
 
-  constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
+  constructor(
+    private userService: UserService,
+    private formBuilder: FormBuilder,
+    private router: Router
+  ) { }
 
    questionForm = this.formBuilder.group({
     answer: ['', Validators.required]
@@ -31,7 +35,7 @@ export class RecoveryQuestionComponent implements OnInit {
         .subscribe(res => {
           this.question = res['question'];
         }, err => {
-          this.errorMessage = 'Email does\'t exist.';
+          this.errorMessage = 'Email doesn\'t exist.';
         });
       }
     } else {
@@ -39,18 +43,29 @@ export class RecoveryQuestionComponent implements OnInit {
     }
   }
 
+  userExists(email) {
+    this.userService.getUserByEmail(email)
+    .subscribe(res => {
+      console.log(res);
+      return true;
+    }, err => {
+      this.errorMessage = err['error'];
+      console.log(this.errorMessage);
+      return false;
+    });
+  }
+
   sendMail() {
     this.data = {
       'email': this.userService.getEmail(),
       'answer': this.questionForm.value['answer']
-    };
+    }
     this.userService.resetPassword(this.data)
     .subscribe(res => {
-      console.log(res);
+      this.router.navigate(['login']);
+      this.userService.setEmail('');
     }, err => {
-      this.errorMessage = 'Answer is wrong!';
-      console.log(err);
+      this.errorMessage = err['error'];
     });
-    this.userService.setEmail('');
   }
 }

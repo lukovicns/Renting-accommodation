@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
 import { Router } from '@angular/router';
 import { CityService } from '../../services/city.service';
+import { AdditionalServiceService } from '../../services/additional-service.service';
 
 @Component({
   selector: 'app-accommodation-list',
@@ -15,10 +16,12 @@ import { CityService } from '../../services/city.service';
 export class AccommodationListComponent implements OnInit {
 
   private accommodations = [];
+  private additionalServices = [];
   private advancedOptions: boolean;
 
   constructor(
     private accommodationService: AccommodationService,
+    private additionalServiceService: AdditionalServiceService,
     private cityService: CityService,
     private formBuilder: FormBuilder,
     private router: Router
@@ -29,6 +32,8 @@ export class AccommodationListComponent implements OnInit {
     this.advancedOptions = false;
     this.accommodationService.getAccommodations()
     .subscribe(res => this.accommodations = res);
+    this.additionalServiceService.getAdditionalServices()
+    .subscribe(res => this.additionalServices = res);
   }
 
   searchForm = this.formBuilder.group({

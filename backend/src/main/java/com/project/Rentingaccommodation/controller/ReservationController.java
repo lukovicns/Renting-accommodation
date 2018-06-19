@@ -195,7 +195,7 @@ public class ReservationController {
 	}
 	// DELETE METHOD
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteReservation(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+	public ResponseEntity<Object> cancelReservation(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);

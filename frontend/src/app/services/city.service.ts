@@ -14,6 +14,6 @@ export class CityService {
   }
 
   getCityByName(cityName) {
-    return this.http.get<City[]>(this.url + 'name/' + cityName);
+    return this.http.get<City>(this.url + 'name/' + cityName);
   }
 }
