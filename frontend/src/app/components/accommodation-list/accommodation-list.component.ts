@@ -6,6 +6,8 @@ import { fadeIn } from '../../animations';
 import { Router } from '@angular/router';
 import { CityService } from '../../services/city.service';
 import { AdditionalServiceService } from '../../services/additional-service.service';
+import { AccommodationCategoryService } from '../../services/accommodation-category.service';
+import { AccommodationTypeService } from '../../services/accommodation-type.service';
 
 @Component({
   selector: 'app-accommodation-list',
@@ -16,12 +18,16 @@ import { AdditionalServiceService } from '../../services/additional-service.serv
 export class AccommodationListComponent implements OnInit {
 
   private accommodations = [];
+  private categories = [];
+  private types = [];
   private additionalServices = [];
   private advancedOptions: boolean;
 
   constructor(
-    private accommodationService: AccommodationService,
     private additionalServiceService: AdditionalServiceService,
+    private categoryService: AccommodationCategoryService,
+    private accommodationService: AccommodationService,
+    private typeService: AccommodationTypeService,
     private cityService: CityService,
     private formBuilder: FormBuilder,
     private router: Router
@@ -34,6 +40,12 @@ export class AccommodationListComponent implements OnInit {
     .subscribe(res => this.accommodations = res);
     this.additionalServiceService.getAdditionalServices()
     .subscribe(res => this.additionalServices = res);
+    this.categoryService.getCategories()
+    .subscribe(res => {
+      this.categories = res;
+    });
+    this.typeService.getTypes()
+    .subscribe(res => this.types = res);
   }
 
   searchForm = this.formBuilder.group({

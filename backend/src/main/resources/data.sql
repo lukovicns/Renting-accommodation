@@ -6,7 +6,8 @@ insert into city (city_id, country_id, name, zipcode) values (1, 1, 'Novi Sad', 
 insert into city (city_id, country_id, name, zipcode) values (2, 1, 'Beograd', '11000');
 
 insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (1, 'Hotel');
-insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (2, 'Apartment');
+insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (2, 'Bed & breakfast');
+insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (3, 'Apartment');
 
 insert into accommodation_category (accommodation_category_id, accommodation_category_name) values (1, '1-5 stars');
 insert into accommodation_category (accommodation_category_id, accommodation_category_name) values (2, 'Uncategorized');

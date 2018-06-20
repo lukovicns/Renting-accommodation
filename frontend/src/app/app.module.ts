@@ -34,6 +34,8 @@ import { ApartmentDetailComponent } from './components/apartment-detail/apartmen
 import { ApartmentAdditionalServiceService } from './services/apartment-additional-service.service';
 import { MessageDetailComponent } from './components/message-detail/message-detail.component';
 import { EditReservationComponent } from './components/edit-reservation/edit-reservation.component';
+import { AccommodationTypeService } from './services/accommodation-type.service';
+import { AccommodationCategoryService } from './services/accommodation-category.service';
 
 
 @NgModule({
@@ -69,6 +71,7 @@ import { EditReservationComponent } from './components/edit-reservation/edit-res
     ReactiveFormsModule
   ],
   providers: [
+    ApartmentAdditionalServiceService,
     UserService,
     AccommodationService,
     ApartmentService,
@@ -76,7 +79,8 @@ import { EditReservationComponent } from './components/edit-reservation/edit-res
     MessageService,
     CityService,
     AdditionalServiceService,
-    ApartmentAdditionalServiceService,
+    AccommodationTypeService,
+    AccommodationCategoryService,
     AuthGuard
   ],
   bootstrap: [AppComponent]
