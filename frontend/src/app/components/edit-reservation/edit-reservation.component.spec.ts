@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ApproveAgentsComponent } from './approve-agents.component';
+import { EditReservationComponent } from './edit-reservation.component';
 
-describe('ApproveAgentsComponent', () => {
-  let component: ApproveAgentsComponent;
-  let fixture: ComponentFixture<ApproveAgentsComponent>;
+describe('EditReservationComponent', () => {
+  let component: EditReservationComponent;
+  let fixture: ComponentFixture<EditReservationComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ApproveAgentsComponent ]
+      declarations: [ EditReservationComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ApproveAgentsComponent);
+    fixture = TestBed.createComponent(EditReservationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

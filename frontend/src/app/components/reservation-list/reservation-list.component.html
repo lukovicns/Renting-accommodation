@@ -29,12 +29,12 @@
             <td>{{ reservation.price }}</td>
             <td>{{ reservation.status }}</td>
             <td>
-              <input type="button" class="btn btn-warning btn-sm" value="Edit">
+              <a class="btn btn-info btn-sm" routerLink="/accommodations/{{ reservation.apartment?.accommodation?.id }}/apartments/{{ reservation.apartment?.id }}/reservation/{{ reservation.id }}/edit">
+                Edit reservation
+              </a>
             </td>
             <td>
-              <form (ngSubmit)="cancelReservation(reservation.id)">
-                <input type="submit" class="btn btn-danger btn-sm" value="Cancel reservation">
-              </form>
+              <button class="btn btn-danger btn-sm" (click)="cancelReservation(reservation.id)">Cancel reservation</button>
             </td>
           </tr>
         </tbody>

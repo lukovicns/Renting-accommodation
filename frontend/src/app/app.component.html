@@ -5,13 +5,19 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-home"></i>&nbsp;Home
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/accommodations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Accommodations</a>
+        <a class="nav-link" routerLink="/accommodations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-bed"></i>&nbsp;Accommodations
+        </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="userIsLoggedIn()" routerLink="/reservations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Reservations</a>
+        <a class="nav-link" *ngIf="userIsLoggedIn()" routerLink="/reservations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-calendar-alt"></i>&nbsp;Reservations
+        </a>
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">
@@ -27,7 +33,7 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" *ngIf="userIsLoggedIn()" routerLink="/inbox" routerLinkActive="active">
-          <i class="far fa-envelope fa-lg"></i>&nbsp;Inbox
+          <i class="far fa-envelope"></i>&nbsp;Inbox
         </a>
       </li>
       <li class="nav-item">

@@ -41,7 +41,7 @@ public class JpaApartmentService implements ApartmentService {
 	}
 
 	@Override
-	public List<Apartment> findByAccommodationId(Long id) {
+	public List<Apartment> findApartmentsByAccommodationId(Long id) {
 		List<Apartment> accommodationApartments = new ArrayList<Apartment>();
 		for (Apartment apartment : repository.findAll()) {
 			if (apartment.getAccommodation().getId() == id) {
@@ -49,6 +49,16 @@ public class JpaApartmentService implements ApartmentService {
 			}
 		}
 		return accommodationApartments;
+	}
+	
+	@Override
+	public Apartment findApartmentByAccommodationId(Long id, Long accommodationId) {
+		for (Apartment apartment : findApartmentsByAccommodationId(accommodationId)) {
+			if (apartment.getId() == id) {
+				return apartment;
+			}
+		}
+		return null;
 	}
 
 	@Override

@@ -8,28 +8,35 @@
   </nav>
   <div class="container">
     <h3>Search results: {{ apartments.length }}</h3>
-    <div class="row">
-      <div class="col-lg-5 col-md-6 col-sm-12">
-        <ul class="list-group">
-          <li class="list-group-item active">Sory by category</li>
-          <li class="list-group-item">Sort by rating</li>
-          <li class="list-group-item">Sort by price</li>
-        </ul>
-      </div>
-      <div class="col-lg-7 col-md-6 col-sm-12">
-        <div class="row" *ngFor="let apartment of apartments">
-          <div class="card">
-            <div class="card-body">
-              <img src="{{ image }}">
-              <h5 class="card-title"></h5>
-              <p class="card-text">{{ apartment.description }}</p>
-              <a class="btn btn-primary" routerLink="/accommodations/{{ apartment.accommodation?.id }}/apartments/{{ apartment.id }}/make-reservation">Make reservations</a>
-              <a class="btn btn-success" routerLink="/accommodations/{{ apartment.accommodation?.id }}/apartments/{{ apartment.id }}/send-message">Send message</a>
-              <a class="btn btn-info pull-right" routerLink="/accommodations/{{ apartment.accommodation?.id }}/apartments/{{ apartment.id }}">More info</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <table class="table" id="apartments-table">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col" (click)="sortTable(0)">Name</th>
+          <th scope="col">Bed type</th>
+          <th scope="col">Accommodation</th>
+          <th scope="col" (click)="sortTable(3)">Category</th>
+          <th scope="col">Size</th>
+          <th scope="col" (click)="sortTable(5)">Max. number of guests</th>
+          <th scope="col">Number of rooms</th>
+          <th scope="col">Detail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let apartment of apartments; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ apartment.name }}</td>
+          <td>{{ apartment.type?.name }}</td>
+          <td>{{ apartment.accommodation?.name }}</td>
+          <td>{{ apartment.accommodation?.category?.name }}</td>
+          <td>{{ apartment.size }}</td>
+          <td>{{ apartment.maxNumberOfGuests }}</td>
+          <td>{{ apartment.numberOfRooms }}</td>
+          <td>
+            <a class="btn btn-info btn-sm" routerLink="/accommodations/{{ apartment.accommodation?.id }}/apartments/{{ apartment.id }}">Detail</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

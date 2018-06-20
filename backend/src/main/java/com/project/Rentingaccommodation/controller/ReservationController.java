@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Reservation;
 import com.project.Rentingaccommodation.model.ReservationStatus;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.security.JwtValidator;
+import com.project.Rentingaccommodation.service.ApartmentService;
 import com.project.Rentingaccommodation.service.ReservationService;
 import com.project.Rentingaccommodation.service.UserService;
 
@@ -35,6 +36,9 @@ public class ReservationController {
 	private UserService userService;
 	
 	@Autowired
+	private ApartmentService apartmentService;
+	
+	@Autowired
 	private JwtValidator jwtValidator;
 	
 	@RequestMapping(value="/user", method=RequestMethod.GET)
@@ -43,6 +47,10 @@ public class ReservationController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
+				User user = userService.findByEmail(jwtUser.getEmail());
+				if (user == null) {
+					return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+				}
 				List<Reservation> userReservations = service.findUserReservations(jwtUser.getEmail());
 				return new ResponseEntity<>(userReservations, HttpStatus.OK);
 			} else {
@@ -88,11 +96,16 @@ public class ReservationController {
 				}
 
 				User user = userService.findByEmail(jwtUser.getEmail());
+				Apartment apartment = apartmentService.findOne(reservation.getApartment().getId());
+				
 				if (user == null) {
-					return new ResponseEntity<>("User doesnt exist.", HttpStatus.FORBIDDEN);
+					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 				}
 				
-//				Pattern pattern = Pattern.compile("^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$");
+				if (apartment == null) {
+					return new ResponseEntity<>("Apartment not found.", HttpStatus.NOT_FOUND);
+				}
+				
 				Pattern pattern = Pattern.compile("^[0-3]?[0-9]/[0-3]?[0-9]/(?:[0-9]{2})?[0-9]{2}$");
 				Matcher startDateMatcher = pattern.matcher(reservation.getStartDate());
 				Matcher endDateMatcher = pattern.matcher(reservation.getEndDate());
@@ -117,9 +130,6 @@ public class ReservationController {
 				if (!startDate.before(endDate)) {
 					return new ResponseEntity<>("Start date must be before end date.", HttpStatus.FORBIDDEN);
 				}
-				
-				// Make reservation of first apartment.
-//				Apartment apartment = apartmentService.findOne(1l);
 				
 				// Check if apartment is available in that period.
 				if (!service.isAvailable(reservation.getApartment(), reservation.getStartDate(), reservation.getEndDate())) {
@@ -134,8 +144,7 @@ public class ReservationController {
 					150,
 					ReservationStatus.RESERVATION
 				);
-				service.save(newReservation);
-				return new ResponseEntity<>(newReservation, HttpStatus.OK);
+				return new ResponseEntity<>(service.save(newReservation), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
@@ -146,22 +155,27 @@ public class ReservationController {
 	
 	// PUT METHOD - Nije zavrseno
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> editReservation(@RequestParam Long id, @RequestBody Reservation reservation, @RequestHeader("Authorization") String authHeader) {
+	public ResponseEntity<Object> editReservation(@PathVariable Long id, @RequestBody Reservation reservation, @RequestHeader("Authorization") String authHeader) {
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				if (reservation.getStartDate() == null || reservation.getStartDate() == "" ||
-					reservation.getEndDate() == null || reservation.getEndDate() == "") {
-					return new ResponseEntity<>("All fields are required (start date, end date).", HttpStatus.FORBIDDEN);
-				}
 				
 				User user = userService.findByEmail(jwtUser.getEmail());
 				if (user == null) {
-					return new ResponseEntity<>("User doesnt exist.", HttpStatus.FORBIDDEN);
+					return new ResponseEntity<>("User doesnt exist.", HttpStatus.NOT_FOUND);
 				}
 				
-//				Pattern pattern = Pattern.compile("^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01])$");
+				Reservation newReservation = service.findOne(id);
+				if (newReservation == null || newReservation.getUser().getId() != user.getId()) {
+					return new ResponseEntity<>("User reservation not found.", HttpStatus.NOT_FOUND);
+				}
+				
+				if (reservation.getStartDate() == null || reservation.getStartDate() == "" ||
+					reservation.getEndDate() == null || reservation.getEndDate() == "") {
+					return new ResponseEntity<>("Start date and end date must be provided.", HttpStatus.FORBIDDEN);
+				}
+				
 				Pattern pattern = Pattern.compile("^[0-3]?[0-9]/[0-3]?[0-9]/(?:[0-9]{2})?[0-9]{2}$");
 				Matcher startDateMatcher = pattern.matcher(reservation.getStartDate());
 				Matcher endDateMatcher = pattern.matcher(reservation.getEndDate());
@@ -178,6 +192,7 @@ public class ReservationController {
 				SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 				Date startDate = dateFormatter.parse(reservation.getStartDate());
 				Date endDate = dateFormatter.parse(reservation.getEndDate());
+				
 				if (startDate.before(new Date()) || endDate.before(new Date())) {
 					return new ResponseEntity<>("You must enter future dates.", HttpStatus.FORBIDDEN);
 				}
@@ -187,22 +202,15 @@ public class ReservationController {
 					return new ResponseEntity<>("Start date must be before end date.", HttpStatus.FORBIDDEN);
 				}
 				
-				// Make reservation of first apartment.
-//				Apartment apartment = apartmentService.findOne(1l);
-				
-				Reservation newReservation = service.findOne(id);
-				newReservation.setApartment(reservation.getApartment());
 				newReservation.setStartDate(reservation.getStartDate());
 				newReservation.setEndDate(reservation.getEndDate());
-				newReservation.setPrice(reservation.getPrice());
 				
 				// Check if apartment is available in that period.
-				if (!service.isAvailable(newReservation.getApartment(), newReservation.getStartDate(), newReservation.getEndDate())) {
+				if (!service.isAvailableForUpdate(newReservation)) {
 					return new ResponseEntity<>("Apartment is not available at the given period.", HttpStatus.FORBIDDEN);
 				}
 				
-				service.save(newReservation);
-				return new ResponseEntity<>(newReservation, HttpStatus.OK);
+				return new ResponseEntity<>(service.save(newReservation), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}

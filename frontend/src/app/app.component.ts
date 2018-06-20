@@ -14,7 +14,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.userIsLoggedIn();
-    this.setUserReservations();
   }
 
   constructor(
@@ -25,12 +24,6 @@ export class AppComponent implements OnInit {
 
   userIsLoggedIn() {
     return this.userService.getCurrentUser() != null;
-  }
-
-  setUserReservations() {
-    this.reservationService.getUserReservations()
-    .subscribe(res => {
-    })
   }
 
   logout() {

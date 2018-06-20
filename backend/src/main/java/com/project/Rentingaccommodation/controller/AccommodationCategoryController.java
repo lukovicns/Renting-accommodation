@@ -47,12 +47,12 @@ public class AccommodationCategoryController {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Object> updateAccommodationCategory(@PathVariable Long id, @RequestBody AccommodationCategory data) {
-		if (data.getName() == null || data.getName() == "") {
-			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
-		}
 		AccommodationCategory category = service.findOne(id);
 		if (category == null) {
 			return new ResponseEntity<>("Category not found.", HttpStatus.NOT_FOUND);
+		}
+		if (data.getName() == null || data.getName() == "") {
+			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
 		}
 		category.setName(data.getName());
 		return new ResponseEntity<>(service.save(category), HttpStatus.OK);

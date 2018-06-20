@@ -1,0 +1,51 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Accommodation types</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h3>Add accommodation type</h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="typeForm" (ngSubmit)="addType()">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" formControlName="name" placeholder="Enter type name">
+          </div>
+          <button type="submit" class="btn btn-info" [disabled]="!typeForm.valid">Add type</button>
+        </form>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered" *ngIf="types && types.length > 0; else typesNotFound">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let type of types; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ type.name }}</td>
+            <td>
+              <a class="btn btn-warning btn-sm">Edit type</a>
+            </td>
+            <td>
+              <button class="btn btn-danger btn-sm" (click)="removeType(type.id)">Remove type</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #typesNotFound>
+      <h1>There are no types yet!</h1>
+    </ng-template>
+  </div>
+</div>

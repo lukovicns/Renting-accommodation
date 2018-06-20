@@ -21,4 +21,24 @@ public class JpaAdditionalServiceService implements AdditionalServiceService {
 	public List<AdditionalService> findAll() {
 		return repository.findAll();
 	}
+
+	@Override
+	public AdditionalService findOne(Long id) {
+		for (AdditionalService additionalService : findAll()) {
+			if (additionalService.getId() == id) {
+				return additionalService;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public AdditionalService save(AdditionalService additionalService) {
+		return repository.save(additionalService);
+	}
+
+	@Override
+	public void delete(AdditionalService additionalService) {
+		repository.delete(additionalService);
+	}
 }

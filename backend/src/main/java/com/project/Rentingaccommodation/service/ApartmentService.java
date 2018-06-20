@@ -10,7 +10,8 @@ import com.project.Rentingaccommodation.model.City;
 public interface ApartmentService {
 
 	Apartment findOne(Long id);
-	List<Apartment> findByAccommodationId(Long id);
+	Apartment findApartmentByAccommodationId(Long id, Long accommodationId);
+	List<Apartment> findApartmentsByAccommodationId(Long id);
 	List<Apartment> findAll();
 	Apartment save(Apartment apartment);
 	void delete(Apartment apartment);

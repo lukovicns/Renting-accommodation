@@ -35,15 +35,15 @@ export class ReservationFormComponent implements OnInit {
     this.apartmentId = parseInt(this.route.snapshot.params['apartmentId']);
 
     this.accommodationService.getAccommodation(this.accommodationId)
-    .subscribe(res => this.accommodation = res,
-    err => {
-      console.log(err);
-    });
-
-    this.apartmentService.getApartment(this.apartmentId)
-    .subscribe(res => this.apartment = res,
-    err => {
-      console.log(err);
+    .subscribe(res => {
+      this.accommodation = res;
+      this.apartmentService.getApartmentByAccommodationId(this.accommodationId, this.apartmentId)
+      .subscribe(res => this.apartment = res,
+      err => {
+        this.router.navigate(['accommodations/' + this.accommodationId]);
+      });
+    }, err => {
+      this.router.navigate(['accommodations']);
     });
   }
 

@@ -20,14 +20,17 @@ export class ApartmentService {
     return this.http.get<Apartment>(this.url + apartmentId);
   }
 
+  getApartmentByAccommodationId(accommodationId, apartmentId) {
+    return this.http.get<Apartment>(this.url + apartmentId + '/accommodation/' + accommodationId);
+  }
+
   getApartmentsByBasicQueryParams(city, persons, startDate, endDate) {
     return this.http.get<Apartment[]>(this.url + 'search', { params: {
       'city': city,
       'persons': persons,
       'startDate': startDate,
       'endDate': endDate
-      }
-    });
+    }});
   }
 
   getApartmentsByAdvancedQueryParams(city, persons, startDate, endDate, type, category) {

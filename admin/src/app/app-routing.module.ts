@@ -4,16 +4,17 @@ import { UserListComponent } from './components/user-list/user-list.component';
 import { LoginComponent } from './components/login/login.component';
 import { AgentListComponent } from './components/agent-list/agent-list.component';
 import { AuthGuard } from './guards/auth.guard';
-import { ApproveAgentsComponent } from './components/approve-agents/approve-agents.component';
+import { HomeComponent } from './components/home/home.component';
+import { CategoryListComponent } from './components/category-list/category-list.component';
+import { TypeListComponent } from './components/type-list/type-list.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'users', pathMatch: 'full' },
+  { path: '', component: HomeComponent },
   { path: 'users', component: UserListComponent, canActivate: [AuthGuard] },
-  { path: 'agents', canActivate: [AuthGuard], children: [
-    { path: '', component: AgentListComponent },
-    { path: 'approve', component: ApproveAgentsComponent }
-  ] },
-  { path: 'login', component: LoginComponent }
+  { path: 'agents', component: AgentListComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: 'categories', component: CategoryListComponent, canActivate: [AuthGuard] },
+  { path: 'types', component: TypeListComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

@@ -61,8 +61,8 @@ public class JpaReservationService implements ReservationService {
 	}
 
 	@Override
-	public void save(Reservation reservation) {
-		repository.save(reservation);
+	public Reservation save(Reservation reservation) {
+		return repository.save(reservation);
 	}
 
 	@Override
@@ -90,7 +90,6 @@ public class JpaReservationService implements ReservationService {
 	public boolean isAvailable(Apartment apartment, String startDate, String endDate) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 		List<Reservation> activeReservations = findByApartmentId(apartment.getId());
-		System.out.println(activeReservations);
 		for (Reservation reservation : activeReservations) {
 			if (reservation.getApartment().getId() == apartment.getId()) {
 				// Check in-between dates.
@@ -108,6 +107,29 @@ public class JpaReservationService implements ReservationService {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
+			}
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean isAvailableForUpdate(Reservation currentReservation) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+		List<Reservation> activeReservations = findByApartmentId(currentReservation.getApartment().getId());
+		for (Reservation reservation : activeReservations) {				// Check in-between dates.
+			try {
+				Date reservationStartDate = dateFormatter.parse(reservation.getStartDate());
+				Date reservationEndDate = dateFormatter.parse(reservation.getEndDate());
+				Date start = dateFormatter.parse(currentReservation.getStartDate());
+				Date end = dateFormatter.parse(currentReservation.getEndDate());
+				if (
+					start.compareTo(reservationStartDate) < 0 && end.compareTo(reservationEndDate) <= 0 && end.compareTo(reservationStartDate) >= 0 ||
+					start.compareTo(reservationStartDate) >= 0 && start.compareTo(reservationEndDate) <= 0 && end.compareTo(reservationEndDate) > 0 && end.compareTo(start) > 0 ||
+					start.compareTo(reservationStartDate) < 0 && end.compareTo(reservationEndDate) > 0) {
+					return false;
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
 		}
 		return true;

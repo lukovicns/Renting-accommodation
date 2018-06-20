@@ -14,3 +14,12 @@ img {
 .nav {
   margin-bottom: 50px;
 }
+
+h3 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.list-group-item {
+  cursor: pointer;
+}

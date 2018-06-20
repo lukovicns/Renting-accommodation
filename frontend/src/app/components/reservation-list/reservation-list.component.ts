@@ -16,7 +16,12 @@ export class ReservationListComponent implements OnInit {
   constructor(private reservationService: ReservationService) { }
 
   ngOnInit() {
-    this.getReservations();
+    this.reservationService.getUserReservations()
+    .subscribe(res => {
+      this.reservations = res;
+    }, err => {
+      console.log(err);
+    });
   }
 
   getReservations() {
@@ -26,6 +31,10 @@ export class ReservationListComponent implements OnInit {
     }, err => {
       console.log(err);
     });
+  }
+
+  editReservation(reservationId) {
+    
   }
 
   cancelReservation(reservationId) {

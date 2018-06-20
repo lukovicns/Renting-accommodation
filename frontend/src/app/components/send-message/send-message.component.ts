@@ -44,17 +44,18 @@ export class SendMessageComponent implements OnInit {
       .subscribe(res => {
         if (res != null) {
           this.accommodationService.getAccommodation(this.accommodationId)
-          .subscribe(res => this.accommodation = res,
-            err => {
+          .subscribe(resp => {
+            this.accommodation = resp;
+            this.apartmentService.getApartmentByAccommodationId(this.accommodationId, this.apartmentId)
+            .subscribe(response => this.apartment = response,
+              err => {
+              this.router.navigate(['/accommodations/' + this.accommodationId]);
+            });
+          }, err => {
             this.router.navigate(['/accommodations'])
           })
-          this.apartmentService.getApartment(this.apartmentId)
-          .subscribe(res => this.apartment = res,
-            err => {
-            this.router.navigate(['/accommodations/' + this.accommodationId]);
-          });
         } else {
-          this.router.navigate(['/accommodations/' + this.accommodationId + '/apartments/' + this.apartmentId])
+          this.router.navigate(['/accommodations/'])
         }
       }, err => {
         console.log(err);

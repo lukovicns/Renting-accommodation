@@ -46,12 +46,12 @@ public class AccommodationTypeController {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Object> updateAccommodationType(@PathVariable Long id, @RequestBody AccommodationType data) {
-		if (data.getName() == null || data.getName() == "") {
-			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
-		}
 		AccommodationType type = service.findOne(id);
 		if (type == null) {
 			return new ResponseEntity<>("Accommodation type not found.", HttpStatus.NOT_FOUND);
+		}
+		if (data.getName() == null || data.getName() == "") {
+			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
 		}
 		type.setName(data.getName());
 		return new ResponseEntity<>(service.save(type), HttpStatus.OK);

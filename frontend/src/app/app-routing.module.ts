@@ -18,6 +18,7 @@ import { SendMessageComponent } from './components/send-message/send-message.com
 import { InboxComponent } from './components/inbox/inbox.component';
 import { ApartmentDetailComponent } from './components/apartment-detail/apartment-detail.component';
 import { MessageDetailComponent } from './components/message-detail/message-detail.component';
+import { EditReservationComponent } from './components/edit-reservation/edit-reservation.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -29,7 +30,10 @@ const routes: Routes = [
         { path: 'apartments', children: [
           { path: ':apartmentId', children: [
             { path: '', component: ApartmentDetailComponent },
-            { path: 'make-reservation', component: ReservationFormComponent, canActivate: [AuthGuard] },
+            { path: 'reservation', canActivate: [AuthGuard], children: [
+              { path: 'add', component: ReservationFormComponent },
+              { path: ':reservationId/edit', component: EditReservationComponent }
+            ] },
             { path: 'send-message', component: SendMessageComponent, canActivate: [AuthGuard] }
           ] },
         ] }

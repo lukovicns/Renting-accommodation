@@ -1,65 +1,57 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { fadeIn } from '../../animations';
 import { AccommodationService } from '../../services/accommodation.service';
 import { ApartmentService } from '../../services/apartment.service';
-import { fadeIn } from '../../animations';
-import { ApartmentAdditionalServiceService } from '../../services/apartment-additional-service.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationService } from '../../services/reservation.service';
-import { UserService } from '../../services/user.service';
 
 @Component({
-  selector: 'app-apartment-detail',
-  templateUrl: './apartment-detail.component.html',
-  styleUrls: ['./apartment-detail.component.css'],
+  selector: 'app-edit-reservation',
+  templateUrl: './edit-reservation.component.html',
+  styleUrls: ['./edit-reservation.component.css'],
   animations: [fadeIn()]
 })
-export class ApartmentDetailComponent implements OnInit {
+export class EditReservationComponent implements OnInit {
 
-  private image: string = 'https://t-ec.bstatic.com/images/hotel/max1280x900/120/120747263.jpg';
-  private hasReservation: boolean;
-  private apartmentAdditionalServices = [];
   private accommodationId: Number;
   private apartmentId: Number;
+  private reservationId: Number;
+  private accommodation = {};
   private apartment = {};
+  private reservation = {};
 
   constructor(
-    private apartmentAdditionalServiceService: ApartmentAdditionalServiceService,
     private accommodationService: AccommodationService,
     private reservationService: ReservationService,
     private apartmentService: ApartmentService,
-    private userService: UserService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
 
   ngOnInit() {
-    this.hasReservation = false;
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
     this.apartmentId = parseInt(this.route.snapshot.params['apartmentId']);
+    this.reservationId = parseInt(this.route.snapshot.params['reservationId']);
+
     this.accommodationService.getAccommodation(this.accommodationId)
     .subscribe(res => {
+      this.accommodation = res;
       this.apartmentService.getApartmentByAccommodationId(this.accommodationId, this.apartmentId)
       .subscribe(resp => {
         this.apartment = resp;
-        this.apartmentAdditionalServiceService.getApartmentAdditionalServices(this.apartmentId)
+        this.reservationService.getUserReservationByApartmentId(this.apartmentId)
         .subscribe(response => {
-          this.apartmentAdditionalServices = response;
+          if (response['id'] != this.reservationId) {
+            this.router.navigate(['accommodations/' + this.accommodationId + '/apartments/' + this.apartmentId]);
+          }
         }, err => {
-          console.log(err);
+          this.router.navigate(['accommodations/' + this.accommodationId + '/apartments/' + this.apartmentId]);
         })
       }, err => {
         this.router.navigate(['accommodations/' + this.accommodationId]);
-      })
-      if (this.userService.getCurrentUser() != null) {
-        this.reservationService.getUserReservationByApartmentId(this.apartmentId)
-        .subscribe(reservation => {
-          if (reservation != null) {
-            this.hasReservation = true;
-          }
-        })
-      }
+      });
     }, err => {
       this.router.navigate(['accommodations']);
-    })
+    });
   }
 }

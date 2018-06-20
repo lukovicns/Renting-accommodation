@@ -8,7 +8,9 @@ import { AppComponent } from './app.component';
 import { UserListComponent } from './components/user-list/user-list.component';
 import { LoginComponent } from './components/login/login.component';
 import { AgentListComponent } from './components/agent-list/agent-list.component';
-import { ApproveAgentsComponent } from './components/approve-agents/approve-agents.component';
+import { HomeComponent } from './components/home/home.component';
+import { CategoryListComponent } from './components/category-list/category-list.component';
+import { TypeListComponent } from './components/type-list/type-list.component';
 
 
 @NgModule({
@@ -17,7 +19,9 @@ import { ApproveAgentsComponent } from './components/approve-agents/approve-agen
     UserListComponent,
     LoginComponent,
     AgentListComponent,
-    ApproveAgentsComponent
+    HomeComponent,
+    CategoryListComponent,
+    TypeListComponent
   ],
   imports: [
     BrowserModule,

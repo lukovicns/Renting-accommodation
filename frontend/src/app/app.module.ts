@@ -33,6 +33,7 @@ import { AdditionalServiceService } from './services/additional-service.service'
 import { ApartmentDetailComponent } from './components/apartment-detail/apartment-detail.component';
 import { ApartmentAdditionalServiceService } from './services/apartment-additional-service.service';
 import { MessageDetailComponent } from './components/message-detail/message-detail.component';
+import { EditReservationComponent } from './components/edit-reservation/edit-reservation.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { MessageDetailComponent } from './components/message-detail/message-deta
     InboxComponent,
     TruncatePipe,
     ApartmentDetailComponent,
-    MessageDetailComponent
+    MessageDetailComponent,
+    EditReservationComponent
   ],
   imports: [
     BrowserModule,

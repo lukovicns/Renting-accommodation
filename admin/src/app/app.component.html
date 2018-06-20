@@ -5,30 +5,40 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/users" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="fas fa-user fa-lg"></i>&nbsp;Users
+        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-home"></i>&nbsp;Home
         </a>
       </li>
-      <li class="nav-item dropdown" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-user-tie fa-lg"></i>&nbsp;Agents
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/categories" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-tags"></i>&nbsp;Categories
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" routerLink="/agents" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">All agents</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" routerLink="/agents/approve" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Approve agents</a>
-        </div>
+      </li>      
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/types" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-th"></i>&nbsp;Types
+        </a>
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
+        <a class="nav-link" routerLink="/agents" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-user-tie"></i>&nbsp;Agents
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="user-nav-link" routerLink="/users" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-user"></i>&nbsp;Users
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" *ngIf="!adminIsLoggedIn()" routerLink="/login" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="fas fa-power-off fa-lg"></i>&nbsp;Login
+          <i class="fas fa-power-off"></i>&nbsp;Login
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" *ngIf="adminIsLoggedIn()" (click)="logout()" id="logout">
-          <i class="fas fa-power-off fa-lg"></i>&nbsp;Logout
+          <i class="fas fa-power-off"></i>&nbsp;Logout
         </a>
       </li>
     </ul>
