@@ -32,19 +32,22 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+      console.log(this.loginForm.value);
     this.userService.loginUser(this.loginForm.value)
     .subscribe(res => {
       console.log(res);
       if (!!res['token']) {
-          this.cookieService.set( 'token', res['token'] );
-          this.cookieValue = this.cookieService.get('token');
-          console.log(this.cookieValue);
+          
+          localStorage.setItem( 'token', res['token'] );
+//          localStorage = localStorage.get('token');
+          console.log(localStorage);
+          this.router.navigate(['/']);
         //sessionStorage.setItem('token', res['token']);
         //const token = storage.get('token');
         //console.log(token);
         //const user = this.userService.getCurrentUser();
         //if (user['role'] === 'AGENT') {
-          this.document.location.href = 'http://localhost:4201';
+//          this.document.location.href = 'http://localhost:4201';
        /* }
         else if (user['role'] === 'USER') {
           this.router.navigate(['/']);

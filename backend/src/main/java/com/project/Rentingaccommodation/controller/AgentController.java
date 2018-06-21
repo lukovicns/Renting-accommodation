@@ -19,6 +19,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ import org.xml.sax.SAXException;
 
 import com.project.Rentingaccommodation.model.Agent;
 import com.project.Rentingaccommodation.model.City;
+import com.project.Rentingaccommodation.model.Country;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.model.UserStatus;
@@ -39,6 +41,7 @@ import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.AgentService;
 import com.project.Rentingaccommodation.service.CityService;
+import com.project.Rentingaccommodation.service.CountryService;
 import com.project.Rentingaccommodation.service.UserService;
 import com.project.Rentingaccommodation.utils.PasswordUtil;
 import com.project.Rentingaccommodation.utils.UserUtils;
@@ -62,6 +65,9 @@ public class AgentController {
 	@Autowired
 	private JwtGenerator jwtGenerator;
 	
+	@Autowired
+	private CountryService countryService;
+	
 	private static final Charset charset = Charset.forName("UTF-8");
 	
 	public static String url = "http://localhost:8082/certificates/generateCertificate";
@@ -70,6 +76,21 @@ public class AgentController {
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ResponseEntity<List<Agent>> getAgents() {
 		return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/getCountries",method = RequestMethod.GET)
+	public ResponseEntity<List<Country>> getCountries() 
+	{
+		List<Country> countries = countryService.findAll();
+        return new ResponseEntity<List<Country>>(countries, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/getCities/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<City>> getCities(@PathVariable String id) 
+	{
+		List<City> cities = cityService.findByCountryId(Long.valueOf(id));
+		
+        return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -91,8 +112,8 @@ public class AgentController {
 		String street = agent.getStreet();
 		String phone = agent.getPhone();
 		String password = PasswordUtil.hash(agent.getPassword().toCharArray(), charset);
-		String question = agent.getQuestion();	
-		String answer = PasswordUtil.hash(agent.getAnswer().toCharArray(), charset);	
+//		String question = agent.getQuestion();	
+//		String answer = PasswordUtil.hash(agent.getAnswer().toCharArray(), charset);	
 		
 		Agent regAgent = new Agent(name, surname, password, email, city, street, phone, businessId);
 		service.save(regAgent);
@@ -114,7 +135,13 @@ public class AgentController {
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
 	public ResponseEntity<Object> loginAgent(@RequestBody LoginDTO loginDTO) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+		System.out.println("jfkajfkl " + loginDTO.getEmail() + " " + loginDTO.getPassword());
 		Agent agent = service.findByEmail(loginDTO.getEmail());
+		System.out.println("aaaa " + agent);
+		System.out.println("aaaa " + agent.getEmail());
+		
+		HashMap<String, Object> response = new HashMap<String, Object>();
+		
 		if(agent != null)
 		{			
 			System.out.println("agent");
@@ -125,18 +152,25 @@ public class AgentController {
 				return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 			
 			Session session = getSession(agent.getEmail());
-			session.createNamedQuery("TRUNCATE db"+agent.getId()+".reservation;");
-			session.createNamedQuery("TRUNCATE db"+agent.getId()+".message;");
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".reservation;");
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".message;");
 			session.createNativeQuery("INSERT INTO db"+agent.getId()+".reservation (SELECT * FROM renting_accommodation_db.reservation WHERE reservation_id IN (SELECT renting_accommodation_db.reservation.reservation_id FROM renting_accommodation_db.reservation INNER JOIN renting_accommodation_db.apartment ON renting_accommodation_db.reservation.apartment_id = renting_accommodation_db.apartment.apartment_id INNER JOIN renting_accommodation_db.accommodation ON renting_accommodation_db.apartment.accommodation_id = renting_accommodation_db.accommodation.accommodation_id WHERE agent_id="+agent.getId()+";)) order by renting_accommodation_db.reservation.reservation_id DESC;");
 			session.createNativeQuery("INSERT INTO db"+agent.getId()+".message (SELECT * FROM renting_accommodation_db.message WHERE agent_id = "+agent.getId()+")");
 			session.close();
 			
 			String token = generate(new JwtUser(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));
-			HashMap<String, Object> response = new HashMap<String, Object>();
+			System.out.println("jwt " + new JwtUser(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));
+			
+			
+			System.out.println("toke " + token);
+			response = new HashMap<String, Object>();
 			response.put("token", token);
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			System.out.println("res " + response);
+			
 		}
-		return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+		
+		return new ResponseEntity<>(response, HttpStatus.OK);
+		
 	}
 	
 	private void buildSessionFactory(String email) {
@@ -194,6 +228,6 @@ public class AgentController {
     	if (jwtUser.getEmail() == null) {
     		return "User with this email doesn't exist.";
     	}
-        return jwtGenerator.generateUser(jwtUser);
+        return jwtGenerator.generateAgent(jwtUser);
     }
 }

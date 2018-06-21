@@ -13,6 +13,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   loginUser(user) {
+      console.log(user);
     return this.http.post(this.url + 'login', user);
   }
   
@@ -38,7 +39,7 @@ export class UserService {
 
   getCurrentUser() {
       let payload;
-      if (sessionStorage.length !== 0) {
+      if (localStorage.length !== 0) {
         payload = decode(localStorage.getItem('token'));
         return payload;
       }
