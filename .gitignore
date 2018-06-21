@@ -86,6 +86,4 @@ typings/
 # next.js build output
 .next
 
-spring-*/src/main/java/META-INF/MANIFEST.MF
-
 */META-INF/*
