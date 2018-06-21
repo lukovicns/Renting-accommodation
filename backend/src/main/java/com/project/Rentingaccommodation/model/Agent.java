@@ -47,11 +47,12 @@ public class Agent {
 		
 	}
 	
-	public Agent(String name, String surname, String email, City city, String street,
+	public Agent(String name, String surname, String password, String email, City city, String street,
 			String phone, int businessId) {
 		super();
 		this.name = name;
 		this.surname = surname;
+		this.password = password;
 		this.email = email;
 		this.city = city;
 		this.street = street;

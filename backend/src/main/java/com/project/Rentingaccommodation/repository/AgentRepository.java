@@ -8,4 +8,6 @@ import com.project.Rentingaccommodation.model.Agent;
 @Repository
 public interface AgentRepository extends JpaRepository<Agent, Long> {
 
+	Agent findByEmail(String email);
+
 }

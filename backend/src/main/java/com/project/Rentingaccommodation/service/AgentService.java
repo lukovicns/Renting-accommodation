@@ -9,4 +9,6 @@ public interface AgentService {
 	List<Agent> findAll();
 	Agent findOne(Long id);
 	Agent findByBusinessId(Long id);
+	Agent findByEmail(String email);
+	Agent save(Agent regAgent);
 }
