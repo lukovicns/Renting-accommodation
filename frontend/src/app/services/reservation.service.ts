@@ -8,8 +8,8 @@ export class ReservationService {
   private url: string = 'http://localhost:8081/api/reservations/'
   private headers = new HttpHeaders()
     .append('Content-Type', 'application/json')
-    .append('Authorization', 'Bearer ' + localStorage.getItem('token'));
-  
+    .append('Authorization', 'Bearer ' + localStorage.getItem('token'))
+
   private userReservations = [];
 
   constructor(private http: HttpClient) { }
@@ -28,6 +28,10 @@ export class ReservationService {
 
   makeReservations(reservation) {
     return this.http.post(this.url, reservation, { headers: this.headers });
+  }
+
+  editReservation(reservationId, data) {
+    return this.http.put(this.url + reservationId, data, { headers: this.headers });
   }
 
   cancelReservation(reservationId) {

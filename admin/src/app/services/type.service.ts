@@ -15,11 +15,23 @@ export class TypeService {
     return this.http.get<AccommodationType[]>(this.url);
   }
 
+  getType(typeId) {
+    return this.http.get<AccommodationType>(this.url + typeId);
+  }
+
   addType(data) {
     return this.http.post(this.url, data);
   }
 
-  removeType(typeId) {
+  editType(typeId, data) {
+    return this.http.put(this.url + typeId, data);
+  }
+
+  activateType(typeId) {
+    return this.http.put(this.url + typeId + '/activate', null);
+  }
+
+  deactivateType(typeId) {
     return this.http.delete(this.url + typeId);
   }
 }

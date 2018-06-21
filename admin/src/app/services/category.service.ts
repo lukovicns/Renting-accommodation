@@ -14,12 +14,24 @@ export class CategoryService {
   getCategories() {
     return this.http.get<AccommodationCategory[]>(this.url);
   }
+  
+  getCategory(categoryId) {
+    return this.http.get<AccommodationCategory>(this.url + categoryId);
+  }
 
   addCategory(data) {
     return this.http.post(this.url, data);
   }
 
-  removeCategory(categoryId) {
+  editCategory(categoryId, data) {
+    return this.http.put(this.url + categoryId, data);
+  }
+
+  activateCategory(categoryId) {
+    return this.http.put(this.url + categoryId + '/activate', null);
+  }
+
+  deactivateCategory(categoryId) {
     return this.http.delete(this.url + categoryId);
   }
 }

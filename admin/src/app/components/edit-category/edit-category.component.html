@@ -1,0 +1,28 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item"><a routerLink="/categories">Categories</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Edit category</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Edit category {{ category.name }}</h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="categoryForm" (ngSubmit)="editCategory()">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" formControlName="name" placeholder="Enter category name">
+          </div>
+          <button type="submit" class="btn btn-info" [disabled]="!categoryForm.valid">Edit category</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

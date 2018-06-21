@@ -12,6 +12,7 @@ import { TypeService } from '../../services/type.service';
 export class TypeListComponent implements OnInit {
 
   private types = [];
+  private errorMessage: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -36,18 +37,27 @@ export class TypeListComponent implements OnInit {
     this.typeService.addType(this.typeForm.value)
     .subscribe(res => {
       this.initTypes();
-      this.typeForm.reset();
     }, err => {
-      console.log(err);
+      this.errorMessage = err['error'];
     })
+    this.typeForm.reset();
   }
 
-  removeType(typeId) {
-    this.typeService.removeType(typeId)
+  activateType(typeId) {
+    this.typeService.activateType(typeId)
     .subscribe(res => {
       this.initTypes();
     }, err => {
-      console.log(err);
+      this.errorMessage = err['error'];
+    })
+  }
+
+  deactivateType(typeId) {
+    this.typeService.deactivateType(typeId)
+    .subscribe(res => {
+      this.initTypes();
+    }, err => {
+      this.errorMessage = err['error'];
     })
   }
 }

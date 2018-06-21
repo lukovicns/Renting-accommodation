@@ -1,5 +1,5 @@
 import { AccommodationService } from '../../services/accommodation.service';
-import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
+import { datepicker } from '../../../assets/js/script.js';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
@@ -36,8 +36,6 @@ export class AccommodationListComponent implements OnInit {
   ngOnInit() {
     datepicker();
     this.advancedOptions = false;
-    this.accommodationService.getAccommodations()
-    .subscribe(res => this.accommodations = res);
     this.additionalServiceService.getAdditionalServices()
     .subscribe(res => this.additionalServices = res);
     this.categoryService.getCategories()
@@ -46,6 +44,8 @@ export class AccommodationListComponent implements OnInit {
     });
     this.typeService.getTypes()
     .subscribe(res => this.types = res);
+    this.accommodationService.getAccommodations()
+    .subscribe(res => this.accommodations = res);
   }
 
   searchForm = this.formBuilder.group({

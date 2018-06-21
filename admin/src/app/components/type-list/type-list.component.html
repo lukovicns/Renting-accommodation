@@ -2,10 +2,13 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Accommodation types</li>
+      <li class="breadcrumb-item active" aria-current="page">Types</li>
     </ol>
   </nav>
   <div class="container">
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
     <div class="card">
       <div class="card-header">
         <h3>Add accommodation type</h3>
@@ -27,7 +30,7 @@
             <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+            <th scope="col">Restore/Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -35,10 +38,11 @@
             <th scope="row">{{ i + 1 }}</th>
             <td>{{ type.name }}</td>
             <td>
-              <a class="btn btn-warning btn-sm">Edit type</a>
+              <a class="btn btn-warning btn-sm" routerLink="/types/{{ type.id }}/edit">Edit type</a>
             </td>
             <td>
-              <button class="btn btn-danger btn-sm" (click)="removeType(type.id)">Remove type</button>
+              <button class="btn btn-success btn-sm" (click)="activateType(type.id)" *ngIf="type.status === 'INACTIVE'">Activate type</button>
+              <button class="btn btn-danger btn-sm" (click)="deactivateType(type.id)" *ngIf="type.status === 'ACTIVE'">Deactivate type</button>
             </td>
           </tr>
         </tbody>

@@ -1,7 +1,7 @@
 import { AccommodationService } from '../../services/accommodation.service';
 import { ReservationService } from '../../services/reservation.service';
 import { ApartmentService } from '../../services/apartment.service';
-import { datepicker, getFormattedDate } from '../../../assets/js/script.js';
+import { datepicker } from '../../../assets/js/script.js';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';

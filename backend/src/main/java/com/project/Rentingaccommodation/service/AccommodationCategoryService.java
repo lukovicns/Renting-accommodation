@@ -9,4 +9,7 @@ public interface AccommodationCategoryService {
 	List<AccommodationCategory> findAll();
 	AccommodationCategory save(AccommodationCategory category);
 	void delete(AccommodationCategory category);
+	List<AccommodationCategory> findActiveCategories();
+	List<AccommodationCategory> findInactiveCategories();
+	AccommodationCategory findByCategoryName(String name);
 }

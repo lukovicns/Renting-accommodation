@@ -4,6 +4,7 @@ import { AccommodationService } from '../../services/accommodation.service';
 import { ApartmentService } from '../../services/apartment.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationService } from '../../services/reservation.service';
+import { setStartDate, setEndDate } from '../../../assets/js/script';
 
 @Component({
   selector: 'app-edit-reservation',
@@ -13,6 +14,7 @@ import { ReservationService } from '../../services/reservation.service';
 })
 export class EditReservationComponent implements OnInit {
 
+  private errorMessage: boolean;
   private accommodationId: Number;
   private apartmentId: Number;
   private reservationId: Number;
@@ -44,6 +46,10 @@ export class EditReservationComponent implements OnInit {
           if (response['id'] != this.reservationId) {
             this.router.navigate(['accommodations/' + this.accommodationId + '/apartments/' + this.apartmentId]);
           }
+          setStartDate(response['startDate']);
+          setEndDate(response['endDate']);
+          document.querySelector('#startDate')['value'] = response['startDate'];
+          document.querySelector('#endDate')['value'] = response['endDate'];
         }, err => {
           this.router.navigate(['accommodations/' + this.accommodationId + '/apartments/' + this.apartmentId]);
         })
@@ -53,5 +59,18 @@ export class EditReservationComponent implements OnInit {
     }, err => {
       this.router.navigate(['accommodations']);
     });
+  }
+
+  editReservation() {
+    const data = {
+      'startDate': document.querySelector('#startDate')['value'],
+      'endDate': document.querySelector('#endDate')['value']
+    }
+    this.reservationService.editReservation(this.reservationId, data)
+    .subscribe(res => {
+      console.log(res);
+    }, err => {
+      this.errorMessage = err['error'];
+    })
   }
 }

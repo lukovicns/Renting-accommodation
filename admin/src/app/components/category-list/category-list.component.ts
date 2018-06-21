@@ -12,6 +12,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 export class CategoryListComponent implements OnInit {
 
   private categories = [];
+  private errorMessage: string;
 
   constructor(
     private categoryService: CategoryService,
@@ -36,18 +37,27 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.addCategory(this.categoryForm.value)
     .subscribe(res => {
       this.initCategories();
-      this.categoryForm.reset();
     }, err => {
-      console.log(err);
+      this.errorMessage = err['error'];
     })
+    this.categoryForm.reset();
   }
 
-  removeCategory(categoryId) {
-    this.categoryService.removeCategory(categoryId)
+  activateCategory(categoryId) {
+    this.categoryService.activateCategory(categoryId)
     .subscribe(res => {
       this.initCategories();
     }, err => {
-      console.log(err);
+      this.errorMessage = err['error'];
+    })
+  }
+
+  deactivateCategory(categoryId) {
+    this.categoryService.deactivateCategory(categoryId)
+    .subscribe(res => {
+      this.initCategories();
+    }, err => {
+      this.errorMessage = err['error'];
     })
   }
 }

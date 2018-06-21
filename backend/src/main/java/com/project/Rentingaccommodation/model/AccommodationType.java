@@ -2,6 +2,8 @@ package com.project.Rentingaccommodation.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,13 +21,17 @@ public class AccommodationType {
 	@Column(name="accommodation_type_name", columnDefinition="VARCHAR(50)", unique=true, nullable=false)
 	private String name;
 	
+	@Enumerated(EnumType.STRING)
+	private AccommodationTypeStatus status;
+	
 	public AccommodationType() {
 		
 	}
 
-	public AccommodationType(String name) {
+	public AccommodationType(String name, AccommodationTypeStatus status) {
 		super();
 		this.name = name;
+		this.status = status;
 	}
 
 	public Long getId() {
@@ -42,5 +48,13 @@ public class AccommodationType {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public AccommodationTypeStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AccommodationTypeStatus status) {
+		this.status = status;
 	}
 }

@@ -8,15 +8,33 @@ export const datepicker = () => {
   });
 }
 
-export const getFormattedDate = () => {
-  let date = new Date();
-  date.setDate(new Date().getDate() + 1);
-  let year = date.getFullYear();
-  let month = (1 + date.getMonth()).toString();
-  month = month.length > 1 ? month : '0' + month;
-  let day = date.getDate().toString();
-  day = day.length > 1 ? day : '0' + day;
-  return day + '/' + month + '/' + year;
+export const setStartDate = startDate => {
+  const tomorrow = new Date();
+  tomorrow.setDate(new Date().getDate() + 1);
+  const start = buildDate(startDate);
+  $('#startDate').datepicker({
+    autoPick: true,
+    format: 'dd/MM/yyyy',
+    startDate: tomorrow,
+    update: start
+  });
+}
+
+export const setEndDate = endDate => {
+  const tomorrow = new Date();
+  tomorrow.setDate(new Date().getDate() + 1);
+  const end = buildDate(endDate);
+  $('#endDate').datepicker({
+    autoPick: true,
+    format: 'dd/MM/yyyy',
+    startDate: tomorrow,
+    update: end
+  });
+}
+
+export const buildDate = dateString => {
+  let splitter = dateString.split('/');
+  return new Date(splitter[2], splitter[1], splitter[0]);
 }
 
 export const sortTable = (n) => {
