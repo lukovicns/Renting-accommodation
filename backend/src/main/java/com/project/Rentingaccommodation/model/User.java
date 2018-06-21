@@ -168,5 +168,12 @@ public class User {
 	public void setMax_tries(int max_tries) {
 		this.max_tries = max_tries;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", city=" + city
+				+ ", street=" + street + ", phone=" + phone + ", question=" + question + ", answer=" + answer
+				+ ", max_tries=" + max_tries + ", status=" + status + "]";
+	}
 }
 

@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Comment } from '../models/Comment';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class CommentService {
 
   private url: string = 'http://localhost:8081/api/comments/';
@@ -12,11 +14,15 @@ export class CommentService {
 
   constructor(private http: HttpClient) { }
 
-  getApartmentApprovedComments(apartmentId) {
-    return this.http.get<Comment[]>(this.url + 'apartment/' + apartmentId + '/approved');
+  getWaitingComments() {
+    return this.http.get<Comment[]>(this.url + 'waiting');
   }
 
-  addComment(data) {
-    return this.http.post<Comment>(this.url, data, { headers: this.headers });
+  approveComment(commentId) {
+    return this.http.put<Comment>(this.url + commentId + '/approve', null, { headers: this.headers });
+  }
+
+  declineComment(commentId) {
+    return this.http.delete<Comment>(this.url + commentId, { headers: this.headers });
   }
 }

@@ -68,7 +68,7 @@ export class EditReservationComponent implements OnInit {
     }
     this.reservationService.editReservation(this.reservationId, data)
     .subscribe(res => {
-      console.log(res);
+      this.router.navigate(['reservations']);
     }, err => {
       this.errorMessage = err['error'];
     })

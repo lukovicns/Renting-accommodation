@@ -8,6 +8,12 @@
     </ol>
   </nav>
   <div class="container">
+    <div class="alert alert-success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
     <div class="row">
       <div class="col-lg-8 col-md-7 col-sm-6">
         <div class="card">
@@ -54,19 +60,37 @@
       <div class="col-lg-4 col-md-5 col-sm-6">
         <div class="row">
           <div class="col-lg-12">
-            <div class="card">
+            <div class="card" id="add-comment">
               <div class="card-header">
-                <h3>Comments</h3>
+                <h4>Add comment</h4>
+              </div>
+              <div class="card-body">
+                <form [formGroup]="commentForm" (ngSubmit)="addComment()">
+                  <div class="form-group">
+                    <textarea id="add-comment" class="form-control" formControlName="comment" cols="30" rows="5" placeholder="Enter your comment here"></textarea>
+                  </div>
+                  <button class="btn btn-success" [disabled]="!commentForm.valid">Add comment</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12">
+            <div class="card" *ngIf="comments && comments.length > 0">
+              <div class="card-header">
+                <h4>Comments</h4>
               </div>
               <div class="card comment-card" *ngFor="let comment of comments">
                 <div class="card-body">
-                  <p>From: <strong>{{ comment.user?.email }}</strong></p>
-                  <hr>
-                  <strong>Comment: </strong>{{ comment.comment }}
-                  <hr>
-                  <p id="created-on">Comment created on: {{ comment.date }}, {{ comment.time }}</p>
+                  <p>From: <strong id="comment-user">{{ comment.user?.email }}</strong></p>
+                  <div class="card content-card">
+                    {{ comment.comment }}
+                  </div>
+                  <p id="created-on">Created on: {{ comment.date }}, {{ comment.time }}</p>
                 </div>
               </div>
+            </div>
+            <div *ngIf="!comments || comments.length == 0">
+              <h3>There are no approved comments yet!</h3>
             </div>
           </div>
         </div>

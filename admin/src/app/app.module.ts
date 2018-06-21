@@ -13,6 +13,7 @@ import { CategoryListComponent } from './components/category-list/category-list.
 import { TypeListComponent } from './components/type-list/type-list.component';
 import { EditTypeComponent } from './components/edit-type/edit-type.component';
 import { EditCategoryComponent } from './components/edit-category/edit-category.component';
+import { CommentListComponent } from './components/comment-list/comment-list.component';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { EditCategoryComponent } from './components/edit-category/edit-category.
     CategoryListComponent,
     TypeListComponent,
     EditTypeComponent,
-    EditCategoryComponent
+    EditCategoryComponent,
+    CommentListComponent
   ],
   imports: [
     BrowserModule,

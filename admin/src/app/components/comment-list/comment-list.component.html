@@ -1,0 +1,48 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Comments</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+    <table class="table" *ngIf="comments && comments.length > 0; else noComments">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">User</th>
+          <th scope="col">Accommodation</th>
+          <th scope="col">Apartment</th>
+          <th scope="col">Comment</th>
+          <th scope="col">Date</th>
+          <th scope="col">Time</th>
+          <th scope="col">Approve</th>
+          <th scope="col">Decline</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let comment of comments; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ comment.user?.email }}</td>
+          <td>{{ comment.appartment?.accommodation.name }}</td>
+          <td>{{ comment.apartment?.name }}</td>
+          <td>{{ comment.comment }}</td>
+          <td>{{ comment.date }}</td>
+          <td>{{ comment.time }}</td>
+          <td>
+            <button class="btn btn-success btn-sm" (click)="approveComment(comment.id)">Approve</button>
+          </td>
+          <td>
+            <button class="btn btn-danger btn-sm" (click)="declineComment(comment.id)">Decline</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noComments>
+      <h1>There are no comments to be approved yet!</h1>
+    </ng-template>
+  </div>
+</div>

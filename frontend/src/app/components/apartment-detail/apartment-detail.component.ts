@@ -7,6 +7,7 @@ import { ApartmentAdditionalServiceService } from '../../services/apartment-addi
 import { ReservationService } from '../../services/reservation.service';
 import { UserService } from '../../services/user.service';
 import { CommentService } from '../../services/comment.service';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-apartment-detail',
@@ -18,6 +19,8 @@ export class ApartmentDetailComponent implements OnInit {
 
   private image: string = 'https://t-ec.bstatic.com/images/hotel/max1280x900/120/120747263.jpg';
   private hasReservation: boolean;
+  private errorMessage: string;
+  private successMessage: string;
   private apartmentAdditionalServices = [];
   private accommodationId: Number;
   private apartmentId: Number;
@@ -31,9 +34,14 @@ export class ApartmentDetailComponent implements OnInit {
     private apartmentService: ApartmentService,
     private commentService: CommentService,
     private userService: UserService,
+    private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router
   ) { }
+
+  commentForm = this.formBuilder.group({
+    comment: ['', Validators.required]
+  });
 
   ngOnInit() {
     this.hasReservation = false;
@@ -60,14 +68,28 @@ export class ApartmentDetailComponent implements OnInit {
             this.hasReservation = true;
           }
         })
-        this.commentService.getApartmentComments(this.apartmentId)
+        this.commentService.getApartmentApprovedComments(this.apartmentId)
         .subscribe(res => {
           this.comments = res;
-          console.log(res);
         });
       }
     }, err => {
       this.router.navigate(['accommodations']);
     })
+  }
+
+  addComment() {
+    const data = {
+      'apartment': this.apartment,
+      'comment': this.commentForm.value['comment']
+    }
+    this.commentService.addComment(data)
+    .subscribe(resp => {
+      this.successMessage = 'Comment successfully submitted. Waiting for approval.';
+      this.ngOnInit();
+    }, err => {
+      this.errorMessage = err['error'];
+    })
+    this.commentForm.reset();
   }
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Comment;
 import com.project.Rentingaccommodation.model.CommentStatus;
 import com.project.Rentingaccommodation.model.User;
@@ -14,16 +16,16 @@ import com.project.Rentingaccommodation.service.CommentService;
 
 @Transactional
 @Service
-public class JpaReviewService implements CommentService {
+public class JpaCommentService implements CommentService {
 
     @Autowired
     CommentRepository repository;
 
 	@Override
 	public Comment findOne(Long id) {
-		for (Comment review : repository.findAll()) {
-			if (review.getId() == id) {
-				return review;
+		for (Comment comment : repository.findAll()) {
+			if (comment.getId() == id) {
+				return comment;
 			}
 		}
 		return null;
@@ -44,18 +46,29 @@ public class JpaReviewService implements CommentService {
 		}
 		return approvedComments;
 	}
-
+	
 	@Override
-	public List<Comment> findDeclinedComments() {
-		List<Comment> declinedComments = new ArrayList<Comment>();
-		for (Comment comment : findAll()) {
-			if (comment.getStatus().equals(CommentStatus.DECLINED)) {
-				declinedComments.add(comment);
+	public List<Comment> findApartmentApprovedComments(Long id) {
+		List<Comment> approvedComments = new ArrayList<Comment>();
+		for (Comment comment : findApartmentComments(id)) {
+			if (comment.getStatus().equals(CommentStatus.APPROVED)) {
+				approvedComments.add(comment);
 			}
 		}
-		return declinedComments;
+		return approvedComments;
 	}
 	
+	@Override
+	public Comment findByUserAndApartment(Long apartmentId, Long userId) {
+		for (Comment comment : findApartmentComments(apartmentId)) {
+			System.out.println(comment);
+			if (comment.getUser().getId() == userId) {
+				return comment;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public List<Comment> findWaitingComments() {
 		List<Comment> waitingComments = new ArrayList<Comment>();
