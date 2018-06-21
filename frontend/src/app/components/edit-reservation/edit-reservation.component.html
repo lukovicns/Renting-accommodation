@@ -6,4 +6,27 @@
         <li class="breadcrumb-item active">Edit reservation</li>
     </ol>
   </nav>
+  <div class="container">
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h1>Edit reservation</h1>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="editReservation()">
+          <div class="form-group">
+              <label for="startDate">Start date</label>
+              <input type="text" class="form-control" id="startDate" data-toggle="datepicker">
+          </div>
+          <div class="form-group">
+              <label for="endDate">Start date</label>
+              <input type="text" class="form-control" id="endDate" data-toggle="datepicker">
+          </div>
+          <button type="submit" class="btn btn-info btn-block">Edit reservations</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

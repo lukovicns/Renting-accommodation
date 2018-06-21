@@ -5,12 +5,12 @@ insert into country (country_id, country_code, country_name) values (3, 'SLO', '
 insert into city (city_id, country_id, name, zipcode) values (1, 1, 'Novi Sad', '21000');
 insert into city (city_id, country_id, name, zipcode) values (2, 1, 'Beograd', '11000');
 
-insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (1, 'Hotel');
-insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (2, 'Bed & breakfast');
-insert into accommodation_type (accommodation_type_id, accommodation_type_name) values (3, 'Apartment');
+insert into accommodation_type (accommodation_type_id, accommodation_type_name, status) values (1, 'Hotel', 'ACTIVE');
+insert into accommodation_type (accommodation_type_id, accommodation_type_name, status) values (2, 'Bed & breakfast', 'ACTIVE');
+insert into accommodation_type (accommodation_type_id, accommodation_type_name, status) values (3, 'Apartment', 'ACTIVE');
 
-insert into accommodation_category (accommodation_category_id, accommodation_category_name) values (1, '1-5 stars');
-insert into accommodation_category (accommodation_category_id, accommodation_category_name) values (2, 'Uncategorized');
+insert into accommodation_category (accommodation_category_id, accommodation_category_name, status) values (1, '1-5 stars', 'ACTIVE');
+insert into accommodation_category (accommodation_category_id, accommodation_category_name, status) values (2, 'Uncategorized', 'ACTIVE');
 
 insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id) values (1, 'Goran', 'Goranovic', 'passpass', 'g@g.com', 1, 'Narodnog fronta 1', '0640000000', 1);
 insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id) values (2, 'Pera', 'Petrovic', 'passpass', 'p@p.com', 2, 'Novosadska 43', '0641111111', 2);

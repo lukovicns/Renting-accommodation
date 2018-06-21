@@ -11,4 +11,7 @@ public interface AccommodationTypeService {
 	List<AccommodationType> findAll();
 	AccommodationType save(AccommodationType type);
 	void delete(AccommodationType type);
+	List<AccommodationType> findActiveTypes();
+	List<AccommodationType> findInactiveTypes();
+	AccommodationType findByTypeName(String name);
 }

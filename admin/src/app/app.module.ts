@@ -11,6 +11,8 @@ import { AgentListComponent } from './components/agent-list/agent-list.component
 import { HomeComponent } from './components/home/home.component';
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { TypeListComponent } from './components/type-list/type-list.component';
+import { EditTypeComponent } from './components/edit-type/edit-type.component';
+import { EditCategoryComponent } from './components/edit-category/edit-category.component';
 
 
 @NgModule({
@@ -21,7 +23,9 @@ import { TypeListComponent } from './components/type-list/type-list.component';
     AgentListComponent,
     HomeComponent,
     CategoryListComponent,
-    TypeListComponent
+    TypeListComponent,
+    EditTypeComponent,
+    EditCategoryComponent
   ],
   imports: [
     BrowserModule,
