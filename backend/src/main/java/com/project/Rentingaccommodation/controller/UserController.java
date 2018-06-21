@@ -24,6 +24,7 @@ import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JwtGenerator;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.service.AdminService;
+import com.project.Rentingaccommodation.service.AgentService;
 import com.project.Rentingaccommodation.service.CityService;
 import com.project.Rentingaccommodation.service.UserService;
 import com.project.Rentingaccommodation.utils.PasswordUtil;
@@ -39,6 +40,9 @@ public class UserController {
 	
 	@Autowired
 	private AdminService adminService;
+	
+	@Autowired
+	private AgentService agentService;
 
 	@Autowired
 	private CityService cityService;
@@ -85,7 +89,7 @@ public class UserController {
 			return new ResponseEntity<>("All fields are required (name, surname, email, city, street, phone, password, question, answer).", HttpStatus.FORBIDDEN);
 		}
 		
-		if (UserUtils.userExists(user.getEmail(), userService, adminService)) {
+		if (UserUtils.userExists(user.getEmail(), userService, adminService, agentService)) {
 			return new ResponseEntity<>("User with this email already exists.", HttpStatus.FORBIDDEN);
 		}
 		

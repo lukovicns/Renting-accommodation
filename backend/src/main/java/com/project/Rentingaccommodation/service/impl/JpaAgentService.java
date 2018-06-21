@@ -24,12 +24,7 @@ public class JpaAgentService implements AgentService {
 
 	@Override
 	public Agent findOne(Long id) {
-		for (Agent agent : findAll()) {
-			if (agent.getId() == id) {
-				return agent;
-			}
-		}
-		return null;
+		return repository.getOne(id);
 	}
 
 	@Override
@@ -40,5 +35,17 @@ public class JpaAgentService implements AgentService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public Agent findByEmail(String email) {
+		// TODO Auto-generated method stub
+		return repository.findByEmail(email);
+	}
+
+	@Override
+	public Agent save(Agent regAgent) {
+		// TODO Auto-generated method stub
+		return repository.save(regAgent);
 	}
 }

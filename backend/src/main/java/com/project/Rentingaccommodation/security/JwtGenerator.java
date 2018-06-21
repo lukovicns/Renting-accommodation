@@ -43,4 +43,15 @@ public class JwtGenerator {
                 .signWith(SignatureAlgorithm.HS512, "secretKey")
                 .compact();
 	}
+	
+	public String generateAgent(JwtUser jwtUser) {
+    	Claims claims = Jwts.claims();
+    	claims.put("id", jwtUser.getId());
+    	claims.put("email", jwtUser.getEmail());
+		claims.put("role", UserRoles.ADMIN);
+		return Jwts.builder()
+                .setClaims(claims)
+                .signWith(SignatureAlgorithm.HS512, "secretKey")
+                .compact();
+	}
 }

@@ -42,6 +42,7 @@ public class JpaAccommodationCategoryServiceImpl implements AccommodationCategor
 
 	@Override
 	public List<AccommodationCategory> findAll() {
+		System.out.println("rep " + repository); 
 		return repository.findAll();
 	}
 
