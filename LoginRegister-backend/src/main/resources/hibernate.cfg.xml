@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><hibernate-configuration>
+    <session-factory>
+        <property name="connection.driver_class">
+            com.mysql.jdbc.Driver
+            </property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/?createDatabaseIfNotExist=true&amp;useSSL=false</property>
+        <property name="connection.username">
+            root
+        </property>
+        <property name="connection.password">
+            root
+        </property>
+        <property name="connection.pool_size">15</property>
+        <!-- SQL dialect -->
+        <property name="dialect">
+            org.hibernate.dialect.MySQL5Dialect
+        </property>
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">create</property>
+
+        <mapping class="com.project.Rentingaccommodation.model.User"/>
+        <mapping class="com.project.Rentingaccommodation.model.Agent"/>
+        <mapping class="com.project.Rentingaccommodation.model.Accommodation"/>
+        <mapping class="com.project.Rentingaccommodation.model.AccommodationCategory"/>
+        <mapping class="com.project.Rentingaccommodation.model.AccommodationType"/>
+        <mapping class="com.project.Rentingaccommodation.model.Apartment"/>
+        <mapping class="com.project.Rentingaccommodation.model.AdditionalService"/>
+        <mapping class="com.project.Rentingaccommodation.model.ApartmentService"/>
+        <mapping class="com.project.Rentingaccommodation.model.BedType"/>
+        <mapping class="com.project.Rentingaccommodation.model.City"/>
+        <mapping class="com.project.Rentingaccommodation.model.Country"/>
+        <mapping class="com.project.Rentingaccommodation.model.Image"/>
+        <mapping class="com.project.Rentingaccommodation.model.Reservation"/>
+        <mapping class="com.project.Rentingaccommodation.model.PricePlan"/>
+    </session-factory>
+</hibernate-configuration>
