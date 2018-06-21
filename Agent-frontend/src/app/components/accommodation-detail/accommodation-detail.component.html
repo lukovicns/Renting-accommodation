@@ -1,0 +1,104 @@
+ <div [@fadeIn]> 
+	<div class="container" *ngIf="accommodation">
+	  <div class="jumbotron">
+	  	<h4 class="display-4">{{ title }}</h4>
+	      <p class="lead"></p>
+	      <h4 class="display-6">Accommodation details</h4>
+		  <hr>
+		    <div class="group row">	
+			    <div class="col-sm-4">
+			       <label for="name">Name</label>
+			       <input type="text" class="form-control" id="name" [(ngModel)] = "accommodation.name" [readonly]="true"> 
+			    </div>
+		     </div>
+		     <hr>
+		     <div class="group row">
+			    <div class="col-sm-4 col-sm-offset-10">
+			      <label for="street">Street</label>
+			      <input type="text" class="form-control" id="street" [(ngModel)] = "accommodation.street" [readonly]="true"> 
+			    </div>
+			    <div class="col-sm-4">
+			        <label for="city">City</label>
+			        <input type="text" class="form-control" id="city" [(ngModel)] = "accommodation.city" [readonly]="true"> 
+			     </div>
+			     <div class="col-sm-4 col-sm-offset-10">
+				     <label for="country">Country</label>
+				     <input type="text" class="form-control" id="country" [(ngModel)] = "accommodation.country" [readonly]="true"> 
+				  </div>
+			  </div>
+			  <hr>
+			  <div class="group row">
+			      <div class="col-sm-2 col-sm-offset-10">
+				      <label for="accCat">Category</label>
+				      <input type="text" class="form-control" id="accCat" [(ngModel)] = "accommodation.category" [readonly]="true"> 
+			      </div>
+			      <div class="col-sm-3">
+			      	   <label for="accType">Type</label>
+			           <input type="text" class="form-control" id="accType" [(ngModel)] = "accommodation.type" [readonly]="true"> 
+			      </div>
+			      
+			    <div class="col-sm-7 col-sm-offset-4">
+			           <label for="description">Description</label>
+			          <!--  <div><textarea style="height: '550px'" [(ngModel)] = "accommodation.description" rows="6" cols="60" id="description"  [readonly]="true"></textarea></div> -->
+			           <input type="text" style="height:100px" class="form-control" id="description" [(ngModel)] = "accommodation.description" [readonly]="true">
+			  </div>
+		  	</div>
+		  	<div class="group row">
+		  	 	 <div class="col-sm-2 col-sm-offset-10">
+		  		  	<button class="btn btn-info" routerLink="/apartmentTable" type="button">Show gallery</button>
+		  		  </div>
+		  	</div>
+	</div>
+	
+	<div class="jumbotron">
+	<div>
+        	<button class="btn btn-outline-info" [routerLink]="['/apartment', accommodation.id]" type="button">Add apartment</button>
+       </div>
+		<!-- <ul>
+	       	<li class="nav-item">
+		        <a class="nav-link" [routerLink]="['/apartment', accommodation.id]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Add apartment</a>
+		      </li>
+		</ul> -->
+		<hr>
+	  	<h4 class="display-6">Apartments</h4>
+	  	<div *ngIf="!show"></div>{{msg}}
+	  	<div *ngIf="show">
+			  <div class="row">
+			         <table class="table">
+			             <thead class="thead-inverse">
+			             <tr>
+			                 <th class="text-center">Name</th>
+			                 <th class="text-center">Bed type</th>
+			                 <th class="text-center">Size(m^2)</th>
+			                 <th class="text-center">Number of rooms</th>
+			                 <th class="text-center">Number of guests</th>
+			                 <th class="text-center">Description</th>
+			                 <th class="text-center">Image</th>
+			             </tr>
+			             </thead>
+			             <tbody>
+			             <tr *ngFor="let apartment of apartments">
+		                 <td class="text-center" style="width: 15px;">{{apartment.name}}</td>
+		                 <td class="text-center" style="width: 15px;">{{apartment.bedType}}</td>
+		                 <td class="text-center" style="width: 15px;">{{apartment.size}}</td>
+		                 <td class="text-center" style="width: 15px;">{{apartment.numOfRooms}}</td>
+		                 <td class="text-center" style="width: 15px;">{{apartment.numOfGuests}}</td>
+		                 <td class="text-center" style="width: 15px;">{{apartment.image}}</td>
+						 <td class="text-center" style="width: 15px;">
+							<div>
+				                <button class="btn btn-outline-info" type="button" [routerLink]="['/apartmentDetail', apartment.id]">Details</button>
+				            </div>
+				          </td>
+				          <td class="text-center" style="width: 15px;">
+				            <div>
+				                <button class="btn btn-outline-danger" type="button" (click)="deleteApartment(apartment.id)">Delete</button>
+				            </div>
+				        </td>
+		             </tr>
+			             </tbody>
+			         </table>
+			     </div>
+			  </div>
+			</div>
+		</div> 
+</div>

@@ -1,0 +1,70 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active">Inbox</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a id="received" class="nav-link active" (click)="receivedTabActive()">Received</a>
+          </li>
+          <li class="nav-item">
+            <a id="sent" class="nav-link" (click)="sentTabActive()">Sent</a>
+          </li>
+        </ul>
+        <table class="table" *ngIf="receivedTab">
+          <thead class="thead-light">
+            <tr>
+              <th scope="row">From</th>
+              <th scope="row">Content</th>
+              <th scope="row">Date</th>
+              <th scope="row">Time</th>
+              <th scope="row">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let message of receivedMessages" [ngClass]="message.status === 'UNREAD' ? 'unread' : 'read'">
+              <!-- <td>{{ message.agent?.email }}</td>
+              <td><a routerLink="/inbox/received/{{ message.id }}">{{ message.text | truncate: 30 }}</a></td>
+              <td>{{ message.date }}</td>
+              <td>{{ message.time }}</td>
+              <td>
+                <a (click)="deleteReceivedMessage(message)">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td> -->
+            </tr>
+          </tbody>
+        </table>
+        <table class="table" *ngIf="sentTab">
+          <thead class="thead-light">
+            <tr>
+              <th scope="row">To</th>
+              <th scope="row">Content</th>
+              <th scope="row">Date</th>
+              <th scope="row">Time</th>
+              <th scope="row">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let message of sentMessages">
+              <!-- <td>{{ message.agent?.email }}</td> 
+              <td><a routerLink="/inbox/sent/{{ message.id }}">{{ message.text | truncate: 30 }}</a></td>
+              <td>{{ message.date }}</td>
+              <td>{{ message.time }}</td>
+              <td>
+                <a>
+                  <i (click)="deleteSentMessage(message)" class="fas fa-trash"></i>
+                </a>
+              </td>-->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div [@fadeIn]>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h1>New accommodation</h1>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="accommodationForm" (ngSubmit)="addAccommodation()">
+        
+          <div class="form-group">
+           	<label for="name">Name</label>
+           	<input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter accommodaion name here">
+          </div>
+          
+          <!-- [(ngModel)]="accommodationTypes" id="accommodationTypes" [ngModelOptions]="{standalone: true}" -->
+          <div class="form-group">
+            <label for="accType">Accommodation type</label>
+	        <select formControlName="accType" required class="form-control"><!-- [(ngModel)]="model" name="type"> -->
+			    <option *ngFor="let at of accommodationTypes" [value]="at.id">{{at.name}}</option>
+			</select>
+		  </div>
+		  
+		  <div class="form-group">
+            <label for="accCat">Accommodation category</label>
+            <select formControlName="accCat" required class="form-control"><!-- [(ngModel)]="model" name="type"> -->
+			    <option *ngFor="let ac of accommodationCategory" [value]="ac.id">{{ac.name}}</option>
+			</select>
+		  </div>
+		  
+		  <div class="form-group">
+            <label for="city">City</label>
+            <select formControlName="city" required class="form-control"><!-- [(ngModel)]="model" name="type"> -->
+			    <option *ngFor="let c of cities" [value]="c.id">{{c.name}}</option>
+			</select>
+		  </div>
+		  
+		  <div class="form-group">
+            <label for="street">Street</label>
+            <input formControlName="street" type="text" class="form-control" id="street" placeholder="Enter street here"> 
+		  </div>
+		  
+		  <div class="form-group">
+            <label for="description">Description</label>
+           <!--  <div><textarea style="overflow:auto;resize:none" formControlName="description" rows="6" cols="60" id="description" placeholder="Enter description here"></textarea></div> -->
+            <input formControlName="description" style="height:100px" type="text" class="form-control" id="description" placeholder="Enter description here">
+		  </div>
+		  
+		   <div class="form-group">
+            <label for="image">Image</label>
+           	<div>
+           		{{imgName}}
+             	<input formControlName="image" style="display: none" type="file" (change)="onFileChanged($event)" #fileInput> 
+			 	<button type="button" class="btn btn-outline-info" (click)="fileInput.click()">Select File</button>
+			 </div>
+		  </div>
+					  
+          <button type="submit" class="btn btn-info btn-block" >Add</button>
+        </form>
+      </div>
+    </div> 
+  </div>
+</div>

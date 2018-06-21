@@ -1,0 +1,40 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+        <li class="breadcrumb-item"><a routerLink="/inbox">Inbox</a></li>
+        <li class="breadcrumb-item active">Message</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="card" *ngIf="messageDirection == 'received'">
+      <div class="card-header">
+        <h3>Recieved messages</h3>
+        <hr>
+        <a routerLink="/inbox">Go back</a>
+      </div>
+      <div class="card-body">
+        <p><strong>From agent:</strong>&nbsp; {{ message.agent?.email }}</p>
+        <p><strong>To user:</strong>&nbsp; {{ message.user?.email }}</p>
+        <hr>
+        <div class="card-body">
+            {{ message.text }}
+        </div>
+      </div>
+    </div>
+    <div class="card" *ngIf="messageDirection == 'sent'">
+      <div class="card-header">
+        <h3>Sent messages</h3>
+        <hr>
+        <a routerLink="/inbox">Go back</a>
+      </div>
+      <div class="card-body">
+        <p><strong>To agent:</strong>&nbsp; {{ message.agent?.email }}</p>
+        <hr>
+        <div class="card-body">
+            {{ message.text }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

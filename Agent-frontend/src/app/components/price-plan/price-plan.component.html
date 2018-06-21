@@ -1,0 +1,31 @@
+<div [@fadeIn]>
+	  <div class="container">
+	    <div class="card">
+	      <div class="card-header">
+	        <h1>New price plan</h1>
+	      </div>
+	      <div class="card-body">
+	        <form [formGroup]="pricePlanForm" (ngSubmit)="addPricePlan()">
+	        
+	          <div class="form-group">
+	            <label for="startDate">Start date</label>
+	              <input type="text" class="form-control" id="startDate" data-toggle="datepicker">
+	          	<!-- <input formControlName="startDate" type="date"/> -->
+			  </div>
+			  
+			  <div class="form-group">
+			   <label for="endDate">End date</label>
+	          	<input formControlName="endDate" type="date"/>
+			  </div>
+			  
+			   <div class="form-group">
+	           	<label for="price">Price</label>
+	           	<input formControlName="price" type="number" class="form-control" id="price" placeholder="Define price here">
+	          </div>
+						  
+	          <button type="submit" class="btn btn-info btn-block">Add</button>
+	        </form>
+	      </div>
+	    </div> 
+	</div>
+</div>
