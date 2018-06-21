@@ -19,7 +19,7 @@ public class JwtGenerator {
 
     public String generateUser(JwtUser jwtUser) {
     	Claims claims = Jwts.claims();
-        User user = userService.findByEmail(jwtUser.getEmail());
+        User user = userService.findOne(jwtUser.getId());
         if(user != null) {
         	claims.put("id", jwtUser.getId());
         	claims.put("email", jwtUser.getEmail());

@@ -36,6 +36,7 @@ import { MessageDetailComponent } from './components/message-detail/message-deta
 import { EditReservationComponent } from './components/edit-reservation/edit-reservation.component';
 import { AccommodationTypeService } from './services/accommodation-type.service';
 import { AccommodationCategoryService } from './services/accommodation-category.service';
+import { CommentService } from './services/comment.service';
 
 
 @NgModule({
@@ -81,6 +82,7 @@ import { AccommodationCategoryService } from './services/accommodation-category.
     AdditionalServiceService,
     AccommodationTypeService,
     AccommodationCategoryService,
+    CommentService,
     AuthGuard
   ],
   bootstrap: [AppComponent]

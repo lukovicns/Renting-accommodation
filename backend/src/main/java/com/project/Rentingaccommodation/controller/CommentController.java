@@ -15,20 +15,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Rentingaccommodation.model.Apartment;
-import com.project.Rentingaccommodation.model.Review;
+import com.project.Rentingaccommodation.model.Comment;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.ApartmentService;
-import com.project.Rentingaccommodation.service.ReviewService;
+import com.project.Rentingaccommodation.service.CommentService;
 import com.project.Rentingaccommodation.service.UserService;
 
 @RestController
-@RequestMapping(value = "/api/reviews")
-public class ReviewController {
+@RequestMapping(value = "/api/comments")
+public class CommentController {
 
     @Autowired
-    private ReviewService service;
+    private CommentService service;
     
     @Autowired
     private UserService userService;
@@ -40,56 +40,55 @@ public class ReviewController {
     private JwtValidator jwtValidator;
     
 	@RequestMapping(value="", method=RequestMethod.GET)
-    public ResponseEntity<List<Review>> getReviews() {
+    public ResponseEntity<List<Comment>> getComments() {
     	return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 	
 	@RequestMapping(value="/approved", method=RequestMethod.GET)
-    public ResponseEntity<List<Review>> getApprovedReviews() {
-    	return new ResponseEntity<>(service.findApprovedReviews(), HttpStatus.OK);
+    public ResponseEntity<List<Comment>> getApprovedComments() {
+    	return new ResponseEntity<>(service.findApprovedComments(), HttpStatus.OK);
     }
 	
 	@RequestMapping(value="/declined", method=RequestMethod.GET)
-    public ResponseEntity<List<Review>> getDeclinedReviews() {
-    	return new ResponseEntity<>(service.findDeclinedReviews(), HttpStatus.OK);
+    public ResponseEntity<List<Comment>> getDeclinedComments() {
+    	return new ResponseEntity<>(service.findDeclinedComments(), HttpStatus.OK);
     }
 	
 	@RequestMapping(value="/waiting", method=RequestMethod.GET)
-    public ResponseEntity<List<Review>> getWaitingReviews() {
-    	return new ResponseEntity<>(service.findWaitingReviews(), HttpStatus.OK);
+    public ResponseEntity<List<Comment>> getWaitingComments() {
+    	return new ResponseEntity<>(service.findWaitingComments(), HttpStatus.OK);
     }
     
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-    public ResponseEntity<Object> getReview(@PathVariable Long id) {
-		Review review = service.findOne(id);
-		if (review == null) {
-			return new ResponseEntity<>("Review not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> getComment(@PathVariable Long id) {
+		Comment comment = service.findOne(id);
+		if (comment == null) {
+			return new ResponseEntity<>("Comment not found.", HttpStatus.NOT_FOUND);
 		}
-        return new ResponseEntity<>(review, HttpStatus.OK);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 	
 	@RequestMapping(value="/apartment/{id}", method=RequestMethod.GET)
-    public List<Review> getAllReviewsForApartment(@PathVariable Long id) {
-        return service.findApartmentReviews(id);
+    public List<Comment> getAllCommentsForApartment(@PathVariable Long id) {
+        return service.findApartmentComments(id);
     }
     
 	@RequestMapping(value="", method=RequestMethod.POST)
-    public ResponseEntity<Object> addReview(@RequestBody Review data, @RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<Object> addComment(@RequestBody Comment data, @RequestHeader("Authorization") String authHeader) {
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				if (data.getUser().getId() == null || Long.valueOf(data.getUser().getId()) == 0 ||
-					data.getApartment().getId() == null || Long.valueOf(data.getApartment().getId()) == 0 ||
-					data.getComment() == null || data.getComment() == "") {
-					return new ResponseEntity<>("All fields are required (user id, apartment id, comment, rating).", HttpStatus.FORBIDDEN);
-				}
-				User user = userService.findByEmail(jwtUser.getEmail());
-				Apartment apartment = apartmentService.findOne(data.getApartment().getId());
-				
+				User user = userService.findOne(jwtUser.getId());
 				if (user == null) {
 					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 				}
+				
+				if (data.getApartment() == null || Long.valueOf(data.getApartment().getId()) == 0 || data.getComment() == null || data.getComment() == "") {
+					return new ResponseEntity<>("You must enter apartment and comment.", HttpStatus.FORBIDDEN);
+				}
+				
+				Apartment apartment = apartmentService.findOne(data.getApartment().getId());
 				
 				if (apartment == null) {
 					return new ResponseEntity<>("Apartment not found.", HttpStatus.NOT_FOUND);
@@ -100,9 +99,9 @@ public class ReviewController {
 				String date = dateFormatter.format(new Date());
 				String time = timeFormatter.format(new Date());
 				
-				Review review = new Review(user, apartment, data.getComment(), date, time);
+				Comment comment = new Comment(user, apartment, data.getComment(), date, time);
 				
-		        return new ResponseEntity<>(service.save(review), HttpStatus.OK);
+		        return new ResponseEntity<>(service.save(comment), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
@@ -111,19 +110,14 @@ public class ReviewController {
 		}
     }
 
-	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-    public ResponseEntity<Object> updateReview(@RequestBody Review review, @PathVariable Long id) {
-        return null;
-    }
-
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-    public ResponseEntity<Object> deleteReview(@PathVariable Long id) {
-		Review review = service.findOne(id);
-		if (review == null) {
-			return new ResponseEntity<>("Review not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> deleteComment(@PathVariable Long id) {
+		Comment comment = service.findOne(id);
+		if (comment == null) {
+			return new ResponseEntity<>("Comment not found.", HttpStatus.NOT_FOUND);
 		}
-		service.delete(review);
-        return new ResponseEntity<>(review, HttpStatus.OK);
+		service.delete(comment);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 	
 //	@RequestMapping(value="/accommodation/{id}/grade", method=RequestMethod.GET)

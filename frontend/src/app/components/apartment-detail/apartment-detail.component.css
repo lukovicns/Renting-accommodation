@@ -18,3 +18,17 @@ ul.list-group {
 a.btn {
   margin-top: 15px;
 }
+
+.comment-card {
+  width: 100%;
+}
+
+h3 {
+  text-align: center;
+}
+
+#created-on {
+  font-size: 90%;
+  color: gray;
+  float: right;
+}

@@ -6,6 +6,7 @@ import { fadeIn } from '../../animations';
 import { ApartmentAdditionalServiceService } from '../../services/apartment-additional-service.service';
 import { ReservationService } from '../../services/reservation.service';
 import { UserService } from '../../services/user.service';
+import { CommentService } from '../../services/comment.service';
 
 @Component({
   selector: 'app-apartment-detail',
@@ -21,12 +22,14 @@ export class ApartmentDetailComponent implements OnInit {
   private accommodationId: Number;
   private apartmentId: Number;
   private apartment = {};
+  private comments = [];
 
   constructor(
     private apartmentAdditionalServiceService: ApartmentAdditionalServiceService,
     private accommodationService: AccommodationService,
     private reservationService: ReservationService,
     private apartmentService: ApartmentService,
+    private commentService: CommentService,
     private userService: UserService,
     private route: ActivatedRoute,
     private router: Router
@@ -57,6 +60,11 @@ export class ApartmentDetailComponent implements OnInit {
             this.hasReservation = true;
           }
         })
+        this.commentService.getApartmentComments(this.apartmentId)
+        .subscribe(res => {
+          this.comments = res;
+          console.log(res);
+        });
       }
     }, err => {
       this.router.navigate(['accommodations']);

@@ -12,12 +12,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="review")
-public class Review {
+@Table(name="comment")
+public class Comment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "review_id", updatable = false, nullable = false, insertable=false)
+	@Column(name = "comment_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
 	@OneToOne
@@ -38,23 +38,20 @@ public class Review {
 	private String time;
 	
 	@Enumerated(EnumType.STRING)
-	private ReviewStatus status;
-	
-//	@ManyToOne
-//	protected Accommodation accommodation;
+	private CommentStatus status;
 
-	public Review() {
+	public Comment() {
 		
 	}
 	
-	public Review(User user, Apartment apartment, String comment, String date, String time) {
+	public Comment(User user, Apartment apartment, String comment, String date, String time) {
 		super();
 		this.user = user;
 		this.apartment = apartment;
 		this.comment = comment;
 		this.date = date;
 		this.time = time;
-		this.status = ReviewStatus.WAITING;
+		this.status = CommentStatus.WAITING;
 	}
 
 	public Long getId() {
@@ -105,11 +102,11 @@ public class Review {
 		this.time = time;
 	}
 
-	public ReviewStatus getStatus() {
+	public CommentStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(ReviewStatus status) {
+	public void setStatus(CommentStatus status) {
 		this.status = status;
 	}
 }

@@ -19,7 +19,6 @@ export class ReservationListComponent implements OnInit {
     this.reservationService.getUserReservations()
     .subscribe(res => {
       this.reservations = res;
-      console.log(this.reservations);
     }, err => {
       console.log(err);
     });

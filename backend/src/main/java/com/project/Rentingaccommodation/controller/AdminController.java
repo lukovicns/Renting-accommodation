@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.Rentingaccommodation.model.Admin;
-import com.project.Rentingaccommodation.model.Review;
+import com.project.Rentingaccommodation.model.Comment;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserStatus;
 import com.project.Rentingaccommodation.security.JwtGenerator;
@@ -80,7 +80,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/decline-review/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Review> declineReview(@PathVariable Long id) {
+	public ResponseEntity<Comment> declineReview(@PathVariable Long id) {
 		return null;
 	}
 	

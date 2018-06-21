@@ -47,9 +47,9 @@ public class ReservationController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				User user = userService.findByEmail(jwtUser.getEmail());
+				User user = userService.findOne(jwtUser.getId());
 				if (user == null) {
-					return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 				}
 				List<Reservation> userReservations = service.findUserReservations(jwtUser.getEmail());
 				return new ResponseEntity<>(userReservations, HttpStatus.OK);
@@ -68,6 +68,9 @@ public class ReservationController {
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
 				User user = userService.findOne(jwtUser.getId());
+				if (user == null) {
+					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+				}
 				Reservation reservation = service.findUserReservationByApartmentId(user, apartmentId);
 				return new ResponseEntity<>(reservation, HttpStatus.OK);
 			} else {
@@ -89,19 +92,17 @@ public class ReservationController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
+				User user = userService.findOne(jwtUser.getId());
+				if (user == null) {
+					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+				}
 				if (reservation.getStartDate() == null || reservation.getStartDate() == "" ||
 					reservation.getEndDate() == null || reservation.getEndDate() == "" ||
 					reservation.getApartment() == null) {
 					return new ResponseEntity<>("All fields are required (apartment, start date, end date).", HttpStatus.FORBIDDEN);
 				}
-
-				User user = userService.findByEmail(jwtUser.getEmail());
 				Apartment apartment = apartmentService.findOne(reservation.getApartment().getId());
-				
-				if (user == null) {
-					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
-				}
-				
+
 				if (apartment == null) {
 					return new ResponseEntity<>("Apartment not found.", HttpStatus.NOT_FOUND);
 				}
@@ -153,15 +154,13 @@ public class ReservationController {
 		}
 	}
 	
-	// PUT METHOD - Nije zavrseno
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Object> editReservation(@PathVariable Long id, @RequestBody Reservation reservation, @RequestHeader("Authorization") String authHeader) {
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				
-				User user = userService.findByEmail(jwtUser.getEmail());
+				User user = userService.findOne(jwtUser.getId());
 				if (user == null) {
 					return new ResponseEntity<>("User doesnt exist.", HttpStatus.NOT_FOUND);
 				}
@@ -218,13 +217,17 @@ public class ReservationController {
 			return new ResponseEntity<>("Token not provided.", HttpStatus.FORBIDDEN);
 		}
 	}
-	// DELETE METHOD
+
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Object> cancelReservation(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
+				User user = userService.findOne(jwtUser.getId());
+				if (user == null) {
+					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
+				}
 				Reservation reservation = service.delete(id);
 				if (reservation == null) {
 					return new ResponseEntity<>("Reservation not found.", HttpStatus.NOT_FOUND);

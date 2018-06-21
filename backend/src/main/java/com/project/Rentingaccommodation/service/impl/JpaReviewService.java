@@ -6,22 +6,22 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.project.Rentingaccommodation.model.Review;
-import com.project.Rentingaccommodation.model.ReviewStatus;
+import com.project.Rentingaccommodation.model.Comment;
+import com.project.Rentingaccommodation.model.CommentStatus;
 import com.project.Rentingaccommodation.model.User;
-import com.project.Rentingaccommodation.repository.ReviewRepository;
-import com.project.Rentingaccommodation.service.ReviewService;
+import com.project.Rentingaccommodation.repository.CommentRepository;
+import com.project.Rentingaccommodation.service.CommentService;
 
 @Transactional
 @Service
-public class JpaReviewService implements ReviewService {
+public class JpaReviewService implements CommentService {
 
     @Autowired
-    ReviewRepository repository;
+    CommentRepository repository;
 
 	@Override
-	public Review findOne(Long id) {
-		for (Review review : repository.findAll()) {
+	public Comment findOne(Long id) {
+		for (Comment review : repository.findAll()) {
 			if (review.getId() == id) {
 				return review;
 			}
@@ -30,72 +30,72 @@ public class JpaReviewService implements ReviewService {
 	}
 
 	@Override
-	public List<Review> findAll() {
+	public List<Comment> findAll() {
 		return repository.findAll();
 	}
 	
 	@Override
-	public List<Review> findApprovedReviews() {
-		List<Review> approvedReviews = new ArrayList<Review>();
-		for (Review review : findAll()) {
-			if (review.getStatus().equals(ReviewStatus.APPROVED)) {
-				approvedReviews.add(review);
+	public List<Comment> findApprovedComments() {
+		List<Comment> approvedComments = new ArrayList<Comment>();
+		for (Comment comment : findAll()) {
+			if (comment.getStatus().equals(CommentStatus.APPROVED)) {
+				approvedComments.add(comment);
 			}
 		}
-		return approvedReviews;
+		return approvedComments;
 	}
 
 	@Override
-	public List<Review> findDeclinedReviews() {
-		List<Review> declinedReviews = new ArrayList<Review>();
-		for (Review review : findAll()) {
-			if (review.getStatus().equals(ReviewStatus.DECLINED)) {
-				declinedReviews.add(review);
+	public List<Comment> findDeclinedComments() {
+		List<Comment> declinedComments = new ArrayList<Comment>();
+		for (Comment comment : findAll()) {
+			if (comment.getStatus().equals(CommentStatus.DECLINED)) {
+				declinedComments.add(comment);
 			}
 		}
-		return declinedReviews;
+		return declinedComments;
 	}
 	
 	@Override
-	public List<Review> findWaitingReviews() {
-		List<Review> waitingReviews = new ArrayList<Review>();
-		for (Review review : findAll()) {
-			if (review.getStatus().equals(ReviewStatus.WAITING)) {
-				waitingReviews.add(review);
+	public List<Comment> findWaitingComments() {
+		List<Comment> waitingComments = new ArrayList<Comment>();
+		for (Comment comment : findAll()) {
+			if (comment.getStatus().equals(CommentStatus.WAITING)) {
+				waitingComments.add(comment);
 			}
 		}
-		return waitingReviews;
+		return waitingComments;
 	}
 	
 	@Override
-	public List<Review> findUserReviews(User user) {
-		List<Review> userReviews = new ArrayList<Review>();
-		for (Review review : findAll()) {
-			if (review.getUser().getId() == user.getId()) {
-				userReviews.add(review);
+	public List<Comment> findUserComments(User user) {
+		List<Comment> userComments = new ArrayList<Comment>();
+		for (Comment comment : findAll()) {
+			if (comment.getUser().getId() == user.getId()) {
+				userComments.add(comment);
 			}
 		}
-		return userReviews;
+		return userComments;
 	}
 	
 	@Override
-	public List<Review> findApartmentReviews(Long id) {
-		List<Review> apartmentReviews = new ArrayList<Review>();
-		for (Review review : findAll()) {
-			if (review.getApartment().getId() == id) {
-				apartmentReviews.add(review);
+	public List<Comment> findApartmentComments(Long id) {
+		List<Comment> apartmentComments = new ArrayList<Comment>();
+		for (Comment comment : findAll()) {
+			if (comment.getApartment().getId() == id) {
+				apartmentComments.add(comment);
 			}
 		}
-		return apartmentReviews;
+		return apartmentComments;
 	}
 	
 	@Override
-	public Review save(Review review) {
-		return repository.save(review);
+	public Comment save(Comment comment) {
+		return repository.save(comment);
 	}
 
 	@Override
-	public void delete(Review review) {
-		repository.delete(review);
+	public void delete(Comment comment) {
+		repository.delete(comment);
 	}
 }
