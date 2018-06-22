@@ -8,11 +8,14 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.w3._2000._09.xmldsig.SignatureType;
 
-@XmlRootElement(name = "getBedTypesRequest", namespace = "http://com.project/web_service/wrappers")
+@XmlRootElement(name = "confirmReservationRequest", namespace = "http://com.project/web_service/wrappers")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getBedTypesRequest", namespace = "http://com.project/web_service/wrappers")
+@XmlType(name = "confirmReservationRequest", namespace = "http://com.project/web_service/wrappers", propOrder = {"reservationId", "Signature"})
 
-public class GetBedTypesRequest {
+public class ConfirmReservationRequest {
+
+	@XmlElement(name = "reservationId")
+    private String reservationId;
 
 	@XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
 	private SignatureType Signature;
@@ -24,5 +27,15 @@ public class GetBedTypesRequest {
 	public void setSignature(SignatureType signature) {
 		Signature = signature;
 	}
+
+	public String getReservationId() {
+		return reservationId;
+	}
+
+	public void setReservationId(String reservationId) {
+		this.reservationId = reservationId;
+	}
+	
+	
 	
 }

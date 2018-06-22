@@ -20,7 +20,6 @@ import javax.jws.soap.SOAPBinding.Use;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
-import org.eclipse.core.runtime.CoreException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
