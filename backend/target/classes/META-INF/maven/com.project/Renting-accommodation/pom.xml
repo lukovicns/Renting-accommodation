@@ -92,10 +92,7 @@
 		    <groupId>com.googlecode.json-simple</groupId>
 		    <artifactId>json-simple</artifactId>
 		</dependency>
-<<<<<<< HEAD
-=======
-		
->>>>>>> 2ddede3b0200f46eebb4d667313a7827ce3e1cba
+
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpclient</artifactId>

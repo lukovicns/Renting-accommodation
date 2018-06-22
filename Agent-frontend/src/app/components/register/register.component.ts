@@ -48,7 +48,7 @@ export class RegisterComponent implements OnInit {
 //    question: ['', Validators.required],
 //    answer: ['', Validators.required],
 //    agent: [false],
-    businessId: []
+    businessId: ['', Validators.required]
   });
       
   ngOnInit() {
