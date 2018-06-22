@@ -18,4 +18,5 @@ public interface ReservationService {
 	boolean isAvailableForUpdate(Reservation reservation);
 	boolean checkDates(String startDate, String endDate);
 	Reservation findUserReservationByApartmentId(User user, Long apartmentId);
+	List<Reservation> findActiveReservationsByApartmentId(Long apartmentId);
 }

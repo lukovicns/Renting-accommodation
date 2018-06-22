@@ -27,14 +27,25 @@
             <td>{{ reservation.startDate }}</td>
             <td>{{ reservation.endDate }}</td>
             <td>{{ reservation.price }}</td>
-            <td>{{ reservation.status }}</td>
             <td>
-              <a class="btn btn-info btn-sm" routerLink="/accommodations/{{ reservation.apartment?.accommodation?.id }}/apartments/{{ reservation.apartment?.id }}/reservation/{{ reservation.id }}/edit">
-                Edit reservation
-              </a>
+              <span *ngIf="reservation.status === 'RESERVATION' || reservation.status === 'VISIT'" id="active">
+                &nbsp;<i class="fas fa-check"></i>
+                {{ reservation.status | titlecase }}
+              </span>
+              <span *ngIf="reservation.status === 'CANCELED'" id="canceled">
+                &nbsp;<i class="fas fa-times"></i>
+                Canceled
+              </span>
             </td>
             <td>
-              <button class="btn btn-danger btn-sm" (click)="cancelReservation(reservation.id)">Cancel reservation</button>
+              <a class="btn btn-info btn-sm" *ngIf="reservation.status === 'RESERVATION'; else noReservation" routerLink="/accommodations/{{ reservation.apartment?.accommodation?.id }}/apartments/{{ reservation.apartment?.id }}/reservation/{{ reservation.id }}/edit">
+                Edit reservation
+              </a>
+              <ng-template #noReservation>/</ng-template>
+            </td>
+            <td>
+              <button class="btn btn-danger btn-sm" (click)="cancelReservation(reservation.id)" *ngIf="reservation.status === 'RESERVATION'; else noReservation">Cancel reservation</button>
+              <ng-template #noReservation>/</ng-template>
             </td>
           </tr>
         </tbody>

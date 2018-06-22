@@ -1,3 +1,38 @@
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+/****** Style Star Rating Widget *****/
+
+.rating { 
+  border: none;
+  float: left;
+}
+
+.rating > input { display: none; } 
+.rating > label:before { 
+  margin-left: 5px;
+  margin-right: 5px;
+  font-size: 1.25em;
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "\f005";
+}
+
+.rating > label { 
+  color: #ddd; 
+ float: right; 
+}
+
+/***** CSS Magic to Highlight Stars on Hover *****/
+
+.rating > input:checked ~ label, /* show gold star when clicked */
+.rating:not(:checked) > label:hover, /* hover current star */
+.rating:not(:checked) > label:hover ~ label { color: #FFD700;  } /* hover previous stars in list */
+
+.rating > input:checked + label:hover, /* hover current star when changing rating */
+.rating > input:checked ~ label:hover,
+.rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+.rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
+
 .card {
   max-width: 700px;
   margin: 0 auto;
@@ -10,13 +45,9 @@
 .container {
   margin-top: 50px;
 }
-
-ul.list-group {
-  margin-top: 15px;
-}
-
 a.btn {
-  margin-top: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .comment-card {
@@ -45,8 +76,21 @@ h4 {
 
 #rating {
   float: right;
-  margin-top: 15px;
+  margin-bottom: 0;
   font-size: 90%;
   color: gray;
   font-style: italic;
+}
+
+#average-rating {
+  margin-bottom: 5px;
+}
+
+#rating-card {
+  height: 80px;
+  margin-bottom: 20px;
+}
+
+#apartment-detail-card {
+  margin-bottom: 20px;
 }

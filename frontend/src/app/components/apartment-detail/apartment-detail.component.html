@@ -15,8 +15,8 @@
       {{ errorMessage }}
     </div>
     <div class="row">
-      <div class="col-lg-8 col-md-7 col-sm-6">
-        <div class="card">
+      <div class="col-lg-8 col-md-7 col-sm-12">
+        <div class="card" id="apartment-detail-card">
           <div class="card-body">
             <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
               <div class="carousel-inner">
@@ -41,7 +41,6 @@
             </div>
               <a class="btn btn-primary" routerLink="/accommodations/{{ apartment.accommodation?.id }}/apartments/{{ apartment.id }}/reservation/add">Make reservations</a>
               <a *ngIf="hasReservation" class="btn btn-success" routerLink="/accommodations/{{ apartment.accommodation?.id }}/apartments/{{ apartment.id }}/send-message">Send message</a>
-              <p id="rating">Average rating: {{ rating }}</p>
             <ul class="list-group">
               <li class="list-group-item"><strong>Name:</strong>&nbsp;{{ apartment.name }}</li>
               <li class="list-group-item"><strong>Bed type:</strong>&nbsp;{{ apartment.type?.name }}</li>
@@ -58,9 +57,23 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-4 col-md-5 col-sm-6">
+      <div class="col-lg-4 col-md-5 col-sm-12">
         <div class="row">
           <div class="col-lg-12">
+            <div class="card" id="rating-card">
+              <div class="card-body">
+                <div id="rating">
+                  <div id="average-rating">Average rating: {{ rating }}</div>
+                  <fieldset class="rating" *ngIf="!userRated">
+                      <input type="radio" (click)="rateApartment()" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                      <input type="radio" (click)="rateApartment()" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                      <input type="radio" (click)="rateApartment()" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                      <input type="radio" (click)="rateApartment()" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                      <input type="radio" (click)="rateApartment()" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
             <div class="card" id="add-comment">
               <div class="card-header">
                 <h4>Add comment</h4>

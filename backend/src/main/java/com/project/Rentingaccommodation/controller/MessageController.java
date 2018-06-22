@@ -214,7 +214,7 @@ public class MessageController {
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
 				Message message = service.findOne(id);
-				Admin admin = adminService.findOne(jwtUser.getId());
+				Admin admin = adminService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				if (admin == null) {
 					return new ResponseEntity<>("User with this token doesn't have admin permissions.", HttpStatus.NOT_FOUND);
 				}

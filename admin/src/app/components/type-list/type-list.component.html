@@ -30,7 +30,7 @@
             <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Edit</th>
-            <th scope="col">Restore/Delete</th>
+            <th scope="col">Activate/Deactivate</th>
           </tr>
         </thead>
         <tbody>
@@ -38,7 +38,7 @@
             <th scope="row">{{ i + 1 }}</th>
             <td>{{ type.name }}</td>
             <td>
-              <a class="btn btn-warning btn-sm" routerLink="/types/{{ type.id }}/edit">Edit type</a>
+              <a class="btn btn-info btn-sm" routerLink="/types/{{ type.id }}/edit">Edit type</a>
             </td>
             <td>
               <button class="btn btn-success btn-sm" (click)="activateType(type.id)" *ngIf="type.status === 'INACTIVE'">Activate type</button>

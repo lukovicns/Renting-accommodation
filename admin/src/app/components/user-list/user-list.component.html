@@ -32,12 +32,17 @@
           <td>{{ user.street }}</td>
           <td>{{ user.phone }}</td>
           <td>{{ user.question }}</td>
-          <td>{{ user.status }}</td>
-          <td *ngIf="user.status === 'ACTIVATED'">
-              <button class="btn btn-warning btn-sm" (click)="blockUser(user.id)">Block user</button>
+          <td *ngIf="user.status === 'ACTIVATED'" id="activated">&nbsp;<i class="fas fa-check"></i>
+            Activated
+          </td>
+          <td *ngIf="user.status === 'BLOCKED'" id="blocked">&nbsp;<i class="fas fa-times"></i>
+            Blocked
           </td>
           <td *ngIf="user.status === 'BLOCKED'">
             <button class="btn btn-success btn-sm" (click)="activateUser(user.id)">Activate user</button>
+          </td>
+          <td *ngIf="user.status === 'ACTIVATED'">
+              <button class="btn btn-secondary btn-sm" (click)="blockUser(user.id)">Block user</button>
           </td>
           <td>
             <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">Delete user</button>

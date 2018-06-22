@@ -12,8 +12,13 @@ insert into accommodation_type (accommodation_type_id, accommodation_type_name, 
 insert into accommodation_category (accommodation_category_id, accommodation_category_name, status) values (1, '1-5 stars', 'ACTIVE');
 insert into accommodation_category (accommodation_category_id, accommodation_category_name, status) values (2, 'Uncategorized', 'ACTIVE');
 
-insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id) values (1, 'Goran', 'Goranovic', 'passpass', 'g@g.com', 1, 'Narodnog fronta 1', '0640000000', 1);
-insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id) values (2, 'Pera', 'Petrovic', 'passpass', 'p@p.com', 2, 'Novosadska 43', '0641111111', 2);
+insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id, status) values (1, 'Goran', 'Goranovic', 'passpass', 'g@g.com', 1, 'Narodnog fronta 1', '0640000000', 1, 'WAITING');
+insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id, status) values (2, 'Pera', 'Petrovic', 'passpass', 'p@p.com', 2, 'Novosadska 43', '0641111111', 2, 'WAITING');
+insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id, status) values (3, 'Stefan', 'Stefanovic', 'passpass', 's@s.com', 2, 'Kralja Petra 1', '0642222222', 3, 'WAITING');
+
+insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');
+
+insert into user(user_id, name, surname, password, email, city_id, street, phone, question, answer, status) values (1, 'Test', 'Test', 'passpass', 'test@test.com', 1, 'Test', 'Test', 'Test', 'Test', 'ACTIVATED');
 
 insert into accommodation (accommodation_id, name, accommodation_type_id, city_id, street, description, accommodation_category_id, agent_id) values (1, 'Hotel Putnik', 1, 1, 'Ilije Ognjanovica 24', 'Hotel putnik se nalazi u centru Novog Sada.', 1, 1);
 insert into accommodation (accommodation_id, name, accommodation_type_id, city_id, street, description, accommodation_category_id, agent_id) values (2, 'Hotel Master', 1, 1, 'Brace Popovic bb', 'Hotel se nalazi kod sajma.', 1, 1);
@@ -28,8 +33,6 @@ insert into apartment (apartment_id, name, bed_type_id, description, accommodati
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (3, 'Room 3', 1, 'Room 3 description', 2, 50, 2, 2);
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (4, 'Smestaj Petrovic 1', 2, 'Smestaj Petrovic 1 description', 4, 30, 2, 2);
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (5, 'Smestaj Petrovic 2', 2, 'Smestaj Petrovic 2 description', 4, 70, 4, 3);
-
-insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');
 
 insert into additional_service(additional_service_id, additional_service_name) values (1, 'Parking');
 insert into additional_service(additional_service_id, additional_service_name) values (2, 'Wifi');

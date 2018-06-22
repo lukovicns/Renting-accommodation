@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Agent } from '../models/Agent';
 
 @Injectable({
@@ -8,6 +8,9 @@ import { Agent } from '../models/Agent';
 export class AgentService {
 
   private url: string = 'http://localhost:8081/api/agents/';
+  private headers = new HttpHeaders()
+  .append('Content-Type', 'application/json')
+  .append('Authorization', 'Bearer ' + localStorage.getItem('token'));
 
   constructor(private http: HttpClient) { }
 
@@ -21,5 +24,17 @@ export class AgentService {
 
   getAgentByBusinessId(businessId) {
     return this.http.get<Agent>(this.url + '/business-id/' + businessId);
+  }
+
+  approveAgent(agentId) {
+    return this.http.put<Agent>(this.url + agentId + '/approve', null, { headers: this.headers });
+  }
+
+  declineAgent(agentId) {
+    return this.http.put<Agent>(this.url + agentId + '/decline', null, { headers: this.headers });
+  }
+
+  removeAgentApproval(agentId) {
+    return this.http.put<Agent>(this.url + agentId + '/remove-approval', null, { headers: this.headers });
   }
 }

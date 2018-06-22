@@ -20,6 +20,7 @@ export class ApartmentDetailComponent implements OnInit {
 
   private image: string = 'https://t-ec.bstatic.com/images/hotel/max1280x900/120/120747263.jpg';
   private hasReservation: boolean;
+  private userRated: boolean;
   private errorMessage: string;
   private successMessage: string;
   private apartmentAdditionalServices = [];
@@ -48,6 +49,7 @@ export class ApartmentDetailComponent implements OnInit {
 
   ngOnInit() {
     this.hasReservation = false;
+    this.userRated = false;
     this.accommodationId = parseInt(this.route.snapshot.params['id']);
     this.apartmentId = parseInt(this.route.snapshot.params['apartmentId']);
     this.accommodationService.getAccommodation(this.accommodationId)
@@ -81,6 +83,12 @@ export class ApartmentDetailComponent implements OnInit {
         .subscribe(res => {
           this.comments = res;
         });
+        this.ratingService.getUserRatingForApartment(this.apartmentId)
+        .subscribe(res => {
+          this.userRated = res != null && res['user'].id == this.userService.getCurrentUser()['id'] ? true: false;
+        }, err => {
+          this.errorMessage = err['error'];
+        })
       }
     }, err => {
       this.router.navigate(['accommodations']);
@@ -100,5 +108,20 @@ export class ApartmentDetailComponent implements OnInit {
       this.errorMessage = err['error'];
     })
     this.commentForm.reset();
+  }
+
+  rateApartment() {
+    let rating = document.querySelector('input[name=rating]:checked')['value'];
+    const data = {
+      'user': this.userService.getCurrentUser(),
+      'apartment': this.apartment,
+      'rating': rating
+    }
+    this.ratingService.rateApartment(data)
+    .subscribe(res => {
+      this.ngOnInit();
+    }, err => {
+      console.log(err);
+    })
   }
 }

@@ -47,7 +47,7 @@ public class ReservationController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				User user = userService.findOne(jwtUser.getId());
+				User user = userService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				if (user == null) {
 					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 				}
@@ -57,7 +57,7 @@ public class ReservationController {
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
-			return new ResponseEntity<>("Token not provided.", HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>("Error validating token.", HttpStatus.FORBIDDEN);
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class ReservationController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				User user = userService.findOne(jwtUser.getId());
+				User user = userService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				if (user == null) {
 					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 				}
@@ -92,7 +92,7 @@ public class ReservationController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				User user = userService.findOne(jwtUser.getId());
+				User user = userService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				if (user == null) {
 					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 				}
@@ -160,7 +160,7 @@ public class ReservationController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				User user = userService.findOne(jwtUser.getId());
+				User user = userService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				if (user == null) {
 					return new ResponseEntity<>("User doesnt exist.", HttpStatus.NOT_FOUND);
 				}
@@ -224,16 +224,16 @@ public class ReservationController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				User user = userService.findOne(jwtUser.getId());
+				User user = userService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				if (user == null) {
 					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 				}
-				Reservation reservation = service.delete(id);
+				Reservation reservation = service.findOne(id);
 				if (reservation == null) {
 					return new ResponseEntity<>("Reservation not found.", HttpStatus.NOT_FOUND);
-				} else {
-					return new ResponseEntity<>(reservation, HttpStatus.OK);
 				}
+				reservation.setStatus(ReservationStatus.CANCELED);
+				return new ResponseEntity<>(service.save(reservation), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}

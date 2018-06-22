@@ -30,7 +30,7 @@
             <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Edit</th>
-            <th scope="col">Remove</th>
+            <th scope="col">Activate/Deactivate</th>
           </tr>
         </thead>
         <tbody>
@@ -38,7 +38,7 @@
             <th scope="row">{{ i + 1 }}</th>
             <td>{{ category.name }}</td>
             <td>
-              <a class="btn btn-warning btn-sm" routerLink="/categories/{{ category.id }}/edit">Edit category</a>
+              <a class="btn btn-info btn-sm" routerLink="/categories/{{ category.id }}/edit">Edit category</a>
             </td>
             <td>
                 <button class="btn btn-success btn-sm" (click)="activateCategory(category.id)" *ngIf="category.status === 'INACTIVE'">Activate category</button>

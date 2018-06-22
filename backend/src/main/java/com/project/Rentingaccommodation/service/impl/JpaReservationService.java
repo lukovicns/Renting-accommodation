@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Reservation;
+import com.project.Rentingaccommodation.model.ReservationStatus;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.repository.ReservationRepository;
 import com.project.Rentingaccommodation.service.ReservationService;
@@ -38,6 +39,17 @@ public class JpaReservationService implements ReservationService {
 			}
 		}
 		return apartmentReservations;
+	}
+	
+	@Override
+	public List<Reservation> findActiveReservationsByApartmentId(Long apartmentId) {
+		List<Reservation> activeApartmentReservations = new ArrayList<Reservation>();
+		for (Reservation reservation : findByApartmentId(apartmentId)) {
+			if (!reservation.getStatus().equals(ReservationStatus.CANCELED)) {
+				activeApartmentReservations.add(reservation);
+			}
+		}
+		return activeApartmentReservations;
 	}
 	
 	@Override
@@ -89,9 +101,9 @@ public class JpaReservationService implements ReservationService {
 	@Override
 	public boolean isAvailable(Apartment apartment, String startDate, String endDate) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-		List<Reservation> activeReservations = findByApartmentId(apartment.getId());
+		List<Reservation> activeReservations = findActiveReservationsByApartmentId(apartment.getId());
 		for (Reservation reservation : activeReservations) {
-			if (reservation.getApartment().getId() == apartment.getId()) {
+			if (reservation.getApartment().getId() == apartment.getId() && !reservation.getStatus().equals(ReservationStatus.CANCELED)) {
 				// Check in-between dates.
 				try {
 					Date reservationStartDate = dateFormatter.parse(reservation.getStartDate());
@@ -115,7 +127,7 @@ public class JpaReservationService implements ReservationService {
 	@Override
 	public boolean isAvailableForUpdate(Reservation currentReservation) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-		List<Reservation> activeReservations = findByApartmentId(currentReservation.getApartment().getId());
+		List<Reservation> activeReservations = findActiveReservationsByApartmentId(currentReservation.getApartment().getId());
 		for (Reservation reservation : activeReservations) {				// Check in-between dates.
 			try {
 				Date reservationStartDate = dateFormatter.parse(reservation.getStartDate());

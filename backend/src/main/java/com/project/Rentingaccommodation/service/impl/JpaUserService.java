@@ -53,4 +53,14 @@ public class JpaUserService implements UserService {
 		}
 		return null;
 	}
+
+	@Override
+	public User findByIdAndEmail(Long id, String email) {
+		for (User u : repository.findAll()) {
+			if (u.getId() == id && u.getEmail().equals(email)) {
+				return u;
+			}
+		}
+		return null;
+	}
 }
