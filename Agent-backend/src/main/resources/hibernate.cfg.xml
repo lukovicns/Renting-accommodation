@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><hibernate-configuration>
+    <session-factory>
+        <property name="connection.driver_class">
+            com.mysql.jdbc.Driver
+            </property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/?createDatabaseIfNotExist=true&amp;useSSL=false</property>
+        <property name="connection.username">
+            root
+        </property>
+        <property name="connection.password">
+            admin
+        </property>
+        <property name="connection.autocommit">true</property>
+        <property name="connection.pool_size">15</property>
+        <!-- SQL dialect -->
+        <property name="dialect">
+            org.hibernate.dialect.MySQL5Dialect
+        </property>
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+        <property name="hbm2ddl.auto">none</property>
+
+        <mapping class="com.project.model.User"/>
+        <mapping class="com.project.model.Agent"/>
+        <mapping class="com.project.model.Accommodation"/>
+        <mapping class="com.project.model.AccommodationCategory"/>
+        <mapping class="com.project.model.AccommodationType"/>
+        <mapping class="com.project.model.Apartment"/>
+        <mapping class="com.project.model.AdditionalService"/>
+        <mapping class="com.project.model.ApartmentService"/>
+        <mapping class="com.project.model.BedType"/>
+        <mapping class="com.project.model.City"/>
+        <mapping class="com.project.model.Country"/>
+        <mapping class="com.project.model.Image"/>
+        <mapping class="com.project.model.Reservation"/>
+        <mapping class="com.project.model.PricePlan"/>
+        <mapping class="com.project.model.Message"/>
+    </session-factory>
+</hibernate-configuration>

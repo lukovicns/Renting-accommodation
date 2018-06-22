@@ -2,6 +2,8 @@ package com.project.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,6 +33,17 @@ public class PricePlan {
 	@Column(name="price", nullable=false)
 	private int price;
 	
+	@Enumerated(EnumType.STRING)
+	private DeleteStatus status;
+	
+	public DeleteStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(DeleteStatus status) {
+		this.status = status;
+	}
+	
 	public PricePlan() {
 		
 	}
@@ -50,6 +63,7 @@ public class PricePlan {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.price = price;
+		this.status = DeleteStatus.ACTIVE;
 	}
 	
 	public PricePlan(String startDate, String endDate, int price) {

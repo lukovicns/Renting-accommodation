@@ -4,12 +4,15 @@
       <h1 class="display-4">Welcome to {{ title }}</h1>
       <p class="lead"></p>
       <hr class="my-4">
+      <div *ngIf="userIsLoggedIn()">
       <p>Start by viewing all accommodations.</p>
       <ul>
 	      <li class="nav-item">
-	        <a class="nav-link" routerLink="/accommodationsTable" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">View accommodations</a>
+	        <a class="nav-link"  routerLink="/accommodationsTable" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">View accommodations</a>
 	      </li>
 	  </ul>
+	  </div>
+	  <p *ngIf="!userIsLoggedIn()">Please login first.</p>
     </div>
   </div>
 </div>

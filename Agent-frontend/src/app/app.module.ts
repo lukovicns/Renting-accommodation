@@ -25,6 +25,8 @@ import { RegisterComponent } from './components/register/register.component';
 //import { DomSanitizerImpl } from '@angular/platform-browser/src/security/dom_sanitization_service';     
 import { CookieService } from 'ngx-cookie-service';
 import { UserService } from './services/user.service';
+import { HttpInterceptorService } from './services/httpinterceptor.service';
+import { HTTP_INTERCEPTORS } from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -58,7 +60,12 @@ import { UserService } from './services/user.service';
     AccommodationService,
     ReservationService,
     CookieService, 
-    UserService
+    UserService,
+    { 
+        provide: HTTP_INTERCEPTORS,
+        useClass: HttpInterceptorService,
+        multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

@@ -6,19 +6,22 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "getAccommodatioTypeRequest", namespace = "http://com.project/web_service/wrappers")
+import org.w3._2000._09.xmldsig.SignatureType;
+
+@XmlRootElement(name = "getAccommodationTypeRequest", namespace = "http://com.project/web_service/wrappers")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getAccommodatioTypeRequest", namespace = "http://com.project/web_service/wrappers")
+@XmlType(name = "getAccommodationTypeRequest", namespace = "http://com.project/web_service/wrappers", propOrder = {"Signature"})
 public class GetAccommodationTypeRequest {
 
-	@XmlElement(name = "name")
-    private String name;
+	@XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
+	private SignatureType Signature;
 
-	public String getName() {
-		return name;
+	public SignatureType getSignature() {
+		return Signature;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setSignature(SignatureType signature) {
+		Signature = signature;
 	}
+	
 }

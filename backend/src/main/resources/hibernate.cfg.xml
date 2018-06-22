@@ -10,6 +10,7 @@
         <property name="connection.password">
             admin
         </property>
+        <property name="connection.autocommit">true</property>
         <property name="connection.pool_size">15</property>
         <!-- SQL dialect -->
         <property name="dialect">
@@ -17,7 +18,7 @@
         </property>
         <!-- Echo all executed SQL to stdout -->
         <property name="show_sql">true</property>
-        <property name="hbm2ddl.auto">update</property>
+        <property name="hbm2ddl.auto">create</property>
 
         <mapping class="com.project.Rentingaccommodation.model.User"/>
         <mapping class="com.project.Rentingaccommodation.model.Agent"/>
@@ -33,5 +34,6 @@
         <mapping class="com.project.Rentingaccommodation.model.Image"/>
         <mapping class="com.project.Rentingaccommodation.model.Reservation"/>
         <mapping class="com.project.Rentingaccommodation.model.PricePlan"/>
+        <mapping class="com.project.Rentingaccommodation.model.Message"/>
     </session-factory>
 </hibernate-configuration>

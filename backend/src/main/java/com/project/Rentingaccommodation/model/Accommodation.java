@@ -1,17 +1,15 @@
 package com.project.Rentingaccommodation.model;
 
-
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name="accommodation")
@@ -46,14 +44,18 @@ public class Accommodation {
 	@OneToOne
 	@JoinColumn(name="agent_id")
 	private Agent agent;
+
+	@Enumerated(EnumType.STRING)
+	private DeleteStatus status;
 	
-	//prokomentarisati
-	@Column(name = "images", columnDefinition = "LONGBLOB")
-	private byte[] images;
-	
-	@Transient
-	private List<String> imageList;
-	
+	public DeleteStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(DeleteStatus status) {
+		this.status = status;
+	}
+
 	public Accommodation() {
 		
 	}
@@ -68,6 +70,7 @@ public class Accommodation {
 		this.description = description;
 		this.category = category;
 		this.agent = agent;
+		this.status = DeleteStatus.ACTIVE;
 	}
 
 	public Long getId() {
@@ -134,25 +137,4 @@ public class Accommodation {
 		this.agent = agent;
 	}
 
-	public byte[] getImages() {
-		return images;
-	}
-
-	public void setImages(byte[] images) {
-		this.images = images;
-	}
-
-	public List<String> getImageList() {
-		return imageList;
-	}
-
-	public void setImageList(List<String> imageList) {
-		this.imageList = imageList;
-	}
-
-	@Override
-	public String toString() {
-		return "Accommodation [id=" + id + ", name=" + name + ", type=" + type + ", city=" + city + ", street=" + street
-				+ ", category=" + category + ", agent=" + agent + "]";
-	}
 }

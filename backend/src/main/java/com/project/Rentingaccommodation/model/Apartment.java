@@ -1,16 +1,15 @@
 package com.project.Rentingaccommodation.model;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name="apartment")
@@ -44,16 +43,35 @@ public class Apartment {
 	@Column(name="number_of_rooms", nullable=false)
 	private int numberOfRooms;
 	
-	@Column(name = "images", columnDefinition = "LONGBLOB")
-	private byte[] images;
+	@Enumerated(EnumType.STRING)
+	private DeleteStatus status;
 	
-	@Transient
-	private List<String> imageList;
 	
+	
+	public DeleteStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(DeleteStatus status) {
+		this.status = status;
+	}
 	public Apartment() {
 		
 	}
 
+	public Apartment(Long id, String name, BedType type, String description, Accommodation accommodation, int size,
+			int maxNumberOfGuests, int numberOfRooms) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.description = description;
+		this.accommodation = accommodation;
+		this.size = size;
+		this.maxNumberOfGuests = maxNumberOfGuests;
+		this.numberOfRooms = numberOfRooms;
+	}
+	
 	public Apartment(String name, BedType type, String description, Accommodation accommodation, int size,
 			int maxNumberOfGuests, int numberOfRooms) {
 		super();
@@ -64,6 +82,7 @@ public class Apartment {
 		this.size = size;
 		this.maxNumberOfGuests = maxNumberOfGuests;
 		this.numberOfRooms = numberOfRooms;
+		this.status = DeleteStatus.ACTIVE;
 	}
 
 	public Long getId() {
@@ -130,27 +149,5 @@ public class Apartment {
 		this.numberOfRooms = numberOfRooms;
 	}
 
-	public byte[] getImages() {
-		return images;
-	}
-
-	public void setImages(byte[] images) {
-		this.images = images;
-	}
-
-	public List<String> getImageList() {
-		return imageList;
-	}
-
-	public void setImageList(List<String> imageList) {
-		this.imageList = imageList;
-	}
-
-	@Override
-	public String toString() {
-		return "Apartment [id=" + id + ", name=" + name + ", type=" + type + ", accommodation=" + accommodation
-				+ ", size=" + size + ", maxNumberOfGuests=" + maxNumberOfGuests + ", numberOfRooms=" + numberOfRooms
-				+ "]";
-	}
 }
 

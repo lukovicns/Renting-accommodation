@@ -7,20 +7,27 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+import javax.xml.xpath.XPathExpressionException;
 
-import org.eclipse.core.runtime.CoreException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
@@ -28,6 +35,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.w3._2000._09.xmldsig.SignatureType;
+import org.xml.sax.SAXException;
 
 import com.project.model.Accommodation;
 import com.project.model.AccommodationCategory;
@@ -37,6 +46,7 @@ import com.project.model.Agent;
 import com.project.model.Apartment;
 import com.project.model.BedType;
 import com.project.model.City;
+import com.project.model.DeleteStatus;
 import com.project.model.Image;
 import com.project.model.PricePlan;
 import com.project.model.Reservation;
@@ -85,6 +95,8 @@ import com.project.service.impl.JpaReservationService;
 			targetNamespace = "http://com.project/web_service/wrappers")
 @SOAPBinding(style = Style.DOCUMENT, use = Use.LITERAL, parameterStyle = ParameterStyle.WRAPPED)
 public class AccommodationWebService {
+	
+	private HashMap<String, SessionFactory> sessions = new HashMap<>();
 	
 //	instantiating repositories and services
 	@Autowired
@@ -149,7 +161,6 @@ public class AccommodationWebService {
 	
 //	instantiating repositories and services
 	
-	
 	@RequestWrapper(className="com.project.web_service.wrappers.SayHello")
 	@ResponseWrapper(className="com.project.web_service.wrappers.SayHelloResponse")
 	public String sayHello(@WebParam(name = "firstName") String firstName,@WebParam(name = "lastName") String lastName) {
@@ -161,7 +172,8 @@ public class AccommodationWebService {
 	@ResponseWrapper(className="com.project.web_service.wrappers.responses.AddAccommodationResponse")
 	public String addAccommodation(@WebParam(name = "name") String name, @WebParam(name = "type") String type,
 			@WebParam(name = "city") String city, @WebParam(name = "street") String street, @WebParam(name = "description") String description,
-			@WebParam(name = "category") String category, @WebParam(name = "image") String image) throws IOException
+			@WebParam(name = "category") String category, @WebParam(name = "image") String image,
+			@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws IOException, XPathExpressionException, ParserConfigurationException, SAXException
 	{
 		
 		AccommodationType accType = accTypeService.findOne(Long.valueOf(type));
@@ -170,6 +182,10 @@ public class AccommodationWebService {
 		Agent agent = agentService.findOne(Long.valueOf("1"));
 		Accommodation newAccommodation = new Accommodation(name, accType, (City) accCity, street, description, accCategory, agent);
 
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
 		System.getProperty("user.dir");
 		System.out.println("location " + System.getProperty("user.dir"));
 		
@@ -207,15 +223,27 @@ public class AccommodationWebService {
 						imgNameCounter = images.get(j+1).getId().intValue() + 1;
 			
 	 		// write the image to a file
-			File outputfile = new File(projectLocation + "\\src\\assets\\out" + imgNameCounter + ".png");
+			File outputfile = new File(projectLocation + "\\src\\assets\\imgs\\out" + imgNameCounter + ".png");
 			ImageIO.write(img, "png", outputfile);
 			
 			Accommodation saved = accService.save(newAccommodation);
+			Long id = null;
 			
 			if(saved != null)
 			{	
 				Image addImg = new Image(outputfile.toString(), saved, null);
 				imageService.save(addImg);
+				
+				id = saved.getId();
+				System.out.println("aaa id " + id);
+				session.createNativeQuery("insert into accommodation values(" + saved.getId() + ",'" +
+				saved.getDescription() + "','" + saved.getName() + "','ACTIVE','" + saved.getStreet() + "'," + saved.getAgent().getId() + "," + 
+				saved.getCategory().getId() + "," +
+				saved.getCity().getId() + "," + saved.getType().getId() + ")").executeUpdate();
+				tx.commit();
+				session.close();
+				retVal = "Accommodation successfully added";
+				
 				
 //				IWorkspace workspace= ResourcesPlugin.getWorkspace();    
 //				IPath location= Path.fromOSString(outputfile.getAbsolutePath()); 
@@ -230,7 +258,6 @@ public class AccommodationWebService {
 //			      ifile.refreshLocal(IResource.DEPTH_ZERO, null);
 				
 //				System.out.println("aaaaaaaaaaaaa " +  IResource.refreshLocal());/*ResourcesPlugin.getWorkspace().getRoot().getProjects()*/
-				retVal = "Accommodation successfully added";
 			}
 		}
 		
@@ -245,15 +272,20 @@ public class AccommodationWebService {
 			@WebParam(name = "numOfGuests") String numOfGuests,
 			@WebParam(name = "description") String description,
 			@WebParam(name = "image") String image, @WebParam(name = "additionalService") String additionalJSON,
-			@WebParam(name = "pricePlans") String pricePlansJSON) throws IOException, ParseException
+			@WebParam(name = "pricePlans") String pricePlansJSON,
+			@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws IOException, ParseException, XPathExpressionException, ParserConfigurationException, SAXException
 	{
 		BedType bt = bedTypeService.findOne(Long.valueOf(bedType));
 		Optional<Accommodation> accDb= accService.findOne(Long.valueOf(accommodationId));
 		Accommodation accommodation = accDb.get();
 		Apartment newApartment = new Apartment(name, bt, description, accommodation, Integer.parseInt(size), Integer.parseInt(numOfGuests), Integer.parseInt(numOfRooms));
-
+		
 		List<AdditionalService> tempArray = new ArrayList<>();
 		Optional<AdditionalService> additionalService = null;
+		
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
 		
 		String temp = additionalJSON.substring(1, additionalJSON.length() - 1);
 		String[] array = temp.split(",");
@@ -317,6 +349,10 @@ public class AccommodationWebService {
 		
 		if(saved != null)
 		{	
+			System.out.println("sabed " + saved.getId());
+			
+			session.save(saved);
+			
 			Image addImg = new Image(outputfile.toString(), saved);
 			imageService.save(addImg);
 			
@@ -325,6 +361,17 @@ public class AccommodationWebService {
 			
 			for(PricePlan pp : pricePlans)
 				pricePlanService.save(new PricePlan(saved, pp.getStartDate(), pp.getEndDate(), pp.getPrice()));
+
+			for(AdditionalService ads : tempArray) {
+				com.project.model.ApartmentService apartmentService = apartmentServiceService.save(new com.project.model.ApartmentService(saved, ads));
+				session.createNativeQuery("insert into apartment_aditional_service SELECT * FROM renting_accommodation_db.apartment_aditional_service where renting_accommodation_db.apartment_aditional_service.apartment_id="+saved.getId()+" ORDER BY renting_accommodation_db.apartment_aditional_service.apartment_additional_service_id DESC LIMIT 1");
+			}
+			
+			for(PricePlan pp : pricePlans) {
+				PricePlan plan = pricePlanService.save(new PricePlan(saved, pp.getStartDate(), pp.getEndDate(), pp.getPrice()));
+				session.save(plan);
+			}
+			
 			
 			retVal = "Apartment successfully added";
 		}
@@ -332,11 +379,10 @@ public class AccommodationWebService {
 		return "Failed";
 	}
 	
-	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.AddPricePlan")
 	@ResponseWrapper(className="com.project.web_service.wrappers.responses.AddPricePlanResponse")
 	public String addPricePlan(@WebParam(name="apartmentId") String apartmentId, @WebParam(name = "startDate") String startDate, 
-			@WebParam(name = "endDate") String endDate, @WebParam(name = "price") String price)
+			@WebParam(name = "endDate") String endDate, @WebParam(name = "price") String price, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature)
 	{
 		System.out.println("tuu sm");
 		Optional<Apartment> optional = apartmentService.findOne(Long.valueOf(apartmentId));
@@ -353,8 +399,8 @@ public class AccommodationWebService {
 		return "New price plan successfully added.";
 	}
 	
-	@RequestWrapper(className="com.project.web_service.wrappers.requests.GetAccommodationTypesRequest")
-	@ResponseWrapper(className="com.project.web_service.wrappers.GetAccommodationTypesResponse")
+	@RequestWrapper(className="com.project.web_service.wrappers.requests.GetAccommodationTypeRequest")
+	@ResponseWrapper(className="com.project.web_service.wrappers.response.GetAccommodationTypesResponse")
 	public List<AccommodationType> getAccommodationTypes(){
 		
 		List<AccommodationType> accommodationTypes = accTypeService.findAll();
@@ -386,9 +432,15 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.GetAccommodationsRequest")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAccommodationsResponse")
-	public List<AccommodationDTO> getAllAccommodations()
+	public List<AccommodationDTO> getAllAccommodations(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
 	{
-		List<Accommodation> accommodations = accService.findAll();
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		System.out.println("email " + email);
+		Session s = getSession(email);
+		System.out.println("jjjjj " + email);
+		@SuppressWarnings("unchecked")
+		List<Accommodation> accommodations = s.createNativeQuery("select * from accommodation").getResultList();
 		List<AccommodationDTO> retVal = new ArrayList<>();
 		
 		for(Accommodation acc : accommodations)
@@ -423,7 +475,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.GetReservations")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetReservationsResponse")
-	public List<ReservationDTO> getReservations()
+	public List<ReservationDTO> getReservations(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature)
 	{
 		List<Reservation> allReservations = reservationService.findAll();
 		List<ReservationDTO> retVal = new ArrayList<>();
@@ -448,7 +500,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetApartments")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetApartmentsResponse")
-	public List<ApartmentDTO> getApartments(@WebParam(name = "id") String id) throws JSONException
+	public List<ApartmentDTO> getApartments(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws JSONException
 	{
 //		Accommodation accommodation = accService.findOne(Long.valueOf(id));
 //		List<Apartment> all = apartmentService.findByAccommodationId(accommodation);
@@ -522,7 +574,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetApartment")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetApartmentResponse")
-	public ApartmentDTO getApartment(@WebParam(name = "id") String id) throws JSONException{
+	public ApartmentDTO getApartment(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws JSONException{
 		
 		Optional<Apartment> optional = apartmentService.findOne(Long.valueOf(id));
 		
@@ -596,7 +648,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetPricePlans")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetPricePlansResponse")
-	public List<PricePlan> getPricePlans(){
+	public List<PricePlan> getPricePlans(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature){
 		
 		List<PricePlan> pricePlans = pricePlanService.findAll();
 		return pricePlans;
@@ -604,7 +656,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.DeleteAccommodation")
 	@ResponseWrapper(className="com.project.web_service.wrappers.DeleteAccommodationResponse")
-	public String deleteAccommodation(@WebParam(name = "id") String id){
+	public String deleteAccommodation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature){
 		
 		List<Apartment> apartments = apartmentService.findByAccommodationId(Long.valueOf(id));
 		List<com.project.model.ApartmentService> apartmentServices = new  ArrayList<>();
@@ -647,7 +699,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAccommodation")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAccommodationResponse")
-	public AccommodationDTO getAccommodation(@WebParam(name = "id") String id){
+	public AccommodationDTO getAccommodation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature){
 		List<City> ct = cityService.findAll();
 		System.out.println(ct.get(0).getName());
 		Object c =  cityService.findOne(Long.valueOf("1"));
@@ -672,7 +724,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.DeleteApartment")
 	@ResponseWrapper(className="com.project.web_service.wrappers.DeleteApartmentResponse")
-	public String deleteApartment(@WebParam(name = "id") String id){
+	public String deleteApartment(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature){
 		
 		Long apartmentId = Long.valueOf(id);
 		
@@ -706,4 +758,25 @@ public class AccommodationWebService {
 		
 		return "Apartment deleted";
 	} 
+	
+	@WebMethod(exclude = true)
+	public Session getSession(String email) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+		
+		System.out.println("sesije "+sessions.keySet());
+		if (sessions.containsKey(email)) {
+			System.out.println("postoji "+ email);
+			return sessions.get(email).openSession();
+		}
+		Configuration conf = new Configuration().configure();
+			// <!-- Database connection settings -->
+		System.out.println("aaa " + agentService.findByEmail(email).getId());
+        String url = "jdbc:mysql://localhost:3306/db" + agentService.findByEmail(email).getId() + "?createDatabaseIfNotExist=true&useSSL=false";
+
+	    conf.setProperty("hibernate.connection.url", url);
+		SessionFactory sessionFactory = conf.buildSessionFactory();
+		
+		sessions.put(email, sessionFactory);
+		return sessionFactory.openSession();
+	}
+	
 }
