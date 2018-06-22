@@ -47,6 +47,16 @@ public class JpaRatingService implements RatingService {
 	}
 
 	@Override
+	public Rating findUserRatingForApartment(User user, Apartment apartment) {
+		for (Rating rating : findApartmentRatings(apartment)) {
+			if (rating.getUser().getId() == user.getId()) {
+				return rating;
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public List<Rating> findApartmentRatings(Apartment apartment) {
 		List<Rating> apartmentRatings = new ArrayList<Rating>();
 		for (Rating rating : findAll()) {
@@ -59,13 +69,12 @@ public class JpaRatingService implements RatingService {
 	
 	@Override
 	public double findAverageRatingForApartment(Apartment apartment) {
-		long sum = 0;
+		double sum = 0;
 		List<Rating> apartmentRatings = findApartmentRatings(apartment);
 		for (Rating rating : apartmentRatings) {
 			sum += rating.getRating();
 		}
-		System.out.println(sum);
-		return sum / apartmentRatings.size();
+		return sum == 0 ? 0 : sum / apartmentRatings.size();
 	}
 
 	@Override

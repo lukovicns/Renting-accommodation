@@ -15,4 +15,5 @@ public interface RatingService {
 	Rating findOne(Long id);
 	Rating save(Rating rating);
 	void delete(Rating rating);
+	Rating findUserRatingForApartment(User user, Apartment apartment);
 }

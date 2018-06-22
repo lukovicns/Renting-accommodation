@@ -15,7 +15,7 @@ public class Rating {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "comment_id", updatable = false, nullable = false, insertable=false)
+	@Column(name = "rating_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
 	@OneToOne

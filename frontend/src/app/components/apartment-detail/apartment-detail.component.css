@@ -19,10 +19,6 @@ a.btn {
   margin-top: 15px;
 }
 
-#comment-user {
-  background-color: rgba(233, 233, 233, 0.623);
-}
-
 .comment-card {
   width: 100%;
 }
@@ -39,9 +35,18 @@ h4 {
   font-size: 90%;
   color: gray;
   margin-bottom: 0;
+  font-style: italic;
   margin-top: 15px;
 }
 
 #add-comment {
   margin-bottom: 20px;
+}
+
+#rating {
+  float: right;
+  margin-top: 15px;
+  font-size: 90%;
+  color: gray;
+  font-style: italic;
 }

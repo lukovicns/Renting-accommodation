@@ -8,6 +8,7 @@ import { ReservationService } from '../../services/reservation.service';
 import { UserService } from '../../services/user.service';
 import { CommentService } from '../../services/comment.service';
 import { FormBuilder, Validators } from '@angular/forms';
+import { RatingService } from '../../services/rating.service';
 
 @Component({
   selector: 'app-apartment-detail',
@@ -24,6 +25,7 @@ export class ApartmentDetailComponent implements OnInit {
   private apartmentAdditionalServices = [];
   private accommodationId: Number;
   private apartmentId: Number;
+  private rating: Number;
   private apartment = {};
   private comments = [];
 
@@ -33,6 +35,7 @@ export class ApartmentDetailComponent implements OnInit {
     private reservationService: ReservationService,
     private apartmentService: ApartmentService,
     private commentService: CommentService,
+    private ratingService: RatingService,
     private userService: UserService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -60,6 +63,12 @@ export class ApartmentDetailComponent implements OnInit {
         })
       }, err => {
         this.router.navigate(['accommodations/' + this.accommodationId]);
+      })
+      this.ratingService.getAverageRatingForApartment(this.apartmentId)
+      .subscribe(res => {
+        res == 0 ? this.rating = 0 : this.rating = parseFloat(Number(res).toFixed(2));
+      }, err => {
+        console.log(err);
       })
       if (this.userService.getCurrentUser() != null) {
         this.reservationService.getUserReservationByApartmentId(this.apartmentId)

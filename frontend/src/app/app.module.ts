@@ -37,6 +37,7 @@ import { EditReservationComponent } from './components/edit-reservation/edit-res
 import { AccommodationTypeService } from './services/accommodation-type.service';
 import { AccommodationCategoryService } from './services/accommodation-category.service';
 import { CommentService } from './services/comment.service';
+import { RatingService } from './services/rating.service';
 
 
 @NgModule({
@@ -82,6 +83,7 @@ import { CommentService } from './services/comment.service';
     AdditionalServiceService,
     AccommodationTypeService,
     AccommodationCategoryService,
+    RatingService,
     CommentService,
     AuthGuard
   ],
