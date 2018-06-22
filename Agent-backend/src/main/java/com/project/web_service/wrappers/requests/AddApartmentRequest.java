@@ -6,10 +6,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.w3._2000._09.xmldsig.SignatureType;
+
 @XmlRootElement(name = "addApartmentRequest", namespace = "http://com.project/web_service/wrappers")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "addApartmentRequest", namespace = "http://com.project/web_service/wrappers", propOrder = {"accommodationId", "name", "bedType", "size", 
-		"numOfRooms", "numOfGuests", "description", "image", "additionalService", "pricePlans"})
+		"numOfRooms", "numOfGuests", "description", "image", "additionalService", "pricePlans", "Signature"})
 
 public class AddApartmentRequest {
 
@@ -42,6 +44,17 @@ public class AddApartmentRequest {
     
     @XmlElement(name = "pricePlans")
     private String pricePlans;
+    
+    @XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
+	private SignatureType Signature;
+
+	public SignatureType getSignature() {
+		return Signature;
+	}
+
+	public void setSignature(SignatureType signature) {
+		Signature = signature;
+	}
 
     public String getAccommodationId() {
 		return accommodationId;

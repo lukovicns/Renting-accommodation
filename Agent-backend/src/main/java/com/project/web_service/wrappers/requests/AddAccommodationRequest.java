@@ -4,13 +4,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.w3._2000._09.xmldsig.SignatureType;
+
 @XmlRootElement(name = "addAccommodationRequest", namespace = "http://com.project/web_service/wrappers")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "addAccommodationRequest", namespace = "http://com.project/web_service/wrappers", propOrder = {"name", "type", "city", 
-		"street", "description", "category", "image"})
+		"street", "description", "category", "image", "Signature"})
 
 public class AddAccommodationRequest {
 
@@ -34,6 +35,17 @@ public class AddAccommodationRequest {
 	    
 	    @XmlElement(name = "image")
 	    private String image;
+	    
+	    @XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
+		private SignatureType Signature;
+
+		public SignatureType getSignature() {
+			return Signature;
+		}
+
+		public void setSignature(SignatureType signature) {
+			Signature = signature;
+		}
 	    
 	    
 	    public String getName() {
