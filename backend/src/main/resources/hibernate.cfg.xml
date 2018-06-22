@@ -8,7 +8,7 @@
             root
         </property>
         <property name="connection.password">
-            root
+            admin
         </property>
         <property name="connection.pool_size">15</property>
         <!-- SQL dialect -->
@@ -19,19 +19,19 @@
         <property name="show_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
 
-        <mapping class="com.project.model.User"/>
-        <mapping class="com.project.model.Agent"/>
-        <mapping class="com.project.model.Accommodation"/>
-        <mapping class="com.project.model.AccommodationCategory"/>
-        <mapping class="com.project.model.AccommodationType"/>
-        <mapping class="com.project.model.Apartment"/>
-        <mapping class="com.project.model.AdditionalService"/>
-        <mapping class="com.project.model.ApartmentService"/>
-        <mapping class="com.project.model.BedType"/>
-        <mapping class="com.project.model.City"/>
-        <mapping class="com.project.model.Country"/>
-        <mapping class="com.project.model.Image"/>
-        <mapping class="com.project.model.Reservation"/>
-        <mapping class="com.project.model.PricePlan"/>
+        <mapping class="com.project.Rentingaccommodation.model.User"/>
+        <mapping class="com.project.Rentingaccommodation.model.Agent"/>
+        <mapping class="com.project.Rentingaccommodation.model.Accommodation"/>
+        <mapping class="com.project.Rentingaccommodation.model.AccommodationCategory"/>
+        <mapping class="com.project.Rentingaccommodation.model.AccommodationType"/>
+        <mapping class="com.project.Rentingaccommodation.model.Apartment"/>
+        <mapping class="com.project.Rentingaccommodation.model.AdditionalService"/>
+        <mapping class="com.project.Rentingaccommodation.model.ApartmentAdditionalService"/>
+        <mapping class="com.project.Rentingaccommodation.model.BedType"/>
+        <mapping class="com.project.Rentingaccommodation.model.City"/>
+        <mapping class="com.project.Rentingaccommodation.model.Country"/>
+        <mapping class="com.project.Rentingaccommodation.model.Image"/>
+        <mapping class="com.project.Rentingaccommodation.model.Reservation"/>
+        <mapping class="com.project.Rentingaccommodation.model.PricePlan"/>
     </session-factory>
 </hibernate-configuration>

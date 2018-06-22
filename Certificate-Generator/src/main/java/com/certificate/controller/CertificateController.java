@@ -142,7 +142,7 @@ public class CertificateController {
 	@ResponseBody
 	public ResponseEntity<?> generateCertificate(@RequestBody String email) throws KeyStoreException, NoSuchProviderException, IOException, NoSuchAlgorithmException, CertificateException{
 		System.out.println("usao");
-		KeyStore keyStore=keyStoreService.loadKeyStore(new File("C:\\Users\\sale1\\Desktop\\projekti\\LoginRegister-backend\\KeyStore.jks"), "sale131195".toCharArray());
+		KeyStore keyStore=keyStoreService.loadKeyStore(new File(System.getProperty("user.dir")+ "\\KeyStore.jks"), "sale131195".toCharArray());
 		CertificateRequest certificateRequest = new CertificateRequest();
 		certificateRequest.setAlias(email);
 		certificateRequest.setC("");
@@ -171,7 +171,7 @@ public class CertificateController {
 			keyStore.setKeyEntry(certificateRequest.getAlias(), newKeyPair.getPrivate(), "sale131195".toCharArray(), new X509Certificate[] { cert });
 			//keyStoreService.write(keyStore, "Aleksandar", certificateRequest.getAlias(), newKeyPair.getPrivate(), certificateRequest.getPassword().toCharArray(),(Certificate) cert);
 			System.out.println(keyStore.getCertificate(certificateRequest.getAlias()));
-			FileOutputStream fos = new FileOutputStream(new File("C:\\Users\\sale1\\Desktop\\projekti\\LoginRegister-backend\\KeyStore.jks"));
+			FileOutputStream fos = new FileOutputStream(new File(System.getProperty("user.dir")+ "\\KeyStore.jks"));
 			keyStore.store(fos, "sale131195".toCharArray());
 			fos.close();
 			return new ResponseEntity<>(HttpStatus.OK);

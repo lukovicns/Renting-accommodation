@@ -1,0 +1,120 @@
+<div [@fadeIn]>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h1>New accommodation</h1>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="apartmentForm" (ngSubmit)="addApartment()">
+        
+          <div class="form-group">
+           	<label for="name">Name</label>
+           	<input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter apartment name here">
+          </div>
+          
+          <div class="form-group">
+            <label for="bedType">Bed type</label>
+            <select formControlName="bedType" required class="form-control"><!-- [(ngModel)]="model" name="type"> -->
+            	<option value="" disabled="true"> Please select bed type</option>
+			    <option *ngFor="let type of bedTypes" [value]="type.id">{{type.name}}</option>
+			</select>
+           <!--  <div *ngFor="let type of bedTypes" >
+		        <label>
+		            <input formControlName="bedType" type="checkbox" name="bedTypes" value="{{type.id}}" (change)="isAnswerProvided($event, type.id)"/>
+		            {{type.name}}
+		        </label>
+		    </div> -->
+			  <!--   <section class="example-section">
+			      <input type="checkbox">Checked
+			      <input type="checkbox">Indeterminate
+			    </section>
+			 -->
+		  </div>
+		  
+		  <div class="form-group">
+            <label for="size">Size (in square meters)</label>
+            <input formControlName="size" type="number" class="form-control" min="1" id="size" placeholder="Define apartment size">
+		  </div>
+		  
+		  <div class="form-group">
+            <label for="numOfRooms">Number of rooms</label>
+            <input formControlName="numOfRooms" type="number" class="form-control" min="1" id="numOfRooms" placeholder="Define number of rooms">
+		  </div>
+		  
+		  <div class="form-group">
+            <label for="numOfGuests">Number of guest</label>
+            <input formControlName="numOfGuests" type="number" class="form-control" min="1" id="numOfGuests" placeholder="Define max number of guests"> 
+		  </div>
+		  
+		  <div class="form-group">
+		  <div>
+            <label for="pricePlans">Price plan</label> 
+            <button type="button" (click)="show()" class="btn btn-outline-info">New price plan</button>
+            <div *ngIf="moreThanOne">
+            <div *ngFor="let pp of pricePlans" >
+		        <label>
+		            <input formControlName="pricePlans" [checked]="pp" type="checkbox" name="pricePlans" value="{{pp.id}}" (change)="isAnswerProvidedPP($event, pp)"/>
+		            {{pp.startDate}} {{pp.endDate}} {{pp.price}}
+		        </label>
+            </div>
+            </div>
+            </div>
+            <!-- <select formControlName="pricePlans" required class="form-control">
+            	<option value="" disabled="true" *ngIf="msg">{{msg}}</option>
+            	<option *ngIf="!msg" value="" disabled="true"> Please select plan type</option>
+			    <option *ngFor="let plan of pricePlans" [value]="plan.id">{{plan.startDate}} {{plan.endDate}} {{plan.price}}</option>
+			</select>  -->
+			<div *ngIf="showNewPricePlan">
+			  <hr>
+	          <div class="form-group">
+	            <label for="startDate">Start date</label>
+	          	<input formControlName="startDate" type="date"/>
+			  </div>
+			  
+			  <div class="form-group">
+			   <label for="endDate">End date</label>
+	          	<input formControlName="endDate" type="date"/>
+			  </div>
+			  
+			   <div class="form-group">
+	           	<label for="price">Price</label>
+	           	<input formControlName="price" type="number" class="form-control" id="price" placeholder="Define price here">
+	          </div>
+				<div>		  
+	          		<button type="button" (click)="addPricePlan()" class="btn btn-info btn-block">Add</button>
+		      	</div>
+		      <hr>
+			</div>		  
+		  </div> 
+		  <hr>
+		  
+		  <div class="form-group">
+            <label for="additional">Additional service</label>
+            	<div *ngFor="let ads of additionalServices" >
+		        <label>
+		            <input formControlName="additional" type="checkbox" name="additional" value="{{ads.id}}" (change)="isAnswerProvided($event, ads.id)"/>
+		            {{ads.name}}
+		        </label>
+		    	</div>
+			</div>
+		  
+		  <div class="form-group">
+            <label for="description">Description</label>
+             <input type="text" style="height:100px" class="form-control" id="description"  formControlName="description" placeholder="Enter description here">
+		  </div>
+		  
+		   <div class="form-group">
+            <label for="image">Image</label>
+           	<div>
+           		<!-- <input formControlName="image" class="form-control" id="image" > -->{{imgName}}
+             	<input formControlName="image" style="display: none" type="file" (change)="onFileChanged($event)" #fileInput> 
+			 	<button type="button" class="btn btn-outline-info" (click)="fileInput.click()">Select File</button>
+			 </div>
+		  </div>
+					  
+          <button type="submit" class="btn btn-info btn-block">Add</button>
+        </form>
+      </div>
+    </div> 
+  </div>
+</div>

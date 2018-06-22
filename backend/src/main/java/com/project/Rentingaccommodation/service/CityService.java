@@ -13,4 +13,5 @@ public interface CityService {
 	City delete(Long id);
 	void delete(List<Long> ids);
 	City findByName(String name);
+	List<City> findByCountryId(Long id);
 }

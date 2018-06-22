@@ -63,4 +63,10 @@ public class JpaCityService implements CityService {
 			repository.deleteById(id);
 		}
 	}
+
+	@Override
+	public List<City> findByCountryId(Long id) {
+		// TODO Auto-generated method stub
+		return repository.findByCountryId(id);
+	}
 }
