@@ -60,6 +60,8 @@ build/Release
 
 # Dependency directories
 frontend/node_modules/
+admin/node_modules/
+Agent-frontend/node_modules/
 jspm_packages/
 
 # TypeScript v1 declaration files

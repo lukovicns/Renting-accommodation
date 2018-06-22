@@ -61,4 +61,14 @@ public class JpaAdminService implements AdminService {
 	public User deactivateUser(User user) {
 		return null;
 	}
+
+	@Override
+	public Admin findByIdAndEmail(Long id, String email) {
+		for (Admin a : repository.findAll()) {
+			if (a.getId() == id && a.getEmail().equals(email)) {
+				return a;
+			}
+		}
+		return null;
+	}
 }

@@ -23,21 +23,23 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
+import com.project.Rentingaccommodation.model.Admin;
 import com.project.Rentingaccommodation.model.Agent;
+import com.project.Rentingaccommodation.model.AgentStatus;
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.model.Country;
-import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserRoles;
-import com.project.Rentingaccommodation.model.UserStatus;
 import com.project.Rentingaccommodation.model.DTO.AgentDTO;
 import com.project.Rentingaccommodation.model.DTO.LoginDTO;
 import com.project.Rentingaccommodation.security.JwtGenerator;
 import com.project.Rentingaccommodation.security.JwtUser;
+import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.AgentService;
 import com.project.Rentingaccommodation.service.CityService;
@@ -64,6 +66,9 @@ public class AgentController {
 	
 	@Autowired
 	private JwtGenerator jwtGenerator;
+	
+	@Autowired
+	private JwtValidator jwtValidator;
 	
 	@Autowired
 	private CountryService countryService;
@@ -93,6 +98,120 @@ public class AgentController {
         return new ResponseEntity<List<City>>(cities, HttpStatus.OK);
 	}
 	
+	@RequestMapping(value="/approved", method=RequestMethod.GET)
+	public ResponseEntity<List<Agent>> getApprovedAgents() {
+		return new ResponseEntity<>(service.findApprovedAgents(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/{id}/approved", method=RequestMethod.GET)
+	public ResponseEntity<Object> getApprovedAgent(@PathVariable Long id) {
+		Agent agent = service.findOne(id);
+		if (agent == null) {
+			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(service.findApprovedAgent(agent), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/waiting", method=RequestMethod.GET)
+	public ResponseEntity<List<Agent>> getWaitingAgents() {
+		return new ResponseEntity<>(service.findWaitingAgents(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/{id}/waiting", method=RequestMethod.GET)
+	public ResponseEntity<Object> getWaitingAgent(@PathVariable Long id) {
+		Agent agent = service.findOne(id);
+		if (agent == null) {
+			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(service.findWaitingAgent(agent), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/declined", method=RequestMethod.GET)
+	public ResponseEntity<List<Agent>> getDeclinedAgents() {
+		return new ResponseEntity<>(service.findDeclinedAgents(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/{id}/declined", method=RequestMethod.GET)
+	public ResponseEntity<Object> getDeclinedAgent(@PathVariable Long id) {
+		Agent agent = service.findOne(id);
+		if (agent == null) {
+			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(service.findDeclinedAgent(agent), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/{id}/approve", method=RequestMethod.PUT)
+	public ResponseEntity<Object> approveAgent(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+		try {
+			String token = authHeader.split(" ")[1].trim();
+			JwtUser jwtUser = jwtValidator.validate(token);
+			if (jwtUser != null) {
+				Admin admin = adminService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
+				if (admin == null) {
+					return new ResponseEntity<>("Admin not found.", HttpStatus.NOT_FOUND);
+				}
+				Agent agent = service.findOne(id);
+				if (agent == null) {
+					return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+				}
+				agent.setStatus(AgentStatus.APPROVED);
+				return new ResponseEntity<>(service.save(agent), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error validating token.", HttpStatus.FORBIDDEN);
+		}
+	}
+	
+	@RequestMapping(value="/{id}/decline", method=RequestMethod.PUT)
+	public ResponseEntity<Object> declineAgent(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+		try {
+			String token = authHeader.split(" ")[1].trim();
+			JwtUser jwtUser = jwtValidator.validate(token);
+			if (jwtUser != null) {
+				Admin admin = adminService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
+				if (admin == null) {
+					return new ResponseEntity<>("Admin not found.", HttpStatus.NOT_FOUND);
+				}
+				Agent agent = service.findOne(id);
+				if (agent == null) {
+					return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+				}
+				agent.setStatus(AgentStatus.DECLINED);
+				return new ResponseEntity<>(service.save(agent), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error validating token.", HttpStatus.FORBIDDEN);
+		}
+	}
+	
+	@RequestMapping(value="/{id}/remove-approval", method=RequestMethod.PUT)
+	public ResponseEntity<Object> removeApprovalOfAgent(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+		try {
+			String token = authHeader.split(" ")[1].trim();
+			JwtUser jwtUser = jwtValidator.validate(token);
+			if (jwtUser != null) {
+				Admin admin = adminService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
+				if (admin == null) {
+					return new ResponseEntity<>("Admin not found.", HttpStatus.NOT_FOUND);
+				}
+				Agent agent = service.findOne(id);
+				if (agent == null) {
+					return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
+				}
+				agent.setStatus(AgentStatus.REMOVED_APPROVAL);
+				return new ResponseEntity<>(service.save(agent), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error validating token.", HttpStatus.FORBIDDEN);
+		}
+	}
+	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<Object> registerAgent(@RequestBody AgentDTO agent) {
 		
@@ -115,7 +234,7 @@ public class AgentController {
 //		String question = agent.getQuestion();	
 //		String answer = PasswordUtil.hash(agent.getAnswer().toCharArray(), charset);	
 		
-		Agent regAgent = new Agent(name, surname, password, email, city, street, phone, businessId);
+		Agent regAgent = new Agent(name, surname, password, email, city, street, phone, businessId, AgentStatus.WAITING);
 		service.save(regAgent);
 		
 		try {
@@ -141,6 +260,10 @@ public class AgentController {
 		System.out.println("aaaa " + agent.getEmail());
 		
 		HashMap<String, Object> response = new HashMap<String, Object>();
+		
+		if (agent.getStatus().equals(AgentStatus.APPROVED)) {
+			return new ResponseEntity<>("This agent is either declined or don't have approval.", HttpStatus.FORBIDDEN);
+		}
 		
 		if(agent != null)
 		{			
@@ -170,7 +293,6 @@ public class AgentController {
 		}
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
-		
 	}
 	
 	private void buildSessionFactory(String email) {
@@ -193,8 +315,6 @@ public class AgentController {
 			
 		return sessionFactory.openSession();
 	}
-	
-	
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Object> getAgent(@PathVariable Long id) {

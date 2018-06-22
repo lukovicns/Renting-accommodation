@@ -48,8 +48,8 @@ public class User {
 	@Column(name="answer", columnDefinition="VARCHAR(100)", nullable=false)
 	private String answer;
 	
-	@Column(name="max_tries", columnDefinition="INT(11)", nullable=false)
-	private int max_tries = 0;
+//	@Column(name="max_tries", columnDefinition="INT(11)", nullable=false)
+//	private int max_tries = 0;
 	
 	@Enumerated(EnumType.STRING)
 	private UserStatus status;
@@ -59,7 +59,7 @@ public class User {
 	}
 
 	public User(String name, String surname, String password, String email, City city,
-			String street, String phone, String question, String answer) {
+			String street, String phone, String question, String answer, UserStatus status) {
 		super();
 		this.name = name;
 		this.surname = surname;
@@ -68,9 +68,9 @@ public class User {
 		this.city = city;
 		this.street = street;
 		this.phone = phone;
-		this.status = UserStatus.ACTIVATED;
 		this.question = question;
 		this.answer = answer;
+		this.status = status;
 	}
 
 	public Long getId() {
@@ -161,19 +161,12 @@ public class User {
 		this.answer = answer;
 	}
 
-	public int getMax_tries() {
-		return max_tries;
-	}
+//	public int getMax_tries() {
+//		return max_tries;
+//	}
+//
+//	public void setMax_tries(int max_tries) {
+//		this.max_tries = max_tries;
+//	}
 
-	public void setMax_tries(int max_tries) {
-		this.max_tries = max_tries;
-	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", surname=" + surname + ", email=" + email + ", city=" + city
-				+ ", street=" + street + ", phone=" + phone + ", question=" + question + ", answer=" + answer
-				+ ", max_tries=" + max_tries + ", status=" + status + "]";
-	}
 }
-

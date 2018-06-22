@@ -2,6 +2,8 @@ package com.project.Rentingaccommodation.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,13 +44,16 @@ public class Agent {
 
 	@Column(name="bussiness_id", unique=true, nullable=false)
 	private int businessId;
+	
+	@Enumerated(EnumType.STRING)
+	private AgentStatus status;
 
 	public Agent() {
 		
 	}
 	
 	public Agent(String name, String surname, String password, String email, City city, String street,
-			String phone, int businessId) {
+			String phone, int businessId, AgentStatus status) {
 		super();
 		this.name = name;
 		this.surname = surname;
@@ -58,6 +63,7 @@ public class Agent {
 		this.street = street;
 		this.phone = phone;
 		this.businessId = businessId;
+		this.status = status;
 	}
 
 	public Long getId() {
@@ -132,10 +138,11 @@ public class Agent {
 		this.businessId = businessId;
 	}
 
-	@Override
-	public String toString() {
-		return "Agent [id=" + id + ", name=" + name + ", surname=" + surname + ", password=" + password + ", email="
-				+ email + ", city=" + city + ", street=" + street + ", phone=" + phone + ", businessId=" + businessId
-				+ "]";
+	public AgentStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AgentStatus status) {
+		this.status = status;
 	}
 }

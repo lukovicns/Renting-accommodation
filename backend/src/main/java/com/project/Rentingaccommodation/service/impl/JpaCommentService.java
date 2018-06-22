@@ -6,8 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Comment;
 import com.project.Rentingaccommodation.model.CommentStatus;
 import com.project.Rentingaccommodation.model.User;

@@ -5,3 +5,19 @@
 h1 {
   text-align: center;
 }
+
+#approved {
+  color: #218838;
+}
+
+#waiting {
+  color: #d39e00;
+}
+
+#declined {
+  color: #dc3545;
+}
+
+th button.btn.btn-success {
+  margin-right: 5px;
+}

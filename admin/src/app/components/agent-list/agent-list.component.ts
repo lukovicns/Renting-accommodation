@@ -11,6 +11,7 @@ import { AgentService } from '../../services/agent.service';
 export class AgentListComponent implements OnInit {
 
   private agents = [];
+  private errorMessage: boolean;
 
   constructor(private agentService: AgentService) { }
 
@@ -20,6 +21,33 @@ export class AgentListComponent implements OnInit {
       this.agents = res;
     }, err => {
       console.log(err);
+    })
+  }
+
+  approveAgent(agentId) {
+    this.agentService.approveAgent(agentId)
+    .subscribe(res => {
+      this.ngOnInit();
+    }, err => {
+      this.errorMessage = err['error'];
+    })
+  }
+
+  declineAgent(agentId) {
+    this.agentService.declineAgent(agentId)
+    .subscribe(res => {
+      this.ngOnInit();
+    }, err => {
+      this.errorMessage = err['error'];
+    })
+  }
+
+  removeAgentApproval(agentId) {
+    this.agentService.removeAgentApproval(agentId)
+    .subscribe(res => {
+      this.ngOnInit();
+    }, err => {
+      this.errorMessage = err['error'];
     })
   }
 }

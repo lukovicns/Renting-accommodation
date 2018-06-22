@@ -109,7 +109,7 @@ public class UserController {
 		String question = user.getQuestion();
 		String answer = PasswordUtil.hash(user.getAnswer().toCharArray(), charset);	
 		
-		User regUser = new User(name, surname, password, email, city, street, phone, question, answer);	
+		User regUser = new User(name, surname, password, email, city, street, phone, question, answer, UserStatus.ACTIVATED);	
 		userService.save(regUser);
 		
 		return new ResponseEntity<>(regUser, HttpStatus.OK);
@@ -138,7 +138,8 @@ public class UserController {
 		String verifyHash = u.getPassword();
 		String verifyPass = user.getPassword();
 		
-		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset)) {
+		// Omoguceno logovanje test korisnika iz baze.
+		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset) && !u.getEmail().equals("test@test.com")) {
 //			u.setMax_tries(u.getMax_tries() + 1);
 //			userService.save(u);
 			return new ResponseEntity<>("Password is invalid.", HttpStatus.UNAUTHORIZED);

@@ -23,24 +23,11 @@ export class ReservationListComponent implements OnInit {
       console.log(err);
     });
   }
-
-  getReservations() {
-    this.reservationService.getUserReservations()
-    .subscribe(res => {
-      this.reservations = res;
-    }, err => {
-      console.log(err);
-    });
-  }
-
-  editReservation(reservationId) {
-    
-  }
-
+  
   cancelReservation(reservationId) {
     this.reservationService.cancelReservation(reservationId)
     .subscribe(res => {
-      this.getReservations();
+      this.ngOnInit();
     }, err => {
       console.log(err);
     })

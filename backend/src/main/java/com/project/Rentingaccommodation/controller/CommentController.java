@@ -85,7 +85,7 @@ public class CommentController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				User user = userService.findOne(jwtUser.getId());
+				User user = userService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				if (user == null) {
 					return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 				}
@@ -132,7 +132,7 @@ public class CommentController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				Admin admin = adminService.findOne(jwtUser.getId());
+				Admin admin = adminService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				Comment comment = service.findOne(id);
 				if (admin == null) {
 					return new ResponseEntity<>("Admin not found.", HttpStatus.NOT_FOUND);
@@ -156,7 +156,7 @@ public class CommentController {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
 			if (jwtUser != null) {
-				Admin admin = adminService.findOne(jwtUser.getId());
+				Admin admin = adminService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				Comment comment = service.findOne(id);
 				if (admin == null) {
 					return new ResponseEntity<>("Admin not found.", HttpStatus.NOT_FOUND);

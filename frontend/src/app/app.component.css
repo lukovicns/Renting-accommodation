@@ -1,3 +1,9 @@
 #logout {
   cursor: pointer;
 }
+
+#profile-nav-link {
+  margin-right: 10px;
+  border-right: 1px solid #4e5863;
+  padding-right: 15px;
+}

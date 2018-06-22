@@ -6,6 +6,9 @@
     </ol>
   </nav>
   <div class="container">
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
     <table class="table" *ngIf="agents && agents.length > 0; else agentsNotFound">
       <thead class="thead-light">
         <tr>
@@ -16,6 +19,8 @@
           <th scope="col">City</th>
           <th scope="col">Street</th>
           <th scope="col">Phone</th>
+          <th scope="col">Status</th>
+          <th scope="col">Approve/Decline</th>
         </tr>
       </thead>
       <tbody>
@@ -27,6 +32,32 @@
           <td>{{ agent.city?.name }}</td>
           <td>{{ agent.street }}</td>
           <td>{{ agent.phone }}</td>
+          <td *ngIf="agent.status === 'APPROVED'" id="approved">
+            &nbsp;<i class="fas fa-check"></i>
+            Approved
+          </td>
+          <td *ngIf="agent.status === 'WAITING'" id="waiting">
+            &nbsp;<i class="far fa-clock"></i>
+            Waiting
+          </td>
+          <td *ngIf="agent.status === 'DECLINED'" id="declined">
+            &nbsp;<i class="fas fa-times"></i>
+            Declined
+          </td>
+          <td *ngIf="agent.status === 'REMOVED_APPROVAL'" id="declined">&nbsp;<i class="fas fa-times"></i>
+            Removed approval
+          </td>
+          <th scope="col">
+            <button class="btn btn-success btn-sm" *ngIf="agent.status === 'WAITING' || agent.status === 'DECLINED' || agent.status === 'REMOVED_APPROVAL'" (click)="approveAgent(agent.id)">
+              Approve
+            </button>
+            <button class="btn btn-danger btn-sm" *ngIf="agent.status === 'WAITING'" (click)="declineAgent(agent.id)">
+              Decline
+            </button>
+            <button class="btn btn-danger btn-sm" *ngIf="agent.status === 'APPROVED'" (click)="removeAgentApproval(agent.id)">
+              Remove approval
+            </button>
+          </th>
         </tr>
       </tbody>
     </table>
