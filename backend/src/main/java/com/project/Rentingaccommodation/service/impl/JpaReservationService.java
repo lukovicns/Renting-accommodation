@@ -153,8 +153,6 @@ public class JpaReservationService implements ReservationService {
 		try {
 			Date start = dateFormatter.parse(startDate);
 			Date end = dateFormatter.parse(endDate);
-			System.out.println(start);
-			System.out.println(end);
 			return start.compareTo(end) >= 0 ? false : true;
 		} catch (ParseException e) {
 			e.printStackTrace();

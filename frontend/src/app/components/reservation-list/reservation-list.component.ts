@@ -11,7 +11,6 @@ import { fadeIn } from '../../animations';
 export class ReservationListComponent implements OnInit {
 
   private reservations = [];
-  private exists = true;
 
   constructor(private reservationService: ReservationService) { }
 

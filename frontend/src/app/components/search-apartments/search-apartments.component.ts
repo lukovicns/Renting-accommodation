@@ -24,6 +24,7 @@ export class SearchApartmentsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.route.snapshot.queryParamMap);
     const city = this.route.snapshot.queryParams['city'];
     const persons = this.route.snapshot.queryParams['persons'];
     const startDate = this.route.snapshot.queryParams['startDate'];
@@ -47,7 +48,8 @@ export class SearchApartmentsComponent implements OnInit {
           this.apartments = resp;
         })
       } else {
-        this.apartmentService.getApartmentsByAdvancedQueryParams(res['id'], persons, startDate, endDate, type, category)
+        // Advanced search logic
+        this.apartmentService.getApartmentsByAdvancedQueryParams(this.route.snapshot.queryParamMap['params'])
         .subscribe(resp => {
           this.apartments = resp;
         })

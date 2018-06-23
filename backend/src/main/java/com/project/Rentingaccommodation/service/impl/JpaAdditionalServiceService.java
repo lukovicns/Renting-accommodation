@@ -1,11 +1,9 @@
 package com.project.Rentingaccommodation.service.impl;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.project.Rentingaccommodation.model.AdditionalService;
 import com.project.Rentingaccommodation.repository.AdditionalServiceRepository;
 import com.project.Rentingaccommodation.service.AdditionalServiceService;

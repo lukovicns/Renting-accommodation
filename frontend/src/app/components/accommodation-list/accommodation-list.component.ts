@@ -68,6 +68,11 @@ export class AccommodationListComponent implements OnInit {
       if (this.advancedOptions) {
         queryParams['type'] = document.querySelector('#type')['value'];
         queryParams['category'] = document.querySelector('#category')['value'];
+        const additionalServices = document.querySelectorAll('input[name=additionalServices]:checked');
+        for (let i = 0; i < additionalServices.length; i++) {
+          let additionalServiceId = additionalServices[i]['id'];
+          queryParams['service' + additionalServiceId] = 'on';
+        }
       }
       this.router.navigate(['/accommodations/search'], { queryParams: queryParams });
     }, err => {

@@ -52,7 +52,7 @@
                   </select>
                 </div>
                 <div class="form-group" *ngFor="let service of additionalServices">
-                  <input type="checkbox" id="{{ service.id }}">
+                  <input type="checkbox" id="{{ service.id }}" name="additionalServices">
                   <label for="{{ service.id }}">{{ service.name }}</label>
                 </div>
               </div>
