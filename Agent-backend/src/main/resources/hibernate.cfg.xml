@@ -8,7 +8,7 @@
             root
         </property>
         <property name="connection.password">
-            admin
+            root
         </property>
         <property name="connection.autocommit">true</property>
         <property name="connection.pool_size">15</property>
@@ -27,7 +27,7 @@
         <mapping class="com.project.model.AccommodationType"/>
         <mapping class="com.project.model.Apartment"/>
         <mapping class="com.project.model.AdditionalService"/>
-        <mapping class="com.project.model.ApartmentService"/>
+        <mapping class="com.project.model.ApartmentAdditionalService"/>
         <mapping class="com.project.model.BedType"/>
         <mapping class="com.project.model.City"/>
         <mapping class="com.project.model.Country"/>

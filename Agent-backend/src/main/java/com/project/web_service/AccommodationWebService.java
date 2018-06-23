@@ -283,17 +283,6 @@ public class AccommodationWebService {
 		tx.commit();
 		session.close();
 		
-		System.out.println("aaa id " + id);
-		session.createNativeQuery("insert into accommodation values(" + saved.getId() + ",'" +
-		saved.getDescription() + "','" + saved.getName() + "','ACTIVE','" + saved.getStreet() + "'," + saved.getAgent().getId() + "," + 
-		saved.getCategory().getId() + "," +
-		saved.getCity().getId() + "," + saved.getType().getId() + ")").executeUpdate();
-		
-		retVal = "Accommodation successfully added";
-		
-		tx.commit();
-		session.close();
-		
 		return retVal;
 	}
 	
@@ -454,12 +443,6 @@ public class AccommodationWebService {
 		PricePlan saved = pricePlanService.save(newPricePlan);
 		if(saved == null)
 			return "error";
-		
-		session.createNativeQuery("insert into price_plan values(" + saved.getId() + ",'" +
-				saved.getEndDate() + "'," + saved.getPrice() + ",'" + saved.getStartDate() + "','ACTIVE'," + saved.getApartment().getId()).executeUpdate();
-		
-		tx.commit();
-		session.close();
 		
 		session.createNativeQuery("insert into price_plan values(" + saved.getId() + ",'" +
 				saved.getEndDate() + "'," + saved.getPrice() + ",'" + saved.getStartDate() + "','ACTIVE'," + saved.getApartment().getId()).executeUpdate();
@@ -827,8 +810,7 @@ public class AccommodationWebService {
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
-		@SuppressWarnings("unchecked")
-		List<PricePlan> pricePlans = session.createNativeQuery("select * from price_plan").getResultList();
+		List<PricePlan> pricePlans = session.createNativeQuery("select * from price_plan", PricePlan.class).getResultList();
 		tx.commit();
 		session.close();
 		
@@ -856,7 +838,7 @@ public class AccommodationWebService {
 		{
 			if(apartment.getStatus().equals(DeleteStatus.ACTIVE))
 			{
-				pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=" + apartment.getId()).getResultList();
+				pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=" + apartment.getId(), PricePlan.class).getResultList();
 				
 				for(PricePlan pp : pricePlans)
 				{	
@@ -963,16 +945,17 @@ public class AccommodationWebService {
 
 		List<MessageDTO> retVal = new ArrayList<MessageDTO>();
 		for(Message message : messages) {
-			retVal.add(new MessageDTO(message.getId().toString(),message.getUser().getName(),message.getUser().getSurname(),message.getText(),message.getDate(),message.getTime()));
+			retVal.add(new MessageDTO(message.getId().toString(),message.getUser().getName(),message.getUser().getSurname(),
+					message.getText(),message.getDate(),message.getTime(), message.getAgent().getEmail(), message.getUser().getEmail()));
 		}
-		
+		System.out.println(retVal.size());
 		return retVal;
 		
 	}
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentSentMessage")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentSentMessageResponse")
-	public Message getAgentSentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public MessageDTO getAgentSentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		Session s = getSession(email);
@@ -980,13 +963,14 @@ public class AccommodationWebService {
 		Message message = s.get(Message.class, Long.valueOf(id));
 		tx.commit();
 		s.close();
-		return message;
+		return new MessageDTO(message.getId().toString(), message.getUser().getName(), message.getUser().getSurname(), message.getText(), message.getDate(), message.getTime(), 
+				message.getAgent().getEmail(), message.getUser().getEmail());
 		
 	}
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessage")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessageResponse")
-	public Message getAgentReceivedMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public MessageDTO getAgentReceivedMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		Session s = getSession(email);
@@ -994,7 +978,8 @@ public class AccommodationWebService {
 		Message message = s.get(Message.class, Long.valueOf(id));
 		tx.commit();
 		s.close();
-		return message;
+		return new MessageDTO(message.getId().toString(), message.getUser().getName(), message.getUser().getSurname(), message.getText(), message.getDate(), message.getTime(), 
+				message.getAgent().getEmail(), message.getUser().getEmail());
 		
 	}
 	
@@ -1005,15 +990,15 @@ public class AccommodationWebService {
 		String email = subjectData.split("=")[8];
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
-		List<Message> messages = s.createNativeQuery("select * from  message where direction = 'USER_TO_AGENT' and status = 'UNREAD'", Message.class).getResultList();
+		List<Message> messages = s.createNativeQuery("select * from  message where direction = 'USER_TO_AGENT' and status!='DELETED_FOR_AGENT'", Message.class).getResultList();
 		tx.commit();
 		s.close();
 
 		List<MessageDTO> retVal = new ArrayList<MessageDTO>();
 		for(Message message : messages) {
-			retVal.add(new MessageDTO(message.getId().toString(),message.getUser().getName(),message.getUser().getSurname(),message.getText(),message.getDate(),message.getTime()));
+			retVal.add(new MessageDTO(message.getId().toString(),message.getUser().getName(),message.getUser().getSurname(),
+					message.getText(),message.getDate(),message.getTime(),message.getAgent().getEmail(), message.getUser().getEmail()));
 		}
-		
 		return retVal;
 		
 	}
@@ -1025,7 +1010,7 @@ public class AccommodationWebService {
 		String email = subjectData.split("=")[8];
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
-		
+		System.out.println("id "+id);
 		Message message = s.get(Message.class, Long.valueOf(id));
 		message.setStatus(MessageStatus.READ);
 		messageService.save(message);

@@ -8,14 +8,12 @@ public class MessageDTO {
 	String content;
 	String date;
 	String time;
+	String agentEmail;
+	String userEmail;
 	
 	
-	
-	public MessageDTO() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	public MessageDTO(String id, String name, String surname, String content, String date, String time) {
+	public MessageDTO(String id, String name, String surname, String content, String date, String time,
+			String agentEmail, String userEmail) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -23,7 +21,14 @@ public class MessageDTO {
 		this.content = content;
 		this.date = date;
 		this.time = time;
+		this.userEmail = userEmail;
+		this.agentEmail = agentEmail;
 	}
+	public MessageDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -59,6 +64,18 @@ public class MessageDTO {
 	}
 	public void setTime(String time) {
 		this.time = time;
+	}
+	public String getAgentEmail() {
+		return agentEmail;
+	}
+	public void setAgentEmail(String agentEmail) {
+		this.agentEmail = agentEmail;
+	}
+	public String getUserEmail() {
+		return userEmail;
+	}
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 	
 	

@@ -1,1 +1,1 @@
-<ns2:getCities xmlns:ns2="http://com.project/web_service/wrappers"></ns2:getCities>
+<ns2:getAgentReceivedMessage xmlns:ns2="http://com.project/web_service/wrappers"><id>2</id></ns2:getAgentReceivedMessage>

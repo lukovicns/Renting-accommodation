@@ -36,6 +36,7 @@ export class MessageService {
     }
 
     deleteReceivedMessage(message) {
+        console.log(message.id)
       return this.http.delete<Message>(this.url + 'deleteAgentSentMessage/'+ message.id);
     }
 

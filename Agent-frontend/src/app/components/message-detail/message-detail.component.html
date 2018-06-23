@@ -14,11 +14,11 @@
         <a routerLink="/inbox">Go back</a>
       </div>
       <div class="card-body">
-        <p><strong>From agent:</strong>&nbsp; {{ message.agent?.email }}</p>
-        <p><strong>To user:</strong>&nbsp; {{ message.user?.email }}</p>
+        <p><strong>To agent:</strong>&nbsp; {{ message.agentEmail }}</p>
+        <p><strong>From user:</strong>&nbsp; {{ message.userEmail }}</p>
         <hr>
         <div class="card-body">
-            {{ message.text }}
+            {{ message.content }}
         </div>
       </div>
     </div>
@@ -29,10 +29,10 @@
         <a routerLink="/inbox">Go back</a>
       </div>
       <div class="card-body">
-        <p><strong>To agent:</strong>&nbsp; {{ message.agent?.email }}</p>
+        <p><strong>To user:</strong>&nbsp; {{ message.userEmail }}</p>
         <hr>
         <div class="card-body">
-            {{ message.text }}
+            {{ message.content }}
         </div>
       </div>
     </div>

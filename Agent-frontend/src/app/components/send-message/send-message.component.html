@@ -2,9 +2,6 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-      <li class="breadcrumb-item"><a routerLink="/accommodations">Accommodations</a></li>
-      <li class="breadcrumb-item"><a routerLink="/accommodations/{{ accommodation.id }}">{{ accommodation.name }}</a></li>
-      <li class="breadcrumb-item"><a routerLink="/accommodations/{{ accommodation.id }}/apartments/{{ apartment.accommodation?.id }}">{{ apartment.name | titlecase }}</a></li>
       <li class="breadcrumb-item active">Send message</li>
     </ol>
   </nav>
@@ -17,7 +14,7 @@
         <h3>Send message</h3>
       </div>
       <div class="card-body">
-        Recipient: {{ accommodation.agent?.email }}
+        Recipient: {{ message.userEmail }}
         <hr>
         <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
           <div class="form-group">

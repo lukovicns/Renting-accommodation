@@ -816,14 +816,17 @@ public class IntercepterWebService {
 		if(xmlJSONObj.toString().contains("return"))
         	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAgentReceivedMessageResponse")).get("return"));
         else
-        	retVal.put("return", "No messagess available.");
+        	retVal.put("return", "No messages available.");
 		
+		System.out.println(retVal.get("return"));
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/markAsReadAgentMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> markAsReadAgentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		

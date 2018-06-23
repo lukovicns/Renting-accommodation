@@ -24,20 +24,22 @@ export class MessageDetailComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    /*this.messageDirection = this.route.snapshot.params['direction'];
+    this.messageDirection = this.route.snapshot.params['direction'];
     this.messageId = this.route.snapshot.params['id'];
     if (this.messageDirection == 'received') {
-      this.messageService.getReceivedMessage(this.userService.getCurrentUser()['id'], this.messageId)
+      this.messageService.getReceivedMessage(this.messageId)
       .subscribe(res => {
-        this.message = res;
+         console.log(res);
+        this.message = res['return'];
         this.markAsRead(this.message);
       }, err => {
         console.log(err);
       })
     } else if (this.messageDirection == 'sent') {
-      this.messageService.getSentMessage(this.userService.getCurrentUser()['id'], this.messageId)
+      this.messageService.getSentMessage(this.messageId)
       .subscribe(res => {
-        this.message = res;
+        console.log(res);
+        this.message = res['return'];
       }, err => {
         console.log(err);
       })
@@ -47,12 +49,12 @@ export class MessageDetailComponent implements OnInit {
   }
 
   markAsRead(message) {
-    this.messageService.markAsRead(this.userService.getCurrentUser()['id'], message.id)
+    this.messageService.markAsRead(this.messageId)
     .subscribe(res => {
 
     }, err => {
       console.log(err);
     })
-  }*/
+  }
 }
-}   
+  

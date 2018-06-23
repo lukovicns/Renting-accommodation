@@ -20,8 +20,9 @@ export class SendMessageComponent implements OnInit {
   private accommodationId: Number;
   private apartmentId: Number;
   private accommodation = {};
-  private apartment = {};
-
+  private message = {}
+  private messageId : any;
+  
   constructor(
     private accommodationService: AccommodationService,
     private reservationService: ReservationService,
@@ -38,28 +39,13 @@ export class SendMessageComponent implements OnInit {
   })
 
   ngOnInit() {
-      /*this.accommodationId = parseInt(this.route.snapshot.params['id']);
-      this.apartmentId = parseInt(this.route.snapshot.params['apartmentId']);
-      this.reservationService.getUserReservationByApartmentId(this.apartmentId)
-      .subscribe(res => {
-        if (res != null) {
-          this.accommodationService.getAccommodation(this.accommodationId)
-          .subscribe(resp => {
-            this.accommodation = resp;
-            this.apartmentService.getApartmentByAccommodationId(this.accommodationId, this.apartmentId)
-            .subscribe(response => this.apartment = response,
-              err => {
-              this.router.navigate(['/accommodations/' + this.accommodationId]);
-            });
-          }, err => {
-            this.router.navigate(['/accommodations'])
-          })
-        } else {
-          this.router.navigate(['/accommodations/'])
-        }
+      this.messageId = parseInt(this.route.snapshot.params['id']);
+      this.messageService.getReceivedMessage(this.messageId).subscribe(res => {
+          this.message = res['return'];
+          console.log(res);
       }, err => {
         console.log(err);
-      })*/
+      })
   }
 
   sendMessage() {
