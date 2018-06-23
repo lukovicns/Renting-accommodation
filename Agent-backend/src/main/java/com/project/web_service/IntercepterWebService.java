@@ -73,7 +73,8 @@ import javax.xml.bind.JAXBException;
  import org.xml.sax.SAXException;
 
  import com.project.config.BlankingResolver;
- import com.project.model.DTO.AccommodationDTO;
+import com.project.model.SendMessage;
+import com.project.model.DTO.AccommodationDTO;
  import com.project.model.DTO.ApartmentDTO;
 import com.project.model.DTO.PricePlanDTO;
 
@@ -130,8 +131,8 @@ public class IntercepterWebService {
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
     
-	//@RequestMapping(value="/addApartment/{accommodationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	/*public ResponseEntity<String> addApartment(@PathVariable String accommodationId, @RequestBody ApartmentDTO apartment, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	@RequestMapping(value="/addApartment/{accommodationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> addApartment(@PathVariable String accommodationId, @RequestBody ApartmentDTO apartment, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
@@ -149,7 +150,7 @@ public class IntercepterWebService {
 				"<pricePlans>"  + apartment.getPricePlans() + "</pricePlans>" +
 				"</ns2:addApartment>"; 
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -162,9 +163,9 @@ public class IntercepterWebService {
 		bin.close();
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
-		
+		System.out.println("inte " + xmlJSONObj);
         JSONObject retVal =  new JSONObject();
-        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:addApartmentResponse")).get("return"));
+        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:addApartmentResponse")).get("return"));
         
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
@@ -182,7 +183,7 @@ public class IntercepterWebService {
 				"<price>" + pricePlan.getPrice() + "</price>\r\n" + 
 				"</ns2:addPricePlan>"; 
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -197,11 +198,42 @@ public class IntercepterWebService {
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		
         JSONObject retVal =  new JSONObject();
-        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:addPricePlanResponse")).get("return"));
+        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:addPricePlanResponse")).get("return"));
         
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
-	*/
+	
+	
+	@RequestMapping(value="/confirmReservation/{id}")
+	public ResponseEntity<String> confirmReservation(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	{
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		
+		String body = " <ns2:confirmReservation xmlns:ns2=\"http://com.project/web_service/wrappers\">\r\n" + 
+				"<id>" + id + "</id>\r\n" +
+				"</ns2:confirmReservation>"; 
+		
+		signXml(body, email,"test.xml", "out.xml");
+		File file = new File("out.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+		System.out.println("za rezervaciju " + xmlJSONObj);
+        JSONObject retVal =  new JSONObject();
+        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:confirmReservationResponse")).get("return"));
+        
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/getAccommodationTypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAccommodationTypes(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
@@ -271,7 +303,7 @@ public class IntercepterWebService {
         JSONObject retVal =  new JSONObject();
         System.out.println(xmlJSONObj);
         if(xmlJSONObj.toString().contains("return"))
-        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:getReservationsResponse")).get("return"));
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getReservationsResponse")).get("return"));
         else
         	retVal.put("return", "There are no reservatoions.");
         
@@ -353,7 +385,7 @@ public class IntercepterWebService {
 	}
 	
 	@RequestMapping(value = "/getAllAccommodations", produces = MediaType.APPLICATION_JSON_VALUE)
-	/*public ResponseEntity<String> getAllAccommodations(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	public ResponseEntity<String> getAllAccommodations(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
@@ -361,7 +393,7 @@ public class IntercepterWebService {
 		String body = "<ns2:getAllAccommodations xmlns:ns2=\"http://com.project/web_service/wrappers\">"
 				+ "</ns2:getAllAccommodations>";
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -375,9 +407,8 @@ public class IntercepterWebService {
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
         JSONObject retVal =  new JSONObject();
-        
         if(xmlJSONObj.toString().contains("return"))
-        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:getAllAccommodationsResponse")).get("return"));
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAllAccommodationsResponse")).get("return"));
         else
         	retVal.put("return", "No accommodations available.");
         
@@ -393,7 +424,7 @@ public class IntercepterWebService {
 		String body =  "<ns2:getBedTypes xmlns:ns2=\"http://com.project/web_service/wrappers\">"
 				+ "</ns2:getBedTypes>"; 
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -410,7 +441,7 @@ public class IntercepterWebService {
         JSONObject retVal =  new JSONObject();
         
         if(xmlJSONObj.toString().contains("return"))
-        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:getBedTypesResponse")).get("return"));
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getBedTypesResponse")).get("return"));
         else
         	retVal.put("return", "No bed types available.");
         
@@ -422,13 +453,13 @@ public class IntercepterWebService {
 	{
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
-		
+		System.out.println("id " + id);
 		String body = "<ns2:getApartments xmlns:ns2=\"http://com.project/web_service/wrappers\">"
 				+ "<id>" + id + "</id>"
 				+ "</ns2:getApartments>"; 
 		
-		signXml(body, email);
-		File file = new File("out.xml");
+		signXml(body, email,"test1.xml", "out1.xml");
+		File file = new File("out1.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
 		byte[] buffer = new byte[(int) file.length()];
@@ -443,7 +474,7 @@ public class IntercepterWebService {
         JSONObject retVal =  new JSONObject();
         System.out.println("get " + xmlJSONObj);
         if(xmlJSONObj.toString().contains("return"))
-        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:getApartmentsResponse")).get("return"));
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getApartmentsResponse")).get("return"));
         else
         	retVal.put("return", "This accommodation has no apartments.");
         
@@ -460,7 +491,7 @@ public class IntercepterWebService {
 				+ "<id>" + id + "</id>"
 				+ " </ns2:getApartment>"; 
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -482,7 +513,7 @@ public class IntercepterWebService {
         }
         
         if(xmlJSONObj.toString().contains("return"))
-        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:getApartmentResponse")).get("return"));
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getApartmentResponse")).get("return"));
         else
         	retVal.put("return", "This accommodation has no apartments.");
         
@@ -499,7 +530,7 @@ public class IntercepterWebService {
 				+ "<id>" + id + "</id>"
 				+ "</ns2:deleteAccommodation>"; 
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -514,7 +545,7 @@ public class IntercepterWebService {
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		
         JSONObject retVal =  new JSONObject();
-        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:deleteAccommodationResponse")).get("return"));
+        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:deleteAccommodationResponse")).get("return"));
         
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
@@ -529,7 +560,7 @@ public class IntercepterWebService {
 				+ "<id>" + id + "</id>"
 				+ "</ns2:getAccommodation>"; 
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -543,10 +574,10 @@ public class IntercepterWebService {
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		JSONObject retVal =  new JSONObject();
-		
+		System.out.println("x " + xmlJSONObj);
 		if(xmlJSONObj.toString().contains("return"))
-			retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:getAccommodationResponse")).get("return"));
-		else if(!xmlJSONObj.toString().contains("ns2:getAccommodationResponse"))
+			retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAccommodationResponse")).get("return"));
+		else if(!xmlJSONObj.toString().contains("ns3:getAccommodationResponse"))
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else
         	retVal.put("return", "This accommodation has no apartments.");
@@ -566,7 +597,7 @@ public class IntercepterWebService {
 				+ "<id>" + id + "</id>"
 				+ "</ns2:deleteApartment>"; 
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -581,7 +612,7 @@ public class IntercepterWebService {
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		
         JSONObject retVal =  new JSONObject();
-        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:deleteApartmentResponse")).get("return"));
+        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:deleteApartmentResponse")).get("return"));
         
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
@@ -595,7 +626,7 @@ public class IntercepterWebService {
 		String body = "<ns2:getPricePlans xmlns:ns2=\"http://com.project/web_service/wrappers\">"
 				+ "</ns2:getPricePlans>"; 
 		
-		signXml(body, email);
+		signXml(body, email,"test.xml", "out.xml");
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -612,7 +643,7 @@ public class IntercepterWebService {
         JSONObject retVal =  new JSONObject();
         
         if(xmlJSONObj.toString().contains("return"))
-        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:getPricePlansResponse")).get("return"));
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getPricePlansResponse")).get("return"));
         else
         	retVal.put("return", "No price plan");
         
@@ -628,8 +659,8 @@ public class IntercepterWebService {
 		String body = "<ns2:getAdditionalServices xmlns:ns2=\"http://com.project/web_service/wrappers\">"
 				+ "</ns2:getAdditionalServices>"; 
 		
-		signXml(body, email);
-		File file = new File("out.xml");
+		signXml(body, email,"test1.xml", "out1.xml");
+		File file = new File("out1.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
 		byte[] buffer = new byte[(int) file.length()];
@@ -645,16 +676,263 @@ public class IntercepterWebService {
         JSONObject retVal =  new JSONObject();
         
         if(xmlJSONObj.toString().contains("return"))
-        	 retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns2:getAdditionalServicesResponse")).get("return"));
+        	 retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAdditionalServicesResponse")).get("return"));
         else
         	retVal.put("return", "No additional services available.");
         
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
-	*/
+	
+	
+	@RequestMapping(value = "/getAgentSentMessages", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getAgentSentMessages(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	{
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		
+		String body = "<ns2:getAgentSentMessages xmlns:ns2=\"http://com.project/web_service/wrappers\">"
+				+ "</ns2:getAgentSentMessages>"; 
+		
+		signXml(body, email,"test.xml", "out.xml");
+		File file = new File("out.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+
+		JSONObject retVal =  new JSONObject();
+		System.out.println("xml sent messages " + xmlJSONObj);
+		
+		if(xmlJSONObj.toString().contains("return"))
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAgentSentMessagesResponse")).get("return"));
+        else
+        	retVal.put("return", "No messagess available.");
+		
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/getAgentReceivedMessages", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getAgentReceivedMessages(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	{
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		
+		String body = "<ns2:getAgentReceivedMessages xmlns:ns2=\"http://com.project/web_service/wrappers\">"
+				+ "</ns2:getAgentReceivedMessages>"; 
+		
+		signXml(body, email,"test1.xml", "out1.xml");
+		File file = new File("out1.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+
+		JSONObject retVal =  new JSONObject();
+		System.out.println("xml received messages " + xmlJSONObj);
+		
+		if(xmlJSONObj.toString().contains("return"))
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAgentReceivedMessagesResponse")).get("return"));
+        else
+        	retVal.put("return", "No messagess available.");
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/getAgentSentMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getAgentSentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	{
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		
+		String body = "<ns2:getAgentSentMessage xmlns:ns2=\"http://com.project/web_service/wrappers\">"
+				+ "<id>"+id+"</id>"
+				+ "</ns2:getAgentSentMessage>"; 
+		
+		signXml(body, email,"test.xml", "out.xml");
+		File file = new File("out.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+
+		JSONObject retVal =  new JSONObject();
+		System.out.println("xml sent message " + xmlJSONObj);
+		
+		if(xmlJSONObj.toString().contains("return"))
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAgentSentMessageResponse")).get("return"));
+        else
+        	retVal.put("return", "No messagess available.");
+		
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/getAgentReceivedMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getAgentReceivedMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	{
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		
+		String body = "<ns2:getAgentReceivedMessage xmlns:ns2=\"http://com.project/web_service/wrappers\">"
+				+ "<id>"+id+"</id>"
+				+ "</ns2:getAgentReceivedMessage>"; 
+		
+		signXml(body, email,"test.xml", "out.xml");
+		File file = new File("out.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+
+		JSONObject retVal =  new JSONObject();
+		System.out.println("xml received message " + xmlJSONObj);
+		
+		if(xmlJSONObj.toString().contains("return"))
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAgentReceivedMessageResponse")).get("return"));
+        else
+        	retVal.put("return", "No messagess available.");
+		
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/markAsReadAgentMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> markAsReadAgentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	{
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		
+		String body = "<ns2:markAsReadAgentMessage xmlns:ns2=\"http://com.project/web_service/wrappers\">"
+				+ "<id>"+id+"</id>"
+				+ "</ns2:markAsReadAgentMessage>"; 
+		
+		signXml(body, email,"test.xml", "out.xml");
+		File file = new File("out.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+
+		JSONObject retVal =  new JSONObject();
+		System.out.println("xml received message " + xmlJSONObj);
+		
+		if(xmlJSONObj.toString().contains("return"))
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:markAsReadAgentMessageResponse")).get("return"));
+        else
+        	retVal.put("return", "No messagess available.");
+		
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/deleteAgentSentMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> deleteAgentSentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	{
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		
+		String body = "<ns2:deleteAgentSentMessage xmlns:ns2=\"http://com.project/web_service/wrappers\">"
+				+ "<id>"+id+"</id>"
+				+ "</ns2:deleteAgentSentMessage>"; 
+		
+		signXml(body, email,"test.xml", "out.xml");
+		File file = new File("out.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+
+		JSONObject retVal =  new JSONObject();
+		System.out.println("xml received message " + xmlJSONObj);
+		
+		if(xmlJSONObj.toString().contains("return"))
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:deleteAgentSentMessageResponse")).get("return"));
+        else
+        	retVal.put("return", "No messagess available.");
+		
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/sendMessageToUser", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> sendMessageToUser(@RequestBody SendMessage sendMessage, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	{
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		
+		String body = "<ns2:sendMessageToUser xmlns:ns2=\"http://com.project/web_service/wrappers\">"
+				+ "<apartmentId>"+sendMessage.getApartment()+"</apartmentId>" 
+				+ "<userId>"+sendMessage.getUser()+"</userId>" 
+				+ "<agentId>"+sendMessage.getAgent()+"</agentId>" 
+				+ "<messageText>"+sendMessage.getText()+"</messageText>"
+				+ "</ns2:sendMessageToUser>"; 
+		
+		signXml(body, email,"test.xml", "out.xml");
+		File file = new File("out.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+
+		JSONObject retVal =  new JSONObject();
+		System.out.println("xml received message " + xmlJSONObj);
+		
+		if(xmlJSONObj.toString().contains("return"))
+        	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:sendMessageToUserResponse")).get("return"));
+        else
+        	retVal.put("return", "No messagess available.");
+		
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
 	public static JSONObject httpClientExecute(String soap) throws UnsupportedOperationException, IOException
 	{
 		HttpClient client = HttpClientBuilder.create().build();
+		
 		HttpPost post = new HttpPost(url);
 		
 		// add header

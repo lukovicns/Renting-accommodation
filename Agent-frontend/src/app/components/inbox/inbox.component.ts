@@ -24,26 +24,30 @@ export class InboxComponent implements OnInit {
 
   ngOnInit() {
     this.initReceivedMessages();
-//    this.initSentMessages();
+    this.initSentMessages();
   }
 
   initReceivedMessages() {
-    /*this.messageService.getReceivedMessages(this.userService.getCurrentUser()['id'])
+    this.messageService.getReceivedMessages()
     .subscribe(res => {
-      this.receivedMessages = res;
-    }, err => {
-      console.log(err);
-    })*/
-  }/*
-
-  initSentMessages() {
-    this.messageService.getSentMessages(this.userService.getCurrentUser()['id'])
-    .subscribe(res => {
-      this.sentMessages = res;
+        this.receivedMessages = res['return'];
+        this.receivedMessages = Array.of(this.receivedMessages);
+        console.log(this.receivedMessages);
     }, err => {
       console.log(err);
     })
-  }*/
+  }
+
+  initSentMessages() {
+    this.messageService.getSentMessages()
+    .subscribe(res => {
+        console.log(res);
+        this.sentMessages = res['return'];
+        this.sentMessages = Array.of(this.sentMessages);
+    }, err => {
+      console.log(err);
+    })
+  }
 
   receivedTabActive() {
     this.sentTab = false;
@@ -59,8 +63,8 @@ export class InboxComponent implements OnInit {
     document.querySelector('#sent').classList.add('active');
   }
 
-  /*deleteReceivedMessage(message) {
-    this.messageService.deleteReceivedMessage(message)
+  deleteReceivedMessage(message) {
+    this.messageService.deleteReceivedMessage(this.message)
     .subscribe(res => {
       this.initReceivedMessages();
     }, err => {
@@ -69,11 +73,11 @@ export class InboxComponent implements OnInit {
   }
 
   deleteSentMessage(message) {
-    this.messageService.deleteSentMessage(message)
+    this.messageService.deleteSentMessage(this.message)
     .subscribe(res => {
       this.initSentMessages();
     }, err => {
       console.log(err);
     })
-  }*/
+  }
 }

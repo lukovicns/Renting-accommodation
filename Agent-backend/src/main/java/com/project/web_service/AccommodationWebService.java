@@ -5,11 +5,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.LongFunction;
 
 import javax.imageio.ImageIO;
 import javax.jws.WebMethod;
@@ -24,6 +27,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.assertj.core.api.filter.InFilter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -34,24 +38,34 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.w3._2000._09.xmldsig.SignatureType;
 import org.xml.sax.SAXException;
 
+import com.project.model.Direction;
+import com.project.model.User;
 import com.project.model.Accommodation;
 import com.project.model.AccommodationCategory;
 import com.project.model.AccommodationType;
 import com.project.model.AdditionalService;
 import com.project.model.Agent;
 import com.project.model.Apartment;
+import com.project.model.ApartmentAdditionalService;
 import com.project.model.BedType;
 import com.project.model.City;
 import com.project.model.DeleteStatus;
 import com.project.model.Image;
+import com.project.model.Message;
+import com.project.model.MessageStatus;
 import com.project.model.PricePlan;
 import com.project.model.Reservation;
+import com.project.model.ReservationStatus;
+import com.project.model.ReservationStatus;
 import com.project.model.DTO.AccommodationDTO;
 import com.project.model.DTO.ApartmentDTO;
+import com.project.model.DTO.MessageDTO;
 import com.project.model.DTO.ReservationDTO;
 import com.project.repository.AccommodationCategoryRepository;
 import com.project.repository.AccommodationRepository;
@@ -59,10 +73,11 @@ import com.project.repository.AccommodationTypeRepository;
 import com.project.repository.AdditionalServiceRepository;
 import com.project.repository.AgentRepository;
 import com.project.repository.ApartmentRepository;
-import com.project.repository.ApartmentServiceRepository;
+import com.project.repository.ApartmentAdditionalServiceRepository;
 import com.project.repository.BedTypeRepository;
 import com.project.repository.CityRepository;
 import com.project.repository.ImageRepository;
+import com.project.repository.MessageRepository;
 import com.project.repository.PricePlanRepository;
 import com.project.repository.ReservationRepository;
 import com.project.service.AccommodationCategoryService;
@@ -70,11 +85,13 @@ import com.project.service.AccommodationService;
 import com.project.service.AccommodationTypeService;
 import com.project.service.AdditionalServiceService;
 import com.project.service.AgentService;
+import com.project.service.ApartmentAdditionalServiceService;
+import com.project.service.ApartmentAdditionalServiceService;
 import com.project.service.ApartmentService;
-import com.project.service.ApartmentServiceService;
 import com.project.service.BedTypeService;
 import com.project.service.CityService;
 import com.project.service.ImageService;
+import com.project.service.MessageService;
 import com.project.service.PricePlanService;
 import com.project.service.ReservationService;
 import com.project.service.impl.JpaAccommodationCategoryService;
@@ -83,10 +100,11 @@ import com.project.service.impl.JpaAccommodationTypeService;
 import com.project.service.impl.JpaAdditionalServiceService;
 import com.project.service.impl.JpaAgentService;
 import com.project.service.impl.JpaApartmentService;
-import com.project.service.impl.JpaApartmentServiceService;
+import com.project.service.impl.JpaApartmentAdditionalServiceService;
 import com.project.service.impl.JpaBedTypeService;
 import com.project.service.impl.JpaCityService;
 import com.project.service.impl.JpaImageService;
+import com.project.service.impl.JpaMessageService;
 import com.project.service.impl.JpaPricePlanService;
 import com.project.service.impl.JpaReservationService;
 
@@ -121,7 +139,7 @@ public class AccommodationWebService {
 	private ApartmentRepository apartmentRepository;
 	
 	@Autowired
-	private ApartmentServiceRepository apartmentServiceRepository;
+	private ApartmentAdditionalServiceRepository apartmentServiceRepository;
 	
 	@Autowired
 	private BedTypeRepository bedTypeRepository;
@@ -134,6 +152,9 @@ public class AccommodationWebService {
 	
 	@Autowired
 	private ReservationRepository reservationRepository;
+	
+	@Autowired
+	private MessageRepository messageRepository;
 	
 	AccommodationService accService = new JpaAccommodationService(accRepository);
 	
@@ -149,7 +170,7 @@ public class AccommodationWebService {
 	
 	ApartmentService apartmentService = new JpaApartmentService(apartmentRepository);
 	
-	ApartmentServiceService apartmentServiceService = new JpaApartmentServiceService(apartmentServiceRepository);
+	ApartmentAdditionalServiceService apartmentAdditionalService = new JpaApartmentAdditionalServiceService(apartmentServiceRepository);
 	
 	BedTypeService bedTypeService = new JpaBedTypeService(bedTypeRepository);
 	
@@ -158,6 +179,8 @@ public class AccommodationWebService {
 	PricePlanService pricePlanService = new JpaPricePlanService(pricePlanRepository);
 	
 	ReservationService reservationService = new JpaReservationService(reservationRepository);
+	
+	MessageService messageService = new JpaMessageService(messageRepository);
 	
 //	instantiating repositories and services
 	
@@ -179,17 +202,24 @@ public class AccommodationWebService {
 		AccommodationType accType = accTypeService.findOne(Long.valueOf(type));
 		AccommodationCategory accCategory = accCategoryService.findOne(Long.valueOf(category));
 		Object accCity = cityService.findOne(Long.valueOf(city));
-		Agent agent = agentService.findOne(Long.valueOf("1"));
-		Accommodation newAccommodation = new Accommodation(name, accType, (City) accCity, street, description, accCategory, agent);
-
+		
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
+		
+		
 		System.getProperty("user.dir");
 		System.out.println("location " + System.getProperty("user.dir"));
 		
-		String projectLocation = System.getProperty("user.dir").toString().replaceAll("\\bbackend\\b", "frontend");
+//		Agent agent = agentService.findOne(Long.valueOf("1"));
+		Agent agent = session.createNativeQuery("select * from agent", Agent.class).getSingleResult();
+				
+		System.out.println("agent u acc " + agent.getId() + " " + agent.getEmail() );
+		Accommodation newAccommodation = new Accommodation(name, accType, (City) accCity, street, description, accCategory, agent);
+
+		
+		String projectLocation = System.getProperty("user.dir").toString().replace("backend", "frontend");
 		System.out.println("prm " + projectLocation);
 		
 		System.out.println(image);
@@ -198,6 +228,11 @@ public class AccommodationWebService {
 		// tokenize the data
 //		String[] parts = image.split(",");
 //		String imageString = parts[1];
+		
+		Accommodation saved = accService.save(newAccommodation);
+		Long id = null;
+		
+
 		
 		for(int i = 0; i < splits.length; i++)
 		{
@@ -226,40 +261,38 @@ public class AccommodationWebService {
 			File outputfile = new File(projectLocation + "\\src\\assets\\imgs\\out" + imgNameCounter + ".png");
 			ImageIO.write(img, "png", outputfile);
 			
-			Accommodation saved = accService.save(newAccommodation);
-			Long id = null;
-			
 			if(saved != null)
 			{	
 				Image addImg = new Image(outputfile.toString(), saved, null);
-				imageService.save(addImg);
+				Image im = imageService.save(addImg);
 				
-				id = saved.getId();
-				System.out.println("aaa id " + id);
-				session.createNativeQuery("insert into accommodation values(" + saved.getId() + ",'" +
-				saved.getDescription() + "','" + saved.getName() + "','ACTIVE','" + saved.getStreet() + "'," + saved.getAgent().getId() + "," + 
-				saved.getCategory().getId() + "," +
-				saved.getCity().getId() + "," + saved.getType().getId() + ")").executeUpdate();
-				tx.commit();
-				session.close();
-				retVal = "Accommodation successfully added";
-				
-				
-//				IWorkspace workspace= ResourcesPlugin.getWorkspace();    
-//				IPath location= Path.fromOSString(outputfile.getAbsolutePath()); 
-//				IFile ifile= workspace.getRoot().getFileForLocation(location);
-//				
-////				IPath path = new Path(projectLocation);
-////				IFile iFile = project.getFile(path);
-//				
-//				java.io.File file = ifile.getLocation().toFile();
-//			      FileOutputStream fOut = new FileOutputStream(file);
-//			      fOut.write("Written by FileOutputStream".getBytes());
-//			      ifile.refreshLocal(IResource.DEPTH_ZERO, null);
-				
-//				System.out.println("aaaaaaaaaaaaa " +  IResource.refreshLocal());/*ResourcesPlugin.getWorkspace().getRoot().getProjects()*/
+				if(im != null)
+					session.createNativeQuery("insert into image values(" + im.getId() + ",'" +
+							im.getUrl() + "'," + saved.getId() + "," + null + ")").executeUpdate();
 			}
 		}
+		
+		System.out.println("aaa id " + id);
+		session.createNativeQuery("insert into accommodation values(" + saved.getId() + ",'" +
+		saved.getDescription() + "','" + saved.getName() + "','ACTIVE','" + saved.getStreet() + "'," + saved.getAgent().getId() + "," + 
+		saved.getCategory().getId() + "," +
+		saved.getCity().getId() + "," + saved.getType().getId() + ")").executeUpdate();
+		
+		retVal = "Accommodation successfully added";
+		
+		tx.commit();
+		session.close();
+		
+		System.out.println("aaa id " + id);
+		session.createNativeQuery("insert into accommodation values(" + saved.getId() + ",'" +
+		saved.getDescription() + "','" + saved.getName() + "','ACTIVE','" + saved.getStreet() + "'," + saved.getAgent().getId() + "," + 
+		saved.getCategory().getId() + "," +
+		saved.getCity().getId() + "," + saved.getType().getId() + ")").executeUpdate();
+		
+		retVal = "Accommodation successfully added";
+		
+		tx.commit();
+		session.close();
 		
 		return retVal;
 	}
@@ -286,6 +319,7 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
 		
 		String temp = additionalJSON.substring(1, additionalJSON.length() - 1);
 		String[] array = temp.split(",");
@@ -293,6 +327,8 @@ public class AccommodationWebService {
 		JSONParser parser = new JSONParser();
 		JSONArray json = (JSONArray) parser.parse(pricePlansJSON);
 
+		String projectLocation = System.getProperty("user.dir").toString().replace("backend", "frontend");
+		
 		List<PricePlan> pricePlans = new ArrayList<>();
 		
 		for(int i = 0; i < json.size(); i++)
@@ -318,74 +354,97 @@ public class AccommodationWebService {
 		String[] splits = image.split("ovo-je-separator");
 		File outputfile = null;
 		
-		for(int i = 0; i < splits.length; i++)
-		{
-			String[] parts = splits[i].split(",");
-			String imageString = parts[1];
-	
-			// create a buffered image
-			BufferedImage img = null;
-			byte[] imageByte;
-	
-			imageByte = Base64.getDecoder().decode(imageString);
-			ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
-			img = ImageIO.read(bis);
-			bis.close();
-		
-			List<Image> images= imageService.findAll();
-			int imgNameCounter = -1;
-			
-			if(images.size() != 0)
-				for(int  j = 0; j < images.size() - 1; j++)
-					if(images.get(j).getId() < images.get(j+1).getId())
-						imgNameCounter = images.get(j+1).getId().intValue() + 1;
-			
-	 		// write the image to a file
-			outputfile = new File("G:\\tanja\\slike\\out" + imgNameCounter + ".png");
-			ImageIO.write(img, "png", outputfile);
-		}
+		System.out.println("image ceo " + image);
 		
 		Apartment saved = apartmentService.save(newApartment);
 		
 		if(saved != null)
-		{	
+		{
+			System.out.println("splits " + splits.length);
+			for(int i = 0; i < splits.length; i++)
+			{
+				String[] parts = splits[i].split(",");
+				String imageString = parts[1];
+		
+				// create a buffered image
+				BufferedImage img = null;
+				byte[] imageByte;
+		
+				imageByte = Base64.getDecoder().decode(imageString);
+				ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+				img = ImageIO.read(bis);
+				bis.close();
+			
+				List<Image> images= imageService.findAll();
+				int imgNameCounter = -1;
+				
+				if(images.size() != 0)
+					for(int  j = 0; j < images.size() - 1; j++)
+						if(images.get(j).getId() < images.get(j+1).getId())
+							imgNameCounter = images.get(j+1).getId().intValue() + 1;
+				
+		 		// write the image to a file
+				outputfile = new File(projectLocation + "\\src\\assets\\imgs\\out" + imgNameCounter + ".png");
+				ImageIO.write(img, "png", outputfile);
+				
+				
+				Image addImg = new Image(outputfile.toString(), saved);
+				Image im = imageService.save(addImg);
+				System.out.println("im " + im.getId());
+				
+				if(im != null)
+					session.createNativeQuery("insert into image values(" + im.getId() + ",'" +
+							im.getUrl() + "'," + null + "," + saved.getId() + ")").executeUpdate();
+				
+			}
+			
 			System.out.println("sabed " + saved.getId());
 			
-			session.save(saved);
-			
-			Image addImg = new Image(outputfile.toString(), saved);
-			imageService.save(addImg);
+			//session.save(saved);
 			
 			for(AdditionalService ads : tempArray)
-				apartmentServiceService.save(new com.project.model.ApartmentService(saved, ads));
+			{	
+				System.out.println("adf " + ads.getId() + " " + ads.getName());
+				
+				ApartmentAdditionalService ap = apartmentAdditionalService.save(new ApartmentAdditionalService(saved, ads));
+				System.out.println("ap " + ap.getId());
+				session.createNativeQuery("insert into apartment_additional_service values(" + ap.getId() + "," +
+					ads.getId() + "," + saved.getId() + ")").executeUpdate();
+			}
 			
 			for(PricePlan pp : pricePlans)
-				pricePlanService.save(new PricePlan(saved, pp.getStartDate(), pp.getEndDate(), pp.getPrice()));
-
-			for(AdditionalService ads : tempArray) {
-				com.project.model.ApartmentService apartmentService = apartmentServiceService.save(new com.project.model.ApartmentService(saved, ads));
-				session.createNativeQuery("insert into apartment_aditional_service SELECT * FROM renting_accommodation_db.apartment_aditional_service where renting_accommodation_db.apartment_aditional_service.apartment_id="+saved.getId()+" ORDER BY renting_accommodation_db.apartment_aditional_service.apartment_additional_service_id DESC LIMIT 1");
+			{	
+				PricePlan p = pricePlanService.save(new PricePlan(saved, pp.getStartDate(), pp.getEndDate(), pp.getPrice()));
+				session.createNativeQuery("insert into price_plan values(" + p.getId() + ",'" +
+						p.getEndDate() + "'," + p.getPrice() + ",'" + p.getStartDate() + "','ACTIVE'," + saved.getId() + ")").executeUpdate();
 			}
 			
-			for(PricePlan pp : pricePlans) {
-				PricePlan plan = pricePlanService.save(new PricePlan(saved, pp.getStartDate(), pp.getEndDate(), pp.getPrice()));
-				session.save(plan);
-			}
-			
+			session.createNativeQuery("insert into apartment values(" + saved.getId() + ",'" +
+					saved.getDescription() + "'," + saved.getMaxNumberOfGuests() + ",'" + saved.getName() + "'," + saved.getNumberOfRooms() + "," + saved.getSize() + ",'ACTIVE',"
+					+ saved.getAccommodation().getId() + "," + saved.getType().getId() + ")").executeUpdate();
+					
+			tx.commit();
+			session.close();
 			
 			retVal = "Apartment successfully added";
-		}
+		}else
+			return "Failed";
 		
-		return "Failed";
+		return retVal;
+		
 	}
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.AddPricePlan")
 	@ResponseWrapper(className="com.project.web_service.wrappers.responses.AddPricePlanResponse")
 	public String addPricePlan(@WebParam(name="apartmentId") String apartmentId, @WebParam(name = "startDate") String startDate, 
-			@WebParam(name = "endDate") String endDate, @WebParam(name = "price") String price, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature)
+			@WebParam(name = "endDate") String endDate, @WebParam(name = "price") String price, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
 	{
 		System.out.println("tuu sm");
 		Optional<Apartment> optional = apartmentService.findOne(Long.valueOf(apartmentId));
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
 		
 		if(!optional.isPresent())
 			return "error";
@@ -396,23 +455,48 @@ public class AccommodationWebService {
 		if(saved == null)
 			return "error";
 		
+		session.createNativeQuery("insert into price_plan values(" + saved.getId() + ",'" +
+				saved.getEndDate() + "'," + saved.getPrice() + ",'" + saved.getStartDate() + "','ACTIVE'," + saved.getApartment().getId()).executeUpdate();
+		
+		tx.commit();
+		session.close();
+		
+		session.createNativeQuery("insert into price_plan values(" + saved.getId() + ",'" +
+				saved.getEndDate() + "'," + saved.getPrice() + ",'" + saved.getStartDate() + "','ACTIVE'," + saved.getApartment().getId()).executeUpdate();
+		
+		tx.commit();
+		session.close();
+		
 		return "New price plan successfully added.";
 	}
 	
-	@RequestWrapper(className="com.project.web_service.wrappers.requests.GetAccommodationTypeRequest")
 	@ResponseWrapper(className="com.project.web_service.wrappers.response.GetAccommodationTypesResponse")
-	public List<AccommodationType> getAccommodationTypes(){
+	public List<AccommodationType> getAccommodationTypes(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		
-		List<AccommodationType> accommodationTypes = accTypeService.findAll();
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		List<AccommodationType> accommodationTypes = session.createNativeQuery("select * from accommodation_type", AccommodationType.class).getResultList();
+		tx.commit();
+		session.close();
+//				accTypeService.findAll();
 		
 		return accommodationTypes;
 	} 
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAccommodationCategoriesRequest")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAccommodationCategoriesResponse")
-	public List<AccommodationCategory> getAccommodationCategories(){
+	public List<AccommodationCategory> getAccommodationCategories(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		
-		List<AccommodationCategory> accommodationCategories = accCategoryService.findAll();
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		List<AccommodationCategory> accommodationCategories = session.createNativeQuery("select * from accommodation_category", AccommodationCategory.class).getResultList();
+//				accCategoryService.findAll();
+		tx.commit();
+		session.close();
 		
 		return accommodationCategories;
 	} 
@@ -436,15 +520,22 @@ public class AccommodationWebService {
 	{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
-		System.out.println("email " + email);
-		Session s = getSession(email);
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		
 		System.out.println("jjjjj " + email);
-		@SuppressWarnings("unchecked")
-		List<Accommodation> accommodations = s.createNativeQuery("select * from accommodation").getResultList();
+		
+		List<Accommodation> accommodations = session.createNativeQuery("select * from accommodation where status='ACTIVE'", Accommodation.class).getResultList();
 		List<AccommodationDTO> retVal = new ArrayList<>();
+		System.out.println(accommodations.size());
+		tx.commit();
+		session.close();
+
 		
 		for(Accommodation acc : accommodations)
 		{
+			System.out.println("aaaaaaaa " + acc.getName());
+			System.out.println("aaaaaaaa " + acc.getName());
 			List<Image> images = imageService.findAll();
 			
 			AccommodationDTO accDTO = new AccommodationDTO(acc.getId().toString(), acc.getName(), acc.getType().getName(), acc.getCity().getName(), 
@@ -475,10 +566,18 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.GetReservations")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetReservationsResponse")
-	public List<ReservationDTO> getReservations(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature)
+	public List<ReservationDTO> getReservations(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
 	{
-		List<Reservation> allReservations = reservationService.findAll();
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+//		List<Reservation> allReservations = reservationService.findAll();
 		List<ReservationDTO> retVal = new ArrayList<>();
+		
+		List<Reservation> allReservations = session.createNativeQuery("select * from reservation", Reservation.class).getResultList();
+		tx.commit();
+		session.close();
 		
 		for(Reservation res : allReservations)
 		{	retVal.add(new ReservationDTO(res.getId().toString(), res.getUser().getName(), res.getUser().getSurname(), 
@@ -486,8 +585,54 @@ public class AccommodationWebService {
 					res.getEndDate(), String.valueOf(res.getPrice()), res.getStatus().toString()));
 			System.out.println("res " + retVal);
 		}
+		
+		
 		return retVal;
 	}
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.requests.ConfirmReservation")
+	@ResponseWrapper(className="com.project.web_service.wrappers.ConfirmReservationResponse")
+	public String confirmReservation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+	{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		
+		System.out.println("resrvatio id " + id);
+		
+		Reservation reservation = reservationService.findOne(Long.valueOf(id));
+		reservation.setStatus(ReservationStatus.VISIT);
+		reservationService.save(reservation);
+		session.update(reservation);
+		
+		tx.commit();
+		session.close();
+		
+		return "Confirmed";
+	}
+	
+/*	@RequestWrapper(className="com.project.web_service.wrappers.requests.ConfirmReservation")
+	@ResponseWrapper(className="com.project.web_service.wrappers.ConfirmReservationResponse")
+	public String confirmReservation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+	{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		
+		System.out.println("resrvatio id " + id);
+		
+		Reservation reservation = reservationService.findOne(Long.valueOf(id));
+		reservation.setStatus(ReservationStatus.VISIT);
+		reservationService.save(reservation);
+		session.update(reservation);
+		
+		tx.commit();
+		session.close();
+		
+		return "Confirmed";
+	}*/
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetBedTypes")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetBedTypesResponse")
@@ -500,11 +645,19 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetApartments")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetApartmentsResponse")
-	public List<ApartmentDTO> getApartments(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws JSONException
+	public List<ApartmentDTO> getApartments(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws JSONException, XPathExpressionException, ParserConfigurationException, SAXException, IOException
 	{
 //		Accommodation accommodation = accService.findOne(Long.valueOf(id));
 //		List<Apartment> all = apartmentService.findByAccommodationId(accommodation);
-		List<Accommodation> allAccommodations = accService.findAll();
+		
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		
+//		List<Accommodation> allAccommodations = accService.findAll();
+		List<Accommodation> allAccommodations = session.createNativeQuery("select * from accommodation", Accommodation.class).getResultList();
+		
 		List<Long> ids = new ArrayList<>();
 		List<ApartmentDTO> retVal = new ArrayList<>();
 		
@@ -514,9 +667,11 @@ public class AccommodationWebService {
 		if(!ids.contains(Long.valueOf(id)))
 			return retVal;
 		
-		List<Apartment> all = apartmentService.findByAccommodationId(Long.valueOf(id));
+		List<Apartment> all = session.createNativeQuery("select * from apartment where status='ACTIVE'", Apartment.class).getResultList();
+//		
+//				apartmentService.findByAccommodationId(Long.valueOf(id));
 		
-		List<com.project.model.ApartmentService> apartmentServices = new ArrayList<>();
+		List<ApartmentAdditionalService> apartmentServices = new ArrayList<>();
 		List<PricePlan> pricePlans = new ArrayList<>();
 		List<Image> images = new ArrayList<>();
 //		List<PricePlanDTO> retDTO = new ArrayList<>();
@@ -528,10 +683,10 @@ public class AccommodationWebService {
 		
 		for(Apartment ap : all)
 		{	
-			apartmentServices = apartmentServiceService.findByApartmentId(ap.getId());
+			apartmentServices = apartmentAdditionalService.findByApartmentId(ap.getId());
 			pricePlans = pricePlanService.findByApartmentId(ap.getId());
 			
-			for(com.project.model.ApartmentService as : apartmentServices)
+			for(ApartmentAdditionalService as : apartmentServices)
 			{
 				apServices += as.getAdditionalService().getName() + ";";
 //				System.out.println("serr " + apServices);
@@ -569,21 +724,36 @@ public class AccommodationWebService {
 					String.valueOf(ap.getMaxNumberOfGuests()), ap.getDescription(), temp, apServices, jarray.toString()));
 		}
 		
+		tx.commit();
+		session.close();
+	
+		
 		return retVal;
 	} 
 	
+	@SuppressWarnings("unchecked")
 	@RequestWrapper(className="com.project.web_service.wrappers.GetApartment")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetApartmentResponse")
-	public ApartmentDTO getApartment(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws JSONException{
+	public ApartmentDTO getApartment(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws JSONException, XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		
-		Optional<Apartment> optional = apartmentService.findOne(Long.valueOf(id));
+//		Optional<Apartment> optional = apartmentService.findOne(Long.valueOf(id));
 		
-		if(!optional.isPresent())
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		
+//		if(!optional.isPresent())
+//			return new ApartmentDTO("error");
+		
+//		Apartment ap = optional.get();
+		
+		Apartment ap = session.get(Apartment.class, Long.valueOf(id));
+		
+		if(ap == null)
 			return new ApartmentDTO("error");
-		
-		Apartment ap = optional.get();
-		
-		List<com.project.model.ApartmentService> apartmentServices = new ArrayList<>();
+			
+		List<ApartmentAdditionalService> apartmentServices = new ArrayList<>();
 		List<PricePlan> pricePlans = new ArrayList<>();
 		List<Image> images = new ArrayList<>();
 //		List<PricePlanDTO> retDTO = new ArrayList<>();
@@ -592,12 +762,14 @@ public class AccommodationWebService {
 		
 		JSONArray jarray = new JSONArray();
 		final JSONObject res = new JSONObject();
-		
 			
-		apartmentServices = apartmentServiceService.findByApartmentId(ap.getId());
-		pricePlans = pricePlanService.findByApartmentId(ap.getId());
+		apartmentServices = apartmentAdditionalService.findByApartmentId(ap.getId());
+		pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=" + ap.getId(), PricePlan.class).getResultList();
+//				pricePlanService.findByApartmentId(ap.getId());
+		tx.commit();
+		session.close();
 		
-		for(com.project.model.ApartmentService as : apartmentServices)
+		for(ApartmentAdditionalService as : apartmentServices)
 		{
 			apServices += as.getAdditionalService().getName() + ";";
 //			System.out.println("serr " + apServices);
@@ -615,7 +787,6 @@ public class AccommodationWebService {
 			pp += p.getStartDate() + " " + p.getEndDate() + " " + p.getPrice() + ";";
 //			System.out.println("pri " + pp);
 		}
-		
 		
 //			TODO
 		images =  imageService.findByApartmentId(ap.getId());
@@ -648,116 +819,280 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetPricePlans")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetPricePlansResponse")
-	public List<PricePlan> getPricePlans(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature){
+	public List<PricePlan> getPricePlans(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		
-		List<PricePlan> pricePlans = pricePlanService.findAll();
+//		List<PricePlan> pricePlans = pricePlanService.findAll();
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		
+		@SuppressWarnings("unchecked")
+		List<PricePlan> pricePlans = session.createNativeQuery("select * from price_plan").getResultList();
+		tx.commit();
+		session.close();
+		
+		
 		return pricePlans;
 	} 
 	
+	@SuppressWarnings("unchecked")
 	@RequestWrapper(className="com.project.web_service.wrappers.DeleteAccommodation")
 	@ResponseWrapper(className="com.project.web_service.wrappers.DeleteAccommodationResponse")
-	public String deleteAccommodation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature){
+	public String deleteAccommodation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		
-		List<Apartment> apartments = apartmentService.findByAccommodationId(Long.valueOf(id));
-		List<com.project.model.ApartmentService> apartmentServices = new  ArrayList<>();
-		
-//		Apartment ih povlaci
-		List<Image> imagesAcc = new ArrayList<>();
-		List<Image> imagesAp = new ArrayList<>();
 		List<PricePlan> pricePlans = new ArrayList<>();
+		
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
+		
+		Accommodation acc = session.get(Accommodation.class, Long.valueOf(id));
+		
+		List<Apartment> apartments = session.createNativeQuery("select * from apartment where accommodation_id=" + acc.getId(), Apartment.class).getResultList();
 		
 		for(Apartment apartment : apartments)
 		{
-			apartmentServices = apartmentServiceService.findByApartmentId(apartment.getId());
-			
-			for(com.project.model.ApartmentService aps : apartmentServices)
-				apartmentServiceService.delete(aps.getId());
-
-			imagesAp = imageService.findByApartmentId(apartment.getId());
-			for(Image i : imagesAp)
-				imageService.delete(i.getId());
-
-			pricePlans = pricePlanService.findAll();
-			for(PricePlan pp : pricePlans)
-			{	
-				if(pp.getApartment().getId().equals(apartment.getId()))
-					pricePlanService.delete(pp.getId());
+			if(apartment.getStatus().equals(DeleteStatus.ACTIVE))
+			{
+				pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=" + apartment.getId()).getResultList();
+				
+				for(PricePlan pp : pricePlans)
+				{	
+					pp.setStatus(DeleteStatus.INACTIVE);
+					pricePlanService.save(pp);
+					session.update(pp);
+				}
 			}
-			
-			apartmentService.delete(apartment.getId());
+			apartment.setStatus(DeleteStatus.INACTIVE);
+			apartmentService.save(apartment);
+			session.update(apartment);
 		}
 		
-		imagesAcc = imageService.findByAccommodationId(Long.valueOf(id));
-		System.out.println(imagesAcc.size());
-		for(Image i : imagesAcc)
-			imageService.delete(i.getId());
-		
-		accService.delete(Long.valueOf(id));
+		acc.setStatus(DeleteStatus.INACTIVE);
+		accService.save(acc);
+		session.update(acc);
+
+		tx.commit();
+		session.close();
 		
 		return "Accommodation deleted";
 	} 
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAccommodation")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAccommodationResponse")
-	public AccommodationDTO getAccommodation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature){
-		List<City> ct = cityService.findAll();
-		System.out.println(ct.get(0).getName());
-		Object c =  cityService.findOne(Long.valueOf("1"));
-		System.out.println("ccc " + c.getClass().getName());
-		Optional<Accommodation> dbAcc = accService.findOne(Long.valueOf(id));
-		System.out.println("dd " + dbAcc.isPresent());
+	public AccommodationDTO getAccommodation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		
 		AccommodationDTO retVal = null;
 		
-		if(!dbAcc.isPresent())
-		{	System.out.println(retVal);
-			return null;
-		}
-		Accommodation acc = dbAcc.get();
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
 		
-		System.out.println("accppp " + acc.getName() + " " + acc.getId());
+		Accommodation acc = session.get(Accommodation.class, Long.valueOf(id));
+		
+		System.out.println("aaa " + acc);
+		if(acc.getStatus().equals(DeleteStatus.ACTIVE))
+			retVal = new AccommodationDTO(acc.getId().toString(), acc.getName(), acc.getType().getName(), acc.getCity().getName(),
+					acc.getCity().getCountry().getName(), acc.getStreet(), acc.getDescription(), acc.getCategory().getName(), "");
+		
 //		TODO sredi za vracanje slike
-		retVal = new AccommodationDTO(acc.getId().toString(), acc.getName(), acc.getType().getName(), acc.getCity().getName(),
-				acc.getCity().getCountry().getName(), acc.getStreet(), acc.getDescription(), acc.getCategory().getName(), "");
-		System.out.println("acc " + retVal);
+		
+		List<Image> images = session.createNativeQuery("select * from image where accommodation_id=" + acc.getId(), Image.class).getResultList();
+		String temp = "";
+		
+		for(Image img : images)
+		{
+			temp += img.getUrl();
+		  	temp += "; ";
+		}
+
+		retVal.setImage(temp);	
+		
+		tx.commit();
+		session.close();
+		
 		return retVal;
 	}
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.DeleteApartment")
 	@ResponseWrapper(className="com.project.web_service.wrappers.DeleteApartmentResponse")
-	public String deleteApartment(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature){
+	public String deleteApartment(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
 		
-		Long apartmentId = Long.valueOf(id);
-		
-//		Apartment ih povlaci
-		List<Image> imagesAcc = new ArrayList<>();
-		List<Image> imagesAp = new ArrayList<>();
 		List<PricePlan> pricePlans = new ArrayList<>();
-		List<com.project.model.ApartmentService> apartmentServices = new  ArrayList<>();
-	
-		apartmentServices = apartmentServiceService.findByApartmentId(apartmentId);
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session session = getSession(email);
+		Transaction tx = session.beginTransaction();
 		
-		for(com.project.model.ApartmentService aps : apartmentServices)
-			apartmentServiceService.delete(aps.getId());
+		Apartment apartment = session.get(Apartment.class, Long.valueOf(id));
 		
-		imagesAcc = imageService.findByAccommodationId(apartmentId);
-		for(Image i : imagesAcc)
-			imageService.delete(i.getId());
-
-		imagesAp = imageService.findByApartmentId(apartmentId);
-		for(Image i : imagesAp)
-			imageService.delete(i.getId());
-
-		pricePlans = pricePlanService.findAll();
-		for(PricePlan pp : pricePlans)
-		{	
-			if(pp.getApartment().getId().equals(apartmentId))
-				pricePlanService.delete(pp.getId());
-		}
-		
-		apartmentService.delete(apartmentId);
+		if(apartment.getStatus().equals(DeleteStatus.ACTIVE))
+		{
+			pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=" + apartment.getId(), PricePlan.class).getResultList();
+			
+			for(PricePlan pp : pricePlans)
+			{	
+				pp.setStatus(DeleteStatus.INACTIVE);
+				pricePlanService.save(pp);
+				session.update(pp);
+			}
+			
+			apartment.setStatus(DeleteStatus.INACTIVE);
+			apartmentService.save(apartment);
+			session.update(apartment);
+			tx.commit();
+			session.close();
+		}	
 		
 		return "Apartment deleted";
 	} 
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentSentMessages")
+	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentSentMessagesResponse")
+	public List<MessageDTO> getAgentSentMessages(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session s = getSession(email);
+		Transaction tx = s.beginTransaction();
+		List<Message> messages = s.createNativeQuery("select * from  message where direction = 'AGENT_TO_USER' and status != 'DELETED_FOR_AGENT'", Message.class).getResultList();
+		tx.commit();
+		s.close();
+
+		List<MessageDTO> retVal = new ArrayList<MessageDTO>();
+		for(Message message : messages) {
+			retVal.add(new MessageDTO(message.getId().toString(),message.getUser().getName(),message.getUser().getSurname(),message.getText(),message.getDate(),message.getTime()));
+		}
+		
+		return retVal;
+		
+	}
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentSentMessage")
+	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentSentMessageResponse")
+	public Message getAgentSentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session s = getSession(email);
+		Transaction tx = s.beginTransaction();
+		Message message = s.get(Message.class, Long.valueOf(id));
+		tx.commit();
+		s.close();
+		return message;
+		
+	}
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessage")
+	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessageResponse")
+	public Message getAgentReceivedMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session s = getSession(email);
+		Transaction tx = s.beginTransaction();
+		Message message = s.get(Message.class, Long.valueOf(id));
+		tx.commit();
+		s.close();
+		return message;
+		
+	}
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessages")
+	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessagesResponse")
+	public List<MessageDTO> getAgentReceivedMessages(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session s = getSession(email);
+		Transaction tx = s.beginTransaction();
+		List<Message> messages = s.createNativeQuery("select * from  message where direction = 'USER_TO_AGENT' and status = 'UNREAD'", Message.class).getResultList();
+		tx.commit();
+		s.close();
+
+		List<MessageDTO> retVal = new ArrayList<MessageDTO>();
+		for(Message message : messages) {
+			retVal.add(new MessageDTO(message.getId().toString(),message.getUser().getName(),message.getUser().getSurname(),message.getText(),message.getDate(),message.getTime()));
+		}
+		
+		return retVal;
+		
+	}
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.MarkAsReadAgentMessage")
+	@ResponseWrapper(className="com.project.web_service.wrappers.MarkAsReadAgentMessageResponse")
+	public String markAsReadAgentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session s = getSession(email);
+		Transaction tx = s.beginTransaction();
+		
+		Message message = s.get(Message.class, Long.valueOf(id));
+		message.setStatus(MessageStatus.READ);
+		messageService.save(message);
+		s.update(message);
+
+		tx.commit();
+		s.close();
+		return "Set read";
+		
+	}
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.DeleteAgentSentMessage")
+	@ResponseWrapper(className="com.project.web_service.wrappers.DeleteAgentSentMessageResponse")
+	public String deleteAgentSentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session s = getSession(email);
+		Transaction tx = s.beginTransaction();
+		
+		Message message = s.get(Message.class, Long.valueOf(id));
+		message.setStatus(MessageStatus.DELETED_FOR_AGENT);;
+		messageService.save(message);
+		s.update(message);
+
+		tx.commit();
+		s.close();
+		return "Set read";
+		
+	}
+	
+	
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.SendMessageToUser")
+	@ResponseWrapper(className="com.project.web_service.wrappers.SendMessageToUserResponse")
+	public String sendMessageToUser(@WebParam (name = "apartmentId") String apartmentId, @WebParam (name = "userId") String userId, @WebParam (name = "agentId") String agentId, @WebParam (name = "messageText") String messageText, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session s = getSession(email);
+		Transaction tx = s.beginTransaction();
+		Apartment apartment = s.get(Apartment.class, Long.valueOf(apartmentId));
+		User user = s.find(User.class, Long.valueOf(userId));
+		Agent agent = s.get(Agent.class, Long.valueOf(agentId));
+		
+		if (user == null) {
+			return "User not found.";
+		}
+		if (agent == null) {
+			return "Agent not found.";
+		}
+		if (apartment == null) {
+			return "Apartment not found.";
+		}
+		
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
+		
+		String date = dateFormatter.format(new Date());
+		String time = timeFormatter.format(new Date());
+		
+		Message message = new Message(user, agent, apartment, date, time, messageText, MessageStatus.UNREAD, Direction.AGENT_TO_USER);
+		Message m = messageService.save(message);
+		s.createNativeQuery("insert into message values("+m.getId()+",'"+date+"','"+m.getDirection()+"','"+ m.getStatus()+"','"+messageText+"','"+time+"',"+agentId+","+apartmentId+","+ userId+")");
+		tx.commit();
+		s.close();
+
+		return "Message sent";
+	}
 	
 	@WebMethod(exclude = true)
 	public Session getSession(String email) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {

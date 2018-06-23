@@ -44,12 +44,11 @@ public class Agent {
 
 	@Column(name="bussiness_id", unique=true, nullable=false)
 	private int businessId;
-	
+
 	@Enumerated(EnumType.STRING)
 	private AgentStatus status;
 
 	public Agent() {
-		
 	}
 	
 	public Agent(String name, String surname, String password, String email, City city, String street,

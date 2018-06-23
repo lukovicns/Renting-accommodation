@@ -33,7 +33,7 @@ export class InboxComponent implements OnInit {
       this.receivedMessages = res;
     }, err => {
       console.log(err);
-    })
+    });
   }
 
   initSentMessages() {
@@ -42,7 +42,7 @@ export class InboxComponent implements OnInit {
       this.sentMessages = res;
     }, err => {
       console.log(err);
-    })
+    });
   }
 
   receivedTabActive() {
@@ -65,7 +65,7 @@ export class InboxComponent implements OnInit {
       this.initReceivedMessages();
     }, err => {
       console.log(err);
-    })
+    });
   }
 
   deleteSentMessage(message) {
@@ -74,6 +74,6 @@ export class InboxComponent implements OnInit {
       this.initSentMessages();
     }, err => {
       console.log(err);
-    })
+    });
   }
 }

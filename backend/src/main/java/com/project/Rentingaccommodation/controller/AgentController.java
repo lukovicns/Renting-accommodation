@@ -255,14 +255,21 @@ public class AgentController {
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
 	public ResponseEntity<Object> loginAgent(@RequestBody LoginDTO loginDTO) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+		
 		System.out.println("jfkajfkl " + loginDTO.getEmail() + " " + loginDTO.getPassword());
 		Agent agent = service.findByEmail(loginDTO.getEmail());
+		
+		if(agent == null)
+			return new ResponseEntity<>("You have to register first", HttpStatus.NOT_FOUND);
+		
 		System.out.println("aaaa " + agent);
 		System.out.println("aaaa " + agent.getEmail());
 		
+		Agent ag = service.findByEmail(agent.getEmail());
+		
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		
-		if (agent.getStatus().equals(AgentStatus.APPROVED)) {
+		if (!agent.getStatus().equals(AgentStatus.APPROVED)) {
 			return new ResponseEntity<>("This agent is either declined or don't have approval.", HttpStatus.FORBIDDEN);
 		}
 		
@@ -273,7 +280,7 @@ public class AgentController {
 			String verifyPass = loginDTO.getPassword();
 			
 			if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset))
-				return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 			
 			Session session = getSession(agent.getEmail());
 			Transaction tx = session.beginTransaction();
@@ -288,6 +295,9 @@ public class AgentController {
 			session.createNativeQuery("TRUNCATE db"+agent.getId()+".country;").executeUpdate();
 			session.createNativeQuery("TRUNCATE db"+agent.getId()+".bed_type;").executeUpdate();
 			session.createNativeQuery("TRUNCATE db"+agent.getId()+".user;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".agent;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".additional_service;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".apartment_additional_service;").executeUpdate();
 			
 			session.createNativeQuery("INSERT INTO db"+agent.getId()+".reservation (SELECT * FROM renting_accommodation_db.reservation "
 					+ "WHERE reservation_id IN (SELECT renting_accommodation_db.reservation.reservation_id FROM renting_accommodation_db.reservation "
@@ -305,9 +315,9 @@ public class AgentController {
 					
 			session.createNativeQuery("INSERT INTO db"+agent.getId()+".message (SELECT * FROM renting_accommodation_db.message WHERE agent_id = "+agent.getId()+")").executeUpdate();
 			
-			session.createNativeQuery("INSERT INTO db"+agent.getId()+".accommodation_type (SELECT * FROM renting_accommodation_db.accommodation_type)").executeUpdate();
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".accommodation_type (SELECT * FROM renting_accommodation_db.accommodation_type where status='ACTIVE')").executeUpdate();
 			
-			session.createNativeQuery("INSERT INTO db"+agent.getId()+".accommodation_category (SELECT * FROM renting_accommodation_db.accommodation_category)").executeUpdate();
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".accommodation_category (SELECT * FROM renting_accommodation_db.accommodation_category where status='ACTIVE')").executeUpdate();
 			
 			session.createNativeQuery("INSERT INTO db"+agent.getId()+".image (SELECT * FROM renting_accommodation_db.image "
 					+ "WHERE accommodation_id IN (SELECT renting_accommodation_db.accommodation.accommodation_id FROM renting_accommodation_db.accommodation "
@@ -322,6 +332,18 @@ public class AgentController {
 			session.createNativeQuery("INSERT INTO db"+agent.getId()+".country (SELECT * FROM renting_accommodation_db.country)").executeUpdate();
 			
 			session.createNativeQuery("INSERT INTO db"+agent.getId()+".user (SELECT * FROM renting_accommodation_db.user)").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".agent (SELECT * FROM renting_accommodation_db.agent where agent_id=" + agent.getId() + ")").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".additional_service (SELECT * FROM renting_accommodation_db.additional_service)").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".bed_type (SELECT * FROM renting_accommodation_db.bed_type)").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".apartment_additional_service (SELECT * FROM renting_accommodation_db.apartment_additional_service "
+					+ "WHERE apartment_id IN (SELECT renting_accommodation_db.apartment.apartment_id FROM renting_accommodation_db.apartment "
+					+ "INNER JOIN renting_accommodation_db.accommodation ON renting_accommodation_db.accommodation.accommodation_id = renting_accommodation_db.apartment.accommodation_id "
+					+ "WHERE agent_id ="+ agent.getId()+"));").executeUpdate();	
+			
 			tx.commit();
 			session.close();
 			
@@ -355,6 +377,7 @@ public class AgentController {
 			// <!-- Database connection settings -->
 	    String url = "jdbc:mysql://localhost:3306/db" + service.findByEmail(email).getId() + "?createDatabaseIfNotExist=true&useSSL=false";
 	    conf.setProperty("hibernate.connection.url", url);
+	    conf.setProperty("hibernate.hbm2ddl.auto", "none");
 		SessionFactory sessionFactory = conf.buildSessionFactory();
 			
 		return sessionFactory.openSession();
