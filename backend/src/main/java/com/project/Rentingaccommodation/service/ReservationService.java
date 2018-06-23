@@ -19,4 +19,5 @@ public interface ReservationService {
 	boolean checkDates(String startDate, String endDate);
 	Reservation findUserReservationByApartmentId(User user, Long apartmentId);
 	List<Reservation> findActiveReservationsByApartmentId(Long apartmentId);
+	List<Reservation> findUserReservationsByApartmentId(User user, Long id);
 }

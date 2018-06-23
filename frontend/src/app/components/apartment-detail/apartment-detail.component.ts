@@ -9,6 +9,7 @@ import { UserService } from '../../services/user.service';
 import { CommentService } from '../../services/comment.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { RatingService } from '../../services/rating.service';
+import { ImageService } from '../../services/image.service';
 
 @Component({
   selector: 'app-apartment-detail',
@@ -29,6 +30,8 @@ export class ApartmentDetailComponent implements OnInit {
   private rating: Number;
   private apartment = {};
   private comments = [];
+  private firstImage = {};
+  private images = [];
 
   constructor(
     private apartmentAdditionalServiceService: ApartmentAdditionalServiceService,
@@ -37,6 +40,7 @@ export class ApartmentDetailComponent implements OnInit {
     private apartmentService: ApartmentService,
     private commentService: CommentService,
     private ratingService: RatingService,
+    private imageService: ImageService,
     private userService: UserService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -57,6 +61,18 @@ export class ApartmentDetailComponent implements OnInit {
       this.apartmentService.getApartmentByAccommodationId(this.accommodationId, this.apartmentId)
       .subscribe(resp => {
         this.apartment = resp;
+        this.imageService.getFirstApartmentImage(this.apartmentId)
+        .subscribe(res => {
+          this.firstImage = res;
+        }, err => {
+          console.log(err);
+        })
+        this.imageService.getOtherApartmentImages(this.apartmentId)
+        .subscribe(res => {
+          this.images = res;
+        }, err => {
+          console.log(err);
+        })
         this.apartmentAdditionalServiceService.getApartmentAdditionalServices(this.apartmentId)
         .subscribe(response => {
           this.apartmentAdditionalServices = response;
@@ -125,7 +141,7 @@ export class ApartmentDetailComponent implements OnInit {
     .subscribe(res => {
       this.ngOnInit();
     }, err => {
-      console.log(err);
+      this.errorMessage = err['error'];
     })
   }
 }

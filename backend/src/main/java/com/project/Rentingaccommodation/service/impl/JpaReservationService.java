@@ -159,4 +159,15 @@ public class JpaReservationService implements ReservationService {
 			return false;
 		}
 	}
+
+	@Override
+	public List<Reservation> findUserReservationsByApartmentId(User user, Long id) {
+		List<Reservation> userReservations = new ArrayList<Reservation>();
+		for (Reservation reservation : findAll()) {
+			if (reservation.getApartment().getId() == id && reservation.getUser().getId() == user.getId()) {
+				userReservations.add(reservation);
+			}
+		}
+		return userReservations;
+	}
 }

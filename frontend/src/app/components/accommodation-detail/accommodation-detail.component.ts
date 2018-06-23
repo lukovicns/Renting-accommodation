@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
+import { ImageService } from '../../services/image.service';
 
 @Component({
   selector: 'app-accommodation-detail',
@@ -18,10 +19,13 @@ export class AccommodationDetailComponent implements OnInit {
   private agentInfoBtn: boolean = false;
   private sendMessageBtn: boolean = false;
   private accommodation = {};
+  private images = [];
+  private firstImage = {};
   private agent = {};
 
   constructor(
     private accommodationService: AccommodationService,
+    private imageService: ImageService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router
@@ -43,6 +47,18 @@ export class AccommodationDetailComponent implements OnInit {
     }, err => {
       this.router.navigate(['**']);
     });
+    this.imageService.getFirstAccommodationImage(this.accommodationId)
+    .subscribe(res => {
+      this.firstImage = res;
+    }, err => {
+      console.log(err);
+    })
+    this.imageService.getOtherAccommodationImages(this.accommodationId)
+    .subscribe(res => {
+      this.images = res;
+    }, err => {
+      console.log(err);
+    })
   }
 
   showAgentInfo() {
