@@ -10,6 +10,8 @@ import { TypeListComponent } from './components/type-list/type-list.component';
 import { EditCategoryComponent } from './components/edit-category/edit-category.component';
 import { EditTypeComponent } from './components/edit-type/edit-type.component';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
+import { AdditionalServicesListComponent } from './components/additional-services-list/additional-services-list.component';
+import { EditAdditionalServiceComponent } from './components/edit-additional-service/edit-additional-service.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -23,6 +25,10 @@ const routes: Routes = [
   { path: 'types', canActivate: [AuthGuard], children: [
     { path: '', component: TypeListComponent },
     { path: ':id/edit', component: EditTypeComponent }
+  ] },
+  { path: 'additional-services', canActivate: [AuthGuard], children: [
+    { path: '', component: AdditionalServicesListComponent },
+    { path: ':id/edit', component: EditAdditionalServiceComponent }
   ] },
   { path: 'comments', component: CommentListComponent }
 ];

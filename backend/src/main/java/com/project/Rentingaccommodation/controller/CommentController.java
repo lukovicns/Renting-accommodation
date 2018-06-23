@@ -1,5 +1,6 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -18,12 +19,14 @@ import com.project.Rentingaccommodation.model.Admin;
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Comment;
 import com.project.Rentingaccommodation.model.CommentStatus;
+import com.project.Rentingaccommodation.model.Reservation;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.ApartmentService;
 import com.project.Rentingaccommodation.service.CommentService;
+import com.project.Rentingaccommodation.service.ReservationService;
 import com.project.Rentingaccommodation.service.UserService;
 
 @RestController
@@ -41,6 +44,9 @@ public class CommentController {
     
     @Autowired
     private AdminService adminService;
+    
+    @Autowired
+    private ReservationService reservationService;
     
     @Autowired
     private JwtValidator jwtValidator;
@@ -104,6 +110,23 @@ public class CommentController {
 				SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 				String date = dateFormatter.format(new Date());
 				String time = timeFormatter.format(new Date());
+
+				List<Reservation> userReservations = reservationService.findUserReservationsByApartmentId(user, apartment.getId());
+				
+				if (userReservations.isEmpty()) {
+					return new ResponseEntity<>("You must first make reservations to make comments.", HttpStatus.FORBIDDEN);
+				}
+				
+				for (Reservation reservation : userReservations) {
+					try {
+						Date endDate = dateFormatter.parse(reservation.getEndDate());
+						if (endDate.compareTo(new Date()) > 0) {
+							return new ResponseEntity<>("You can comment after the reservation has passed.", HttpStatus.FORBIDDEN);
+						}
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
 				
 				for (Comment c : service.findAll()) {
 					if (c.getApartment().getId() == apartment.getId() && c.getUser().getId() == user.getId()) {

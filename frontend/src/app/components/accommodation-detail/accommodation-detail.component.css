@@ -23,3 +23,9 @@ ul {
 textarea {
   margin-bottom: 20px;
 }
+
+img {
+  height: 300px;
+  width: auto;
+  overflow: hidden;
+}

@@ -20,6 +20,11 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" routerLink="/additional-services" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fas fa-cog"></i>&nbsp;Additional services
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" routerLink="/comments" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <i class="fas fa-comment-alt"></i>&nbsp;Comments
         </a>

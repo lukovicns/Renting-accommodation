@@ -33,15 +33,7 @@ export class ApartmentService {
     }});
   }
 
-  getApartmentsByAdvancedQueryParams(city, persons, startDate, endDate, type, category) {
-    return this.http.get<Apartment[]>(this.url + 'advanced-search', { params: {
-      'city': city,
-      'persons': persons,
-      'startDate': startDate,
-      'endDate': endDate,
-      'type': type,
-      'category': category
-      }
-    });
+  getApartmentsByAdvancedQueryParams(params) {
+    return this.http.get<Apartment[]>(this.url + 'advanced-search', { params: params });
   }
 }

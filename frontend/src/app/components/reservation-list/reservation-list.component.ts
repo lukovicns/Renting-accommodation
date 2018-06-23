@@ -11,7 +11,6 @@ import { fadeIn } from '../../animations';
 export class ReservationListComponent implements OnInit {
 
   private reservations = [];
-  private exists = true;
 
   constructor(private reservationService: ReservationService) { }
 
@@ -19,6 +18,7 @@ export class ReservationListComponent implements OnInit {
     this.reservationService.getUserReservations()
     .subscribe(res => {
       this.reservations = res;
+      console.log('hey');
     }, err => {
       console.log(err);
     });

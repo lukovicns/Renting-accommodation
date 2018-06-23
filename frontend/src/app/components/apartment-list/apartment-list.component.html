@@ -2,8 +2,8 @@
   <div *ngFor="let apartment of apartments">
     <div class="card">
       <div class="card-body">
-        <img src="{{ image }}">
-        <h5 class="card-title"></h5>
+        <h5 class="card-title">{{ apartment.name }}</h5>
+        <hr>
         <p class="card-text">{{ apartment.description }}</p>
         <hr>
         <a class="btn btn-info pull-right" routerLink="/accommodations/{{ apartment.accommodation?.id }}/apartments/{{ apartment.id }}">More info</a>

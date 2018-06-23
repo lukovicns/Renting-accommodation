@@ -59,4 +59,10 @@ public class ApartmentAdditionalService {
 	public void setAdditionalService(AdditionalService additionalService) {
 		this.additionalService = additionalService;
 	}
+
+	@Override
+	public String toString() {
+		return "ApartmentAdditionalService [id=" + id + ", apartment=" + apartment + ", additionalService="
+				+ additionalService + "]";
+	}
 }

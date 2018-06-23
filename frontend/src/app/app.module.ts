@@ -38,6 +38,7 @@ import { AccommodationTypeService } from './services/accommodation-type.service'
 import { AccommodationCategoryService } from './services/accommodation-category.service';
 import { CommentService } from './services/comment.service';
 import { RatingService } from './services/rating.service';
+import { ImageService } from './services/image.service';
 
 
 @NgModule({
@@ -85,6 +86,7 @@ import { RatingService } from './services/rating.service';
     AccommodationCategoryService,
     RatingService,
     CommentService,
+    ImageService,
     AuthGuard
   ],
   bootstrap: [AppComponent]

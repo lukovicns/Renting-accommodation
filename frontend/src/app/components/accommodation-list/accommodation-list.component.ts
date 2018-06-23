@@ -8,6 +8,7 @@ import { CityService } from '../../services/city.service';
 import { AdditionalServiceService } from '../../services/additional-service.service';
 import { AccommodationCategoryService } from '../../services/accommodation-category.service';
 import { AccommodationTypeService } from '../../services/accommodation-type.service';
+import { ImageService } from '../../services/image.service';
 
 @Component({
   selector: 'app-accommodation-list',
@@ -22,12 +23,15 @@ export class AccommodationListComponent implements OnInit {
   private types = [];
   private additionalServices = [];
   private advancedOptions: boolean;
+  private images = {};
+  private apartmentImages = [];
 
   constructor(
     private additionalServiceService: AdditionalServiceService,
     private categoryService: AccommodationCategoryService,
     private accommodationService: AccommodationService,
     private typeService: AccommodationTypeService,
+    private imageService: ImageService,
     private cityService: CityService,
     private formBuilder: FormBuilder,
     private router: Router
@@ -45,7 +49,9 @@ export class AccommodationListComponent implements OnInit {
     this.typeService.getTypes()
     .subscribe(res => this.types = res);
     this.accommodationService.getAccommodations()
-    .subscribe(res => this.accommodations = res);
+    .subscribe(res => {
+      this.accommodations = res;
+    });
   }
 
   searchForm = this.formBuilder.group({
@@ -68,6 +74,11 @@ export class AccommodationListComponent implements OnInit {
       if (this.advancedOptions) {
         queryParams['type'] = document.querySelector('#type')['value'];
         queryParams['category'] = document.querySelector('#category')['value'];
+        const additionalServices = document.querySelectorAll('input[name=additionalServices]:checked');
+        for (let i = 0; i < additionalServices.length; i++) {
+          let additionalServiceId = additionalServices[i]['id'];
+          queryParams['service' + additionalServiceId] = 'on';
+        }
       }
       this.router.navigate(['/accommodations/search'], { queryParams: queryParams });
     }, err => {

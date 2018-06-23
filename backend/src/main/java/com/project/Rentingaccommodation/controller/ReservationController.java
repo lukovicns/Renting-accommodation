@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.Rentingaccommodation.model.Apartment;
+import com.project.Rentingaccommodation.model.PricePlan;
 import com.project.Rentingaccommodation.model.Reservation;
 import com.project.Rentingaccommodation.model.ReservationStatus;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.ApartmentService;
+import com.project.Rentingaccommodation.service.PricePlanService;
 import com.project.Rentingaccommodation.service.ReservationService;
 import com.project.Rentingaccommodation.service.UserService;
 
@@ -37,6 +39,9 @@ public class ReservationController {
 	
 	@Autowired
 	private ApartmentService apartmentService;
+	
+	@Autowired
+	private PricePlanService pricePlanService;
 	
 	@Autowired
 	private JwtValidator jwtValidator;
@@ -137,12 +142,15 @@ public class ReservationController {
 					return new ResponseEntity<>("Apartment is not available at the given period.", HttpStatus.FORBIDDEN);
 				}
 				
+				// Setup price plan for apartment based on given start and end date.
+				PricePlan pricePlan = pricePlanService.setReservationPricePlan(apartment, reservation.getStartDate(), reservation.getEndDate());
+				
 				Reservation newReservation = new Reservation(
 					user,
 					reservation.getApartment(),
 					reservation.getStartDate(),
 					reservation.getEndDate(),
-					150,
+					pricePlan.getPrice(),
 					ReservationStatus.RESERVATION
 				);
 				return new ResponseEntity<>(service.save(newReservation), HttpStatus.OK);

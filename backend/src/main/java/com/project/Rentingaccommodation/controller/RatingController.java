@@ -1,5 +1,6 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Rating;
+import com.project.Rentingaccommodation.model.Reservation;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.ApartmentService;
 import com.project.Rentingaccommodation.service.RatingService;
+import com.project.Rentingaccommodation.service.ReservationService;
 import com.project.Rentingaccommodation.service.UserService;
 
 @RestController
@@ -37,6 +40,9 @@ public class RatingController {
     
     @Autowired
     private JwtValidator jwtValidator;
+    
+    @Autowired
+    private ReservationService reservationService;
     
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ResponseEntity<List<Rating>> getRatings() {
@@ -105,6 +111,23 @@ public class RatingController {
 		SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
 		String date = dateFormatter.format(new Date());
 		String time = timeFormatter.format(new Date());
+		
+		List<Reservation> userReservations = reservationService.findUserReservationsByApartmentId(user, apartment.getId());
+		
+		if (userReservations.isEmpty()) {
+			return new ResponseEntity<>("You must first make reservations to rate apartment.", HttpStatus.FORBIDDEN);
+		}
+		
+		for (Reservation reservation : userReservations) {
+			try {
+				Date endDate = dateFormatter.parse(reservation.getEndDate());
+				if (endDate.compareTo(new Date()) > 0) {
+					return new ResponseEntity<>("You can rate apartment after the reservation has passed.", HttpStatus.FORBIDDEN);
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		Rating rating = new Rating(user, apartment, date, time, data.getRating());
 		return new ResponseEntity<>(service.save(rating), HttpStatus.OK);

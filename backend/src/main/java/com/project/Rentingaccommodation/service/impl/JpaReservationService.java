@@ -153,12 +153,21 @@ public class JpaReservationService implements ReservationService {
 		try {
 			Date start = dateFormatter.parse(startDate);
 			Date end = dateFormatter.parse(endDate);
-			System.out.println(start);
-			System.out.println(end);
 			return start.compareTo(end) >= 0 ? false : true;
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	@Override
+	public List<Reservation> findUserReservationsByApartmentId(User user, Long id) {
+		List<Reservation> userReservations = new ArrayList<Reservation>();
+		for (Reservation reservation : findAll()) {
+			if (reservation.getApartment().getId() == id && reservation.getUser().getId() == user.getId()) {
+				userReservations.add(reservation);
+			}
+		}
+		return userReservations;
 	}
 }

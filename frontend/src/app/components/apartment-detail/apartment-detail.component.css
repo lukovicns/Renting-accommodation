@@ -94,3 +94,9 @@ h4 {
 #apartment-detail-card {
   margin-bottom: 20px;
 }
+
+img {
+  height: 400px;
+  width: auto;
+  overflow: hidden;
+}
