@@ -13,6 +13,7 @@ import { ReservationListComponent } from './components/reservation-list/reservat
 import { InboxComponent } from './components/inbox/inbox.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { MessageDetailComponent } from './components/message-detail/message-detail.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent},
@@ -20,12 +21,15 @@ const routes: Routes = [
   { path: 'accommodationsTable', component: AccommodationTableComponent },
   { path: 'apartment/:id', component: ApartmentComponent },
   { path: 'accommodationDetail/:id', component: AccommodationDetailComponent},
-  { path: 'apartmentTable', component: ApartmentTableComponent},
+  { path: 'apartmentTable/:id', component: ApartmentTableComponent},
   { path: 'pricePlan', component: PricePlanComponent},
   { path: 'notFound', component: NotFoundComponent},
   { path: 'apartmentDetail/:id', component: ApartmentDetailComponent},
   { path: 'reservations', component: ReservationListComponent},
-  { path: 'inbox', component: InboxComponent},
+  { path: 'inbox', children: [
+         { path: '', component: InboxComponent },
+         { path: ':direction/:id', component: MessageDetailComponent }
+  ] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent }
 //  { path: 'recovery', component: RecoveryEmailComponent},

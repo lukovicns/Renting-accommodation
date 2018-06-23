@@ -27,6 +27,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { UserService } from './services/user.service';
 import { HttpInterceptorService } from './services/httpinterceptor.service';
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
+import { TruncatePipe } from './pipes/truncate.pipe';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { HTTP_INTERCEPTORS } from "@angular/common/http";
     MessageDetailComponent,
     SendMessageComponent,
     LoginComponent,
+    TruncatePipe,
     RegisterComponent
   ],
   imports: [

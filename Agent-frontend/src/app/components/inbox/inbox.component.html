@@ -27,16 +27,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let message of receivedMessages" [ngClass]="message.status === 'UNREAD' ? 'unread' : 'read'">
-              <!-- <td>{{ message.agent?.email }}</td>
-              <td><a routerLink="/inbox/received/{{ message.id }}">{{ message.text | truncate: 30 }}</a></td>
+            <tr *ngFor="let message of receivedMessages">
+              <td>{{ message.name }} {{message.surname}}</td>
+              <!-- <td><a routerLink="/inbox/received/{{ message.id }}">{{ message.text | truncate: 30 }}</a></td> -->
+              <td>{{ message.content }}</td>
               <td>{{ message.date }}</td>
               <td>{{ message.time }}</td>
               <td>
                 <a (click)="deleteReceivedMessage(message)">
                   <i class="fas fa-trash"></i>
                 </a>
-              </td> -->
+              </td>
             </tr>
           </tbody>
         </table>
@@ -52,15 +53,15 @@
           </thead>
           <tbody>
             <tr *ngFor="let message of sentMessages">
-              <!-- <td>{{ message.agent?.email }}</td> 
-              <td><a routerLink="/inbox/sent/{{ message.id }}">{{ message.text | truncate: 30 }}</a></td>
+              <td>{{ message.agent?.email }}</td> 
+              <!-- <td><a routerLink="/inbox/sent/{{ message.id }}">{{ message.text | truncate: 30 }}</a></td> -->
               <td>{{ message.date }}</td>
               <td>{{ message.time }}</td>
               <td>
                 <a>
                   <i (click)="deleteSentMessage(message)" class="fas fa-trash"></i>
                 </a>
-              </td>-->
+              </td>
             </tr>
           </tbody>
         </table>

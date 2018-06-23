@@ -21,9 +21,12 @@ import com.project.service.MessageService;
 @Service
 public class JpaMessageService implements MessageService {
 
-	@Autowired
-	private MessageRepository repository;
+	private static MessageRepository repository;
 	
+	public JpaMessageService(MessageRepository repository) {
+		if(repository != null)
+			JpaMessageService.setRepository(repository);	}
+
 	@Override
 	public Message findOne(Long id) {
 		for (Message message : findAll()) {
@@ -36,17 +39,17 @@ public class JpaMessageService implements MessageService {
 
 	@Override
 	public List<Message> findAll() {
-		return repository.findAll();
+		return getRepository().findAll();
 	}
 	
 	@Override
 	public Message save(Message message) {
-		return repository.save(message);
+		return getRepository().save(message);
 	}
 	
 	@Override
 	public void delete(Message message) {
-		repository.delete(message);
+		getRepository().delete(message);
 	}
 
 	@Override
@@ -192,13 +195,13 @@ public class JpaMessageService implements MessageService {
 	@Override
 	public Message sendMessageToUser(User user, Agent agent, Apartment apartment, String date, String time, String text) {
 		Message message = new Message(user, agent, apartment, date, time, text, MessageStatus.UNREAD, Direction.AGENT_TO_USER);
-		return repository.save(message);
+		return getRepository().save(message);
 	}
 
 	@Override
 	public Message sendMessageToAgent(User user, Agent agent, Apartment apartment, String date, String time, String text) {
 		Message message = new Message(user, agent, apartment, date, time, text, MessageStatus.UNREAD, Direction.USER_TO_AGENT);
-		return repository.save(message);
+		return getRepository().save(message);
 	}
 	
 	@Override
@@ -245,5 +248,13 @@ public class JpaMessageService implements MessageService {
 	public void deleteAgentReceivedMessage(Agent agent, Message message) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public static MessageRepository getRepository() {
+		return repository;
+	}
+
+	public static void setRepository(MessageRepository repository) {
+		JpaMessageService.repository = repository;
 	}
 }
