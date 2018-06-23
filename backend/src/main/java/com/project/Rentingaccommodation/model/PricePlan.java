@@ -2,6 +2,8 @@ package com.project.Rentingaccommodation.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,8 +21,8 @@ public class PricePlan {
 	private Long id;
 	
 	@OneToOne
-	@JoinColumn(name="room_id")
-	private Apartment room;
+	@JoinColumn(name="apartment_id")
+	private Apartment apartment;
 	
 	@Column(name="start_date", columnDefinition="VARCHAR(50)", nullable=false)
 	private String startDate;
@@ -31,13 +33,41 @@ public class PricePlan {
 	@Column(name="price", nullable=false)
 	private int price;
 	
+	@Enumerated(EnumType.STRING)
+	private DeleteStatus status;
+	
+	public DeleteStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(DeleteStatus status) {
+		this.status = status;
+	}
+	
 	public PricePlan() {
 		
 	}
 
-	public PricePlan(Apartment room, String startDate, String endDate, int price) {
+	public PricePlan(Long id, Apartment apartment, String startDate, String endDate, int price) {
 		super();
-		this.room = room;
+		this.id = id;
+		this.apartment = apartment;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.price = price;
+	}
+	
+	public PricePlan(Apartment apartment, String startDate, String endDate, int price) {
+		super();
+		this.apartment = apartment;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.price = price;
+		this.status = DeleteStatus.ACTIVE;
+	}
+	
+	public PricePlan(String startDate, String endDate, int price) {
+		super();
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.price = price;
@@ -51,12 +81,12 @@ public class PricePlan {
 		this.id = id;
 	}
 
-	public Apartment getRoom() {
-		return room;
+	public Apartment getApartment() {
+		return apartment;
 	}
 
-	public void setRoom(Apartment room) {
-		this.room = room;
+	public void setApartment(Apartment apartment) {
+		this.apartment = apartment;
 	}
 
 	public String getStartDate() {

@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getAccommodationCategoriesResponse", namespace = "http://com.project/web_service/wrappers")
 
-public class GetgetAccommodationCategoriesResponse {
+public class GetAccommodationCategoriesResponse {
 
 	@XmlElement(name = "return")
     private String _return;

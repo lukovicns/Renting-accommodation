@@ -16,7 +16,7 @@ public class Image {
 	@Column(name = "image_id", updatable = false, nullable = false, insertable=false)
 	private Long id;
 	
-	@Column(name="url", columnDefinition="VARCHAR(500)", nullable=false)
+	@Column(name="url", columnDefinition="VARCHAR(500)", nullable=true)
 	private String url;
 	
 	@OneToOne

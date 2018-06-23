@@ -14,6 +14,8 @@ import { TypeListComponent } from './components/type-list/type-list.component';
 import { EditTypeComponent } from './components/edit-type/edit-type.component';
 import { EditCategoryComponent } from './components/edit-category/edit-category.component';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
+import { AdditionalServicesListComponent } from './components/additional-services-list/additional-services-list.component';
+import { EditAdditionalServiceComponent } from './components/edit-additional-service/edit-additional-service.component';
 
 
 @NgModule({
@@ -27,7 +29,9 @@ import { CommentListComponent } from './components/comment-list/comment-list.com
     TypeListComponent,
     EditTypeComponent,
     EditCategoryComponent,
-    CommentListComponent
+    CommentListComponent,
+    AdditionalServicesListComponent,
+    EditAdditionalServiceComponent
   ],
   imports: [
     BrowserModule,

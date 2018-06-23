@@ -1,0 +1,54 @@
+<div [@fadeIn]>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Additional services</li>
+    </ol>
+  </nav>
+  <div class="container">
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Add additional service</h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="additionalServiceForm" (ngSubmit)="addAdditionalService()">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" formControlName="name" placeholder="Enter additional service name">
+          </div>
+          <button type="submit" class="btn btn-info" [disabled]="!additionalServiceForm.valid">Add additional service</button>
+        </form>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered" *ngIf="services && services.length > 0; else servicesNotFound">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Activate/Deactivate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let service of services; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ service.name }}</td>
+            <td>
+              <a class="btn btn-info btn-sm" routerLink="/additional-services/{{ service.id }}/edit">Edit additional service</a>
+            </td>
+            <td>
+                <button class="btn btn-danger btn-sm" (click)="deleteAdditionalService(service.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #servicesNotFound>
+      <h1>There are no additional services yet!</h1>
+    </ng-template>
+  </div>
+</div>

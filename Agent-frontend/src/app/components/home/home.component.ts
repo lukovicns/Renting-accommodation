@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private userService: UserService) { }
 
   ngOnInit() {
   }
@@ -19,6 +20,10 @@ export class HomeComponent implements OnInit {
   {
       this.router.navigate(['./SomewhereElse']);
   }
+  
+  userIsLoggedIn() {
+      return this.userService.getCurrentUser() != null;
+    }
 
   title = 'The Booking App';
 }

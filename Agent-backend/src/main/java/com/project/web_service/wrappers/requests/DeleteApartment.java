@@ -6,15 +6,28 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.w3._2000._09.xmldsig.SignatureType;
+
 @XmlRootElement(name = "deleteApartment", namespace = "http://com.project/web_service/wrappers")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteApartment", namespace = "http://com.project/web_service/wrappers", propOrder = {"id"})
+@XmlType(name = "deleteApartment", namespace = "http://com.project/web_service/wrappers", propOrder = {"id", "Signature"})
 
 public class DeleteApartment {
 
 	@XmlElement(name = "id")
     private String id;
 
+	@XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
+	private SignatureType Signature;
+
+	public SignatureType getSignature() {
+		return Signature;
+	}
+
+	public void setSignature(SignatureType signature) {
+		Signature = signature;
+	}
+	
 	public String getId() {
 		return id;
 	}

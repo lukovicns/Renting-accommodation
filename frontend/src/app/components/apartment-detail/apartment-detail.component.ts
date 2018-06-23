@@ -95,6 +95,10 @@ export class ApartmentDetailComponent implements OnInit {
     })
   }
 
+  isAuthenticated() {
+    return this.userService.getCurrentUser() != null;
+  }
+
   addComment() {
     const data = {
       'apartment': this.apartment,

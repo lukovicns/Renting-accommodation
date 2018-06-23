@@ -10,14 +10,12 @@ import org.w3._2000._09.xmldsig.SignatureType;
 
 @XmlRootElement(name = "getAccommodationTypeRequest", namespace = "http://com.project/web_service/wrappers")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getAccommodationTypeRequest", namespace = "http://com.project/web_service/wrappers", propOrder = {"name", "Signature"})
+@XmlType(name = "getAccommodationTypeRequest", namespace = "http://com.project/web_service/wrappers", propOrder = {"Signature"})
 public class GetAccommodationTypeRequest {
-
-	@XmlElement(name = "name")
-    private String name;
 
 	@XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
 	private SignatureType Signature;
+
 
 	public SignatureType getSignature() {
 		return Signature;
@@ -26,14 +24,5 @@ public class GetAccommodationTypeRequest {
 	public void setSignature(SignatureType signature) {
 		Signature = signature;
 	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	
 }

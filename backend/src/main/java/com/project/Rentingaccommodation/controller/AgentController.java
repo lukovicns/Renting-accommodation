@@ -16,6 +16,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -275,10 +276,53 @@ public class AgentController {
 				return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 			
 			Session session = getSession(agent.getEmail());
-			session.createNativeQuery("TRUNCATE db"+agent.getId()+".reservation;");
-			session.createNativeQuery("TRUNCATE db"+agent.getId()+".message;");
-			session.createNativeQuery("INSERT INTO db"+agent.getId()+".reservation (SELECT * FROM renting_accommodation_db.reservation WHERE reservation_id IN (SELECT renting_accommodation_db.reservation.reservation_id FROM renting_accommodation_db.reservation INNER JOIN renting_accommodation_db.apartment ON renting_accommodation_db.reservation.apartment_id = renting_accommodation_db.apartment.apartment_id INNER JOIN renting_accommodation_db.accommodation ON renting_accommodation_db.apartment.accommodation_id = renting_accommodation_db.accommodation.accommodation_id WHERE agent_id="+agent.getId()+";)) order by renting_accommodation_db.reservation.reservation_id DESC;");
-			session.createNativeQuery("INSERT INTO db"+agent.getId()+".message (SELECT * FROM renting_accommodation_db.message WHERE agent_id = "+agent.getId()+")");
+			Transaction tx = session.beginTransaction();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".reservation;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".accommodation;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".apartment;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".message;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".accommodation_type;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".accommodation_category;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".image;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".city;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".country;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".bed_type;").executeUpdate();
+			session.createNativeQuery("TRUNCATE db"+agent.getId()+".user;").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".reservation (SELECT * FROM renting_accommodation_db.reservation "
+					+ "WHERE reservation_id IN (SELECT renting_accommodation_db.reservation.reservation_id FROM renting_accommodation_db.reservation "
+					+ "INNER JOIN renting_accommodation_db.apartment ON renting_accommodation_db.reservation.apartment_id = renting_accommodation_db.apartment.apartment_id "
+					+ "INNER JOIN renting_accommodation_db.accommodation "
+					+ "ON renting_accommodation_db.apartment.accommodation_id = renting_accommodation_db.accommodation.accommodation_id "
+					+ "WHERE agent_id="+agent.getId()+"));").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".accommodation (SELECT * FROM renting_accommodation_db.accommodation WHERE agent_id = "+ agent.getId()+")").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".apartment (SELECT * FROM renting_accommodation_db.apartment WHERE accommodation_id IN "
+					+ "(SELECT renting_accommodation_db.accommodation.accommodation_id FROM renting_accommodation_db.accommodation "
+					+ "INNER JOIN renting_accommodation_db.apartment ON "
+					+ "renting_accommodation_db.accommodation.accommodation_id = renting_accommodation_db.apartment.accommodation_id WHERE agent_id= " + agent.getId() +"));").executeUpdate();
+					
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".message (SELECT * FROM renting_accommodation_db.message WHERE agent_id = "+agent.getId()+")").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".accommodation_type (SELECT * FROM renting_accommodation_db.accommodation_type)").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".accommodation_category (SELECT * FROM renting_accommodation_db.accommodation_category)").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".image (SELECT * FROM renting_accommodation_db.image "
+					+ "WHERE accommodation_id IN (SELECT renting_accommodation_db.accommodation.accommodation_id FROM renting_accommodation_db.accommodation "
+					+ "WHERE agent_id ="+ agent.getId()+"));").executeUpdate();
+					 
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".image (SELECT * FROM renting_accommodation_db.image "
+					+ "WHERE apartment_id IN (SELECT renting_accommodation_db.apartment.apartment_id FROM renting_accommodation_db.apartment "
+					+ "INNER JOIN renting_accommodation_db.accommodation ON renting_accommodation_db.accommodation.accommodation_id = renting_accommodation_db.apartment.accommodation_id WHERE agent_id ="+ agent.getId()+"));").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".city (SELECT * FROM renting_accommodation_db.city)").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".country (SELECT * FROM renting_accommodation_db.country)").executeUpdate();
+			
+			session.createNativeQuery("INSERT INTO db"+agent.getId()+".user (SELECT * FROM renting_accommodation_db.user)").executeUpdate();
+			tx.commit();
 			session.close();
 			
 			String token = generate(new JwtUser(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));

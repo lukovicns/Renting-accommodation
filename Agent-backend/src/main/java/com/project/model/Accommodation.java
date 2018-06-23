@@ -48,8 +48,6 @@ public class Accommodation {
 	@Enumerated(EnumType.STRING)
 	private DeleteStatus status;
 	
-	
-	
 	public DeleteStatus getStatus() {
 		return status;
 	}
