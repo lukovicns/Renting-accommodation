@@ -144,6 +144,10 @@ public class ReservationController {
 				
 				// Setup price plan for apartment based on given start and end date.
 				PricePlan pricePlan = pricePlanService.setReservationPricePlan(apartment, reservation.getStartDate(), reservation.getEndDate());
+				System.out.println(pricePlan);
+				if (pricePlan == null) {
+					
+				}
 				
 				Reservation newReservation = new Reservation(
 					user,

@@ -19,7 +19,6 @@ export class ReservationService {
   }
 
   getUserReservations() {
-    console.log(localStorage.getItem('token'));
     return this.http.get<Reservation[]>(this.url + 'user', { headers: this.headers });
   }
 

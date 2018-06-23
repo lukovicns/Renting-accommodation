@@ -50,6 +50,14 @@ insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price,
 insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price, status) values (2, 1, '01/07/2018', '07/07/2018', 1500, 'ACTIVE');
 insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price, status) values (3, 1, '08/07/2018', '16/07/2018', 1500, 'ACTIVE');
 
+insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price, status) values (4, 2, '18/06/2018', '30/06/2018', 1500, 'ACTIVE');
+insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price, status) values (5, 2, '01/07/2018', '07/07/2018', 1500, 'ACTIVE');
+insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price, status) values (6, 2, '08/07/2018', '16/07/2018', 1500, 'ACTIVE');
+
+insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price, status) values (7, 3, '18/06/2018', '30/06/2018', 1500, 'ACTIVE');
+insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price, status) values (8, 3, '01/07/2018', '07/07/2018', 1500, 'ACTIVE');
+insert into price_plan(price_plan_id, apartment_id, start_date, end_date, price, status) values (9, 3, '08/07/2018', '16/07/2018', 1500, 'ACTIVE');
+
 insert into reservation(reservation_id, user_id, apartment_id, start_date, end_date, price, status) values (1, 1, 1, '10/06/2018', '18/06/2018', 1500, 'RESERVATION');
 
 insert into image(image_id, url, accommodation_id) values (1, 'https://t-ec.bstatic.com/images/hotel/max1280x900/223/22392909.jpg', 1);
