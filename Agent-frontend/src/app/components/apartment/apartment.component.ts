@@ -176,11 +176,8 @@ export class ApartmentComponent implements OnInit {
           swal({
               text: res['return'],
               confirmButtonText: 'Ok',
-          }).then((result) => {
-              if (result.value) {
-                  this.router.navigate(['/accommodationDetail/'+ this.accommodationId]);
-              }
           });
+             this.router.navigate(['/accommodationDetail/'+ this.accommodationId]);
         });
    }
   

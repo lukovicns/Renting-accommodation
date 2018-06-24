@@ -19,19 +19,9 @@ export class ReservationService {
     return this.http.get(this.url + '/getReservations');
   }
 
-  /*getUserReservations() {
-    return this.http.get(this.url + 'user', { headers: this.headers });
+  confirmReservation(id) {
+      return this.http.get(this.url + '/confirmReservation/' + id);
   }
-
-  getUserReservationByApartmentId(apartmentId) {
-    return this.http.get(this.url + 'user/' + apartmentId, { headers: this.headers });
-  }
-
-  makeReservations(reservation) {
-    return this.http.post(this.url, reservation, { headers: this.headers });
-  }
-
-  cancelReservation(reservationId) {
-    return this.http.delete(this.url + reservationId, { headers: this.headers });
-  }*/
+  
+  
 }

@@ -118,14 +118,14 @@
 			  	</div>
 			  	<div class="group row">
 				  <div class="col-sm-10 col-sm-offset-10" *ngIf="addNewR">
-				  		<form [formGroup]="reservationForm" (ngSubmit)="makeReservations()">
+				  		<form [formGroup]="reservationForm" (ngSubmit)="addReservation()">
 					          <div class="form-group">
 					              <label for="startDate">Start date</label>
 					              <input formControlName="startDateR" type="date"/>
 					          </div>
 					          <div class="form-group">
-					              <label for="endDate">Start date</label>
-						             <input formControlName="startDateR" type="date"/>
+					              <label for="endDate">End date</label>
+						             <input formControlName="endDateR" type="date"/>
 					          </div>
 					          <button type="submit" class="btn btn-info btn-block">Make reservation</button>
 					    </form>

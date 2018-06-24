@@ -78,4 +78,12 @@ export class ApartmentService {
   getApartment(id){
       return this.http.get(this.url + '/getApartment/' + id);
   }
+  
+  addReservation(data, apartmentId){
+      let  newdata = {
+              'startDate': data.startDateR,
+              'endDate': data.endDateR
+            };
+      return this.http.post(this.url + '/addReservation/' + apartmentId, newdata);
+  }
 }

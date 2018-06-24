@@ -50,17 +50,15 @@ export class SendMessageComponent implements OnInit {
 
   sendMessage() {
     const data = {
-      'apartment': this.apartmentId,
-      'user': this.userService.getCurrentUser()['id'],
-      'agent': this.accommodation['agent'].id,
+      'id' : this.messageId;
       'text': this.messageForm.value['content']
     }
-    /*this.messageService.sendMessage(data)
+    this.messageService.sendMessage(data)
     .subscribe(res => {
-      this.successMessage = 'You have successfully sent message to ' + this.accommodation['agent'].email;
+      this.successMessage = 'Message succesfully sent.';
       this.messageForm.reset();
     }, err => {
       console.log(err);
-    })*/
+    })
   }
 }

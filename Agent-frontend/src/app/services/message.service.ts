@@ -12,7 +12,8 @@ export class MessageService {
   constructor(private http: HttpClient) { }
   
     sendMessage(data) {
-      return this.http.post(this.url + 'sendMessageToUser', data);
+        console.log(data);
+      return this.http.post(this.url + 'sendMessageToUser/'+data.id, data.text);
     }
 
     getSentMessages() {

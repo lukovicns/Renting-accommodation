@@ -10,17 +10,11 @@ import org.w3._2000._09.xmldsig.SignatureType;
 
 @XmlRootElement(name = "sendMessageToUser", namespace = "http://com.project/web_service/wrappers")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sendMessageToUser", namespace = "http://com.project/web_service/wrappers", propOrder = {"apartmentId","userId", "agentId", "messageText", "Signature"})
+@XmlType(name = "sendMessageToUser", namespace = "http://com.project/web_service/wrappers", propOrder = {"messageId", "messageText", "Signature"})
 public class SendMessageToUser {
 
 	@XmlElement(name = "apartmentId")
-    private String apartmentId;
-	
-	@XmlElement(name = "userId")
-    private String userId;
-	
-	@XmlElement(name = "agentId")
-    private String agentId;
+    private String messageId;
 	
 	@XmlElement(name = "messageText")
     private String messageText;
@@ -36,28 +30,12 @@ public class SendMessageToUser {
 		Signature = signature;
 	}
 
-	public String getApartmentId() {
-		return apartmentId;
+	public String getMessageId() {
+		return messageId;
 	}
 
-	public void setApartmentId(String apartmentId) {
-		this.apartmentId = apartmentId;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public String getAgentId() {
-		return agentId;
-	}
-
-	public void setAgentId(String agentId) {
-		this.agentId = agentId;
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 
 	

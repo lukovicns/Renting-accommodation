@@ -6,7 +6,7 @@
     </ol>
   </nav>
   <div class="container">
-    <div *ngIf="show && reservation"><!-- *ngIf="reservations.length > 0; else content" -->
+    <div *ngIf="show"><!-- *ngIf="reservations.length > 0; else content" -->
       <table class="table">
         <thead class="thead-light">
           <tr>
@@ -16,25 +16,23 @@
             <th scope="col">Check-out date</th>
             <th scope="col">Price</th>
             <th scope="col">Status</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+            <th scope="col">Option</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let reservation of reservations">
             <th scope="row">1</th>
-            <td><a routerLink="/accommodations/{{ reservation.apartment?.accommodation?.id }}/apartments/{{ reservation.apartment?.id }}">{{ reservation.apartment?.name }}</a></td>
+            <td>{{ reservation.apartment }}</td>
             <td>{{ reservation.startDate }}</td>
             <td>{{ reservation.endDate }}</td>
             <td>{{ reservation.price }}</td>
             <td>{{ reservation.status }}</td>
             <td>
-              <a class="btn btn-info btn-sm" routerLink="/accommodations/{{ reservation.apartment?.accommodation?.id }}/apartments/{{ reservation.apartment?.id }}/reservation/{{ reservation.id }}/edit">
-                Edit reservation
-              </a>
-            </td>
-            <td>
-              <button class="btn btn-danger btn-sm" (click)="cancelReservation(reservation.id)">Cancel reservation</button>
+              <button *ngIf="reservation.status == 'RESERVATION'" class="btn btn-success btn-sm" (click)="confirmReservation(reservation.id)">Confirm reservation</button>
+              <button *ngIf="confirmed" class="btn btn-basic btn-sm" disabled> Reservation confirmed</button>
+               <a>
+                  <i *ngIf="confirmed" class="fas fa-check"></i>
+                </a>
             </td>
           </tr>
         </tbody>

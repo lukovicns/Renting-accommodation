@@ -15,6 +15,7 @@ export class ReservationListComponent implements OnInit {
     reservations: any;
     msg: string;
     show : boolean;
+    confirmed = false;
 
   constructor(private reservationService: ReservationService, 
               private activatedRoute: ActivatedRoute, 
@@ -37,6 +38,7 @@ export class ReservationListComponent implements OnInit {
                       this.reservations = Array.of(this.reservations);
                   }else
                   {
+                      console.log('tu');
                       this.show = true;
                       this.reservations = res['return'];
                   }
@@ -45,4 +47,16 @@ export class ReservationListComponent implements OnInit {
                 });
       }
 
+  
+  confirmReservation(id)
+  {
+      this.confirmed = true;
+      console.log(this.confirmed);
+      this.reservationService.confirmReservation(id).subscribe(
+              res => {
+                  console.log(res['return']);
+                  
+                 });
+                  
+  }
 }

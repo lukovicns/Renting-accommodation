@@ -24,6 +24,12 @@ public class ReservationDTO {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	public ReservationDTO(String startDate, String endDate) {
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
 
 	public ReservationDTO(String id, String userName, String userSurname, String apartment, String accommodation, String startDate, String endDate, String price,
 			String status) {

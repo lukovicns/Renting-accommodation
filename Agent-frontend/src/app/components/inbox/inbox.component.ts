@@ -105,6 +105,7 @@ export class InboxComponent implements OnInit {
       
     this.messageService.deleteReceivedMessage(message)
     .subscribe(res => {
+        this.ngOnInit();
       this.initReceivedMessages();
     }, err => {
       console.log(err);
@@ -114,6 +115,7 @@ export class InboxComponent implements OnInit {
   deleteSentMessage(message) {
     this.messageService.deleteSentMessage(message)
     .subscribe(res => {
+        this.ngOnInit();
       this.initSentMessages();
     }, err => {
       console.log(err);

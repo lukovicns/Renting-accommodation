@@ -8,17 +8,17 @@ import {AccommodationService } from '../../services/accommodation.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
-  selector: 'app-apartment-table',
-  templateUrl: './apartment-table.component.html',
-  styleUrls: ['./apartment-table.component.css'],
-  animations: [fadeIn()]
-})
-export class ApartmentTableComponent implements OnInit {
+    selector: 'app-apartment-images',
+    templateUrl: './apartment-images.component.html',
+    styleUrls: ['./apartment-images.component.css']
+  })
+export class ApartmentImagesComponent implements OnInit {
     images = [];
     imag;
-    accommodationId: any;
-    accommodation: any;
+    apartmentId: any;
+    apartment: any;
     temp: any;
+    data:any;
     
   constructor(private apartmentService : ApartmentService, 
           private accommodationService : AccommodationService, 
@@ -29,24 +29,25 @@ export class ApartmentTableComponent implements OnInit {
 //      <img [src]="_DomSanitizationService.bypassSecurityTrustUrl(imgSrcProperty)"/>
       
       this.activatedRoute.params.subscribe((params: Params) => {
-          this.accommodationId = params['id'];
+          this.apartmentId = params['id'];
         });
       
-      this.accommodationService.getAccommodation(this.accommodationId).subscribe(res => 
+      this.apartmentService.getApartment(this.apartmentId).subscribe(res => 
       {
-          this.temp = res['return'];
-          this.accommodation = {
-              'id': this.temp.id,
-              'name': this.temp.name,
-              'type': this.temp.type,
-              'city': this.temp.city,
-              'street': this.temp.street,
-              'country': this.temp.country,
-              'description': this.temp.description,
-              'category': this.temp.category,
-              'image': this.temp.image 
-          }
-          let imgs = this.accommodation.image.split(';');
+          this.apartment = res['return'];
+          console.log(this.apartment);
+          this.data = {
+                  'name': this.apartment.name,
+                  'bedType': this.apartment.bedType,
+                  'size': this.apartment.size,
+                  'numOfRooms': this.apartment.numOfRooms,
+                  'numOfGuests': this.apartment.numOfGuests,
+                  'description': this.apartment.description
+//                  'image': this.imgUrl,
+//                  'additionalService': this.checkedItems,
+//                  'pricePlans': this.pricePlans
+                };
+          let imgs = this.data.image.split(';');
           
           for(let i = 0; i < imgs.length - 1; i++)
           {
@@ -57,7 +58,7 @@ export class ApartmentTableComponent implements OnInit {
              this.images.push(dom.bypassSecurityTrustUrl("../assets/imgs/" + pic)); 
              
           }
-          console.log(this.accommodation.image);
+//          console.log(this.accommodation.image);
       },
       err => {this.router.navigate(['/notFound']);
       });
@@ -87,3 +88,6 @@ export class ApartmentTableComponent implements OnInit {
   }
 
 }
+
+
+

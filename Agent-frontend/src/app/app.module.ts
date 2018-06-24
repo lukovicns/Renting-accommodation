@@ -28,6 +28,7 @@ import { UserService } from './services/user.service';
 import { HttpInterceptorService } from './services/httpinterceptor.service';
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { TruncatePipe } from './pipes/truncate.pipe';
+import { ApartmentImagesComponent } from './components/apartment-images/apartment-images.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { TruncatePipe } from './pipes/truncate.pipe';
     SendMessageComponent,
     LoginComponent,
     TruncatePipe,
-    RegisterComponent
+    RegisterComponent,
+    ApartmentImagesComponent
   ],
   imports: [
     BrowserModule,

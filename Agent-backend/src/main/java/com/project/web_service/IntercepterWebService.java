@@ -18,9 +18,11 @@ import java.security.InvalidAlgorithmParameterException;
  import java.security.UnrecoverableEntryException;
  import java.security.cert.CertificateException;
  import java.security.cert.X509Certificate;
- import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
  import java.util.Collections;
- import java.util.List;
+import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.JAXBException;
@@ -72,13 +74,17 @@ import javax.xml.bind.JAXBException;
  import org.w3c.dom.Document;
  import org.xml.sax.SAXException;
 
- import com.project.config.BlankingResolver;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.project.config.BlankingResolver;
+import com.project.model.Message;
 import com.project.model.SendMessage;
 import com.project.model.DTO.AccommodationDTO;
  import com.project.model.DTO.ApartmentDTO;
+import com.project.model.DTO.MakeReservationDTO;
 import com.project.model.DTO.PricePlanDTO;
+import com.project.model.DTO.ReservationDTO;
 
- import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Claims;
  import io.jsonwebtoken.Jwts;
 
 @RestController
@@ -168,6 +174,60 @@ public class IntercepterWebService {
         retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:addApartmentResponse")).get("return"));
         
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/addReservation/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> addReservation(@PathVariable String id, @RequestBody MakeReservationDTO reservation, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException, java.text.ParseException
+	{
+		
+		String email = getEmailFromToken(token);
+		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+		System.out.println("reservatio "+reservation.getStartDate());
+		final String OLD_FORMAT = "yyyy-MM-dd";
+		final String NEW_FORMAT = "dd/MM/yyyy";
+
+		// August 12, 2010
+		String oldDateString = reservation.getStartDate();
+		String newDateString;
+		
+		String oldDateString1 = reservation.getEndDate();
+		String newDateString1;
+
+		SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+		SimpleDateFormat sdf1 = new SimpleDateFormat(OLD_FORMAT);
+		Date d = sdf.parse(oldDateString);
+		sdf.applyPattern(NEW_FORMAT);
+		newDateString = sdf.format(d);
+		Date d1 = sdf1.parse(oldDateString1);
+		sdf1.applyPattern(NEW_FORMAT);
+		newDateString1 = sdf1.format(d1);
+		
+		String body = " <ns2:addReservation xmlns:ns2=\"http://com.project/web_service/wrappers\">\r\n" + 
+				"<apartmentId>" + id + "</apartmentId>\r\n" +
+				"<startDate>" +newDateString+ "</startDate>\r\n" + 
+				"<endDate>" + newDateString1 + "</endDate>\r\n" + 
+				"</ns2:addReservation>"; 
+		
+		signXml(body, email,"test.xml", "out.xml");
+		File file = new File("out.xml");
+		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
+		                file));
+		byte[] buffer = new byte[(int) file.length()];
+		bin.read(buffer);
+		String fileStr = new String(buffer);
+		fileStr = fileStr.substring(54, fileStr.length());
+		soap +=fileStr;
+		soap += "</soap:Body></soap:Envelope>";
+		bin.close();
+		
+		JSONObject xmlJSONObj = httpClientExecute(soap);
+		
+        JSONObject retVal =  new JSONObject();
+        System.out.println(xmlJSONObj);
+        retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:addReservationResponse")).get("return"));
+        System.out.println(xmlJSONObj);
+        return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
+		
 	}
 	
 	@RequestMapping(value="/addPricePlan/{apartmentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -894,17 +954,16 @@ public class IntercepterWebService {
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/sendMessageToUser", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> sendMessageToUser(@RequestBody SendMessage sendMessage, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	@RequestMapping(value = "/sendMessageToUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> sendMessageToUser(@PathVariable (name = "id") String id, @RequestBody String text, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
 		String body = "<ns2:sendMessageToUser xmlns:ns2=\"http://com.project/web_service/wrappers\">"
-				+ "<apartmentId>"+sendMessage.getApartment()+"</apartmentId>" 
-				+ "<userId>"+sendMessage.getUser()+"</userId>" 
-				+ "<agentId>"+sendMessage.getAgent()+"</agentId>" 
-				+ "<messageText>"+sendMessage.getText()+"</messageText>"
+				+ "<messageId>"+id+"</messageId>" 
+				+ "<messageText>"+text+"</messageText>"
 				+ "</ns2:sendMessageToUser>"; 
 		
 		signXml(body, email,"test.xml", "out.xml");

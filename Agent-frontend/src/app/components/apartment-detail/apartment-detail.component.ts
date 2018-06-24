@@ -113,4 +113,11 @@ export class ApartmentDetailComponent implements OnInit {
       
       console.log("tttt");
   }
+  
+  addReservation(){
+      console.log(this.reservationForm.value);
+      this.apartmentService.addReservation(this.reservationForm.value, this.apartmentId).subscribe(res =>
+      console.log(res);
+      );
+  }
 }

@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -13,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.LongFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.jws.WebMethod;
@@ -184,13 +187,6 @@ public class AccommodationWebService {
 	
 //	instantiating repositories and services
 	
-	@RequestWrapper(className="com.project.web_service.wrappers.SayHello")
-	@ResponseWrapper(className="com.project.web_service.wrappers.SayHelloResponse")
-	public String sayHello(@WebParam(name = "firstName") String firstName,@WebParam(name = "lastName") String lastName) {
-		System.out.println("Invoked HelloDocWrappedImpl sayHello() method");
-		return "Hello world " + firstName + " " + lastName;
-	}
-	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.AddAccommodationRequest")
 	@ResponseWrapper(className="com.project.web_service.wrappers.responses.AddAccommodationResponse")
 	public String addAccommodation(@WebParam(name = "name") String name, @WebParam(name = "type") String type,
@@ -208,7 +204,6 @@ public class AccommodationWebService {
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
-		
 		System.getProperty("user.dir");
 		System.out.println("location " + System.getProperty("user.dir"));
 		
@@ -221,21 +216,21 @@ public class AccommodationWebService {
 		
 		String projectLocation = System.getProperty("user.dir").toString().replace("backend", "frontend");
 		System.out.println("prm " + projectLocation);
-		
 		System.out.println(image);
 		String retVal = "";
 		String[] splits = image.split("ovo-je-separator");
-		// tokenize the data
-//		String[] parts = image.split(",");
-//		String imageString = parts[1];
 		
 		Accommodation saved = accService.save(newAccommodation);
 		Long id = null;
+		File outputfile = null;
+		int size = -1;
+		int imgNameCounter = -1;
 		
-
-		
+//		List<Image> images= imageService.findAll();
+		System.out.println("split "+splits.length);
 		for(int i = 0; i < splits.length; i++)
 		{
+			List<Image> images= imageService.findAll();
 			System.out.println("sss " + splits[i]);
 			String[] parts = splits[i].split(",");
 			String imageString = parts[1];
@@ -249,17 +244,17 @@ public class AccommodationWebService {
 			img = ImageIO.read(bis);
 			bis.close();
 			
-			List<Image> images= imageService.findAll();
-			int imgNameCounter = -1;
-			
-			if(images.size() != 0)
-				for(int  j = 0; j < images.size() - 1; j++)
-					if(images.get(j).getId() < images.get(j+1).getId())
-						imgNameCounter = images.get(j+1).getId().intValue() + 1;
-			
-	 		// write the image to a file
-			File outputfile = new File(projectLocation + "\\src\\assets\\imgs\\out" + imgNameCounter + ".png");
-			ImageIO.write(img, "png", outputfile);
+			if(images.size() == 0)
+			{	
+				outputfile = new File(projectLocation + "\\src\\assets\\imgs\\out0.png");
+				System.out.println("i tu 1" + imgNameCounter);
+				ImageIO.write(img, "png", outputfile);
+			}else 
+			{
+				outputfile = new File(projectLocation + "\\src\\assets\\imgs\\out" + images.size() + ".png");
+				System.out.println("i tu 1" + imgNameCounter);
+				ImageIO.write(img, "png", outputfile);
+			}
 			
 			if(saved != null)
 			{	
@@ -354,7 +349,7 @@ public class AccommodationWebService {
 			{
 				String[] parts = splits[i].split(",");
 				String imageString = parts[1];
-		
+				System.out.println("sss " + splits[i]);
 				// create a buffered image
 				BufferedImage img = null;
 				byte[] imageByte;
@@ -368,19 +363,23 @@ public class AccommodationWebService {
 				int imgNameCounter = -1;
 				
 				if(images.size() != 0)
+				{	System.out.println("usao");
 					for(int  j = 0; j < images.size() - 1; j++)
-						if(images.get(j).getId() < images.get(j+1).getId())
+					{	if(images.get(j).getId() < images.get(j+1).getId())
 							imgNameCounter = images.get(j+1).getId().intValue() + 1;
-				
-		 		// write the image to a file
-				outputfile = new File(projectLocation + "\\src\\assets\\imgs\\out" + imgNameCounter + ".png");
-				ImageIO.write(img, "png", outputfile);
-				
+						System.out.println("i tu " );
+						
+						outputfile = new File(projectLocation + "\\src\\assets\\imgs\\out" + imgNameCounter + ".png");
+						ImageIO.write(img, "png", outputfile);
+					}
+					
+				}
 				
 				Image addImg = new Image(outputfile.toString(), saved);
 				Image im = imageService.save(addImg);
 				System.out.println("im " + im.getId());
 				
+				if(saved != null)
 				if(im != null)
 					session.createNativeQuery("insert into image values(" + im.getId() + ",'" +
 							im.getUrl() + "'," + null + "," + saved.getId() + ")").executeUpdate();
@@ -594,28 +593,6 @@ public class AccommodationWebService {
 		
 		return "Confirmed";
 	}
-	
-/*	@RequestWrapper(className="com.project.web_service.wrappers.requests.ConfirmReservation")
-	@ResponseWrapper(className="com.project.web_service.wrappers.ConfirmReservationResponse")
-	public String confirmReservation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
-	{
-		String subjectData = signature.getKeyInfo().getX509Data().getName();
-		String email = subjectData.split("=")[8];
-		Session session = getSession(email);
-		Transaction tx = session.beginTransaction();
-		
-		System.out.println("resrvatio id " + id);
-		
-		Reservation reservation = reservationService.findOne(Long.valueOf(id));
-		reservation.setStatus(ReservationStatus.VISIT);
-		reservationService.save(reservation);
-		session.update(reservation);
-		
-		tx.commit();
-		session.close();
-		
-		return "Confirmed";
-	}*/
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetBedTypes")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetBedTypesResponse")
@@ -1041,28 +1018,65 @@ public class AccommodationWebService {
 		
 	}
 	
-	
-	
-	@RequestWrapper(className="com.project.web_service.wrappers.SendMessageToUser")
-	@ResponseWrapper(className="com.project.web_service.wrappers.SendMessageToUserResponse")
-	public String sendMessageToUser(@WebParam (name = "apartmentId") String apartmentId, @WebParam (name = "userId") String userId, @WebParam (name = "agentId") String agentId, @WebParam (name = "messageText") String messageText, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	@RequestWrapper(className="com.project.web_service.wrappers.requests.AddReservationRequest")
+	@ResponseWrapper(className="com.project.web_service.wrappers.responses.AddReservationResponse")
+	public String addReservation(@WebParam(name="apartmentId") String apartmentId, @WebParam(name = "startDate") String startDate, @WebParam(name = "endDate") String endDate, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws SQLException, XPathExpressionException, ParserConfigurationException, SAXException, IOException, java.text.ParseException
+	{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
-		Apartment apartment = s.get(Apartment.class, Long.valueOf(apartmentId));
-		User user = s.find(User.class, Long.valueOf(userId));
-		Agent agent = s.get(Agent.class, Long.valueOf(agentId));
 		
-		if (user == null) {
-			return "User not found.";
+		Apartment apartment = s.get(Apartment.class, Long.valueOf(apartmentId));
+		Reservation reservation = new Reservation(null, apartment, startDate, endDate, 0, ReservationStatus.RESERVATION);
+
+		Pattern pattern = Pattern.compile("^[0-3]?[0-9]/[0-3]?[0-9]/(?:[0-9]{2})?[0-9]{2}$");
+		Matcher startDateMatcher = pattern.matcher(reservation.getStartDate());
+		Matcher endDateMatcher = pattern.matcher(reservation.getEndDate());
+		
+		// Check date formats.
+		if (!startDateMatcher.find()) {
+			return "Wrong format";
 		}
-		if (agent == null) {
-			return "Agent not found.";
+		if (!endDateMatcher.find()) {
+			return "Wrong format";
 		}
-		if (apartment == null) {
-			return "Apartment not found.";
+		
+		// Check if dates are past dates.
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date checkStartDate = dateFormatter.parse(reservation.getStartDate());
+		Date checkEndDate = dateFormatter.parse(reservation.getEndDate());
+		if (checkStartDate.before(new Date()) || checkEndDate.before(new Date())) {
+			return "You must enter future dates.";
 		}
+		
+		// Check if start date is before end date.
+		if (!checkStartDate.before(checkEndDate)) {
+			return "Start date must be before end date.";
+		}
+		
+		// Check if apartment is available in that period.
+		if (!reservationService.isAvailable(reservation.getApartment(), reservation.getStartDate(), reservation.getEndDate())) {
+			return "Apartment is not available at the given period.";
+		}
+		
+		Reservation r = reservationService.save(reservation);
+		
+		s.createNativeQuery("insert into reservation values("+r.getId()+",'"+r.getEndDate()+"',"+0+",'"+r.getStartDate()+"','RESERVATION',"+apartmentId+",NULL)").executeUpdate();
+		
+		tx.commit();
+		s.close();
+		
+		return "Reservation successfully added";
+	}
+	
+	@RequestWrapper(className="com.project.web_service.wrappers.SendMessageToUser")
+	@ResponseWrapper(className="com.project.web_service.wrappers.SendMessageToUserResponse")
+	public String sendMessageToUser(@WebParam (name = "messageId") String messageId, @WebParam (name = "messageText") String messageText, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+		String subjectData = signature.getKeyInfo().getX509Data().getName();
+		String email = subjectData.split("=")[8];
+		Session s = getSession(email);
+		Transaction tx = s.beginTransaction();
 		
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
@@ -1070,9 +1084,11 @@ public class AccommodationWebService {
 		String date = dateFormatter.format(new Date());
 		String time = timeFormatter.format(new Date());
 		
-		Message message = new Message(user, agent, apartment, date, time, messageText, MessageStatus.UNREAD, Direction.AGENT_TO_USER);
-		Message m = messageService.save(message);
-		s.createNativeQuery("insert into message values("+m.getId()+",'"+date+"','"+m.getDirection()+"','"+ m.getStatus()+"','"+messageText+"','"+time+"',"+agentId+","+apartmentId+","+ userId+")");
+		Message message = s.get(Message.class, Long.valueOf(messageId));
+		
+		Message messageResponse = new Message(message.getUser(), message.getAgent(), message.getApartment(), date, time, messageText, MessageStatus.UNREAD, Direction.AGENT_TO_USER);
+		Message m = messageService.save(messageResponse);
+		s.createNativeQuery("insert into message values("+m.getId()+",'"+date+"','"+m.getDirection()+"','"+ m.getStatus()+"','"+messageText+"','"+time+"',"+m.getAgent().getId()+","+m.getApartment().getId()+","+ m.getUser().getId()+")").executeUpdate();
 		tx.commit();
 		s.close();
 

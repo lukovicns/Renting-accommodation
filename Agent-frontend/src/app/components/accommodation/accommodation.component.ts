@@ -17,7 +17,8 @@ export class AccommodationComponent implements OnInit {
     accommodationCategory = [];
     cities = [];
     images = null;
-  
+    
+    
     title = 'The Booking App';
     
     model = new AccommodationType(1, this.accommodationTypes[0]);
@@ -53,13 +54,15 @@ export class AccommodationComponent implements OnInit {
           var reader = new FileReader();
           reader.readAsDataURL(event.target.files[0]); // read file as data url
           reader.onload = (event) => { // called once readAsDataURL is completed
-          
+          console.log(this.url);
+          console.log(this.urls);
           this.url = reader.result;
           if(this.urls != undefined)
               this.urls = this.urls + 'ovo-je-separator' + this.url;
           else
               this.urls = this.url;
           }
+          console.log(this.urls);
       }
   }
   
@@ -87,15 +90,12 @@ export class AccommodationComponent implements OnInit {
   
   addAccommodation() {
     this.accommodationService.addAccommodation(this.accommodationForm.value, this.urls)
-      .subscribe(res => {
-          swal({
-              text: res['return'],
-              confirmButtonText: 'Ok',
-          }).then((result) => {
-              if (result.value) {
-                  this.router.navigate(['/accommodationsTable']);
-              }
-          });
+    .subscribe(res => { 
+        swal({
+            text: res['return'],
+            confirmButtonText: 'Ok',
+        });
+           this.router.navigate(['/accommodationsTable');
       });
   }
 }
