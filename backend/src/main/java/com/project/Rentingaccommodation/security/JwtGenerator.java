@@ -26,7 +26,7 @@ public class JwtGenerator {
     		claims.put("role", UserRoles.USER);
     		return Jwts.builder()
                     .setClaims(claims)
-                    .signWith(SignatureAlgorithm.HS512, "secretKey")
+                    .signWith(SignatureAlgorithm.HS512, "SECRETKEY")
                     .compact();
     		
         }
@@ -40,7 +40,7 @@ public class JwtGenerator {
 		claims.put("role", UserRoles.ADMIN);
 		return Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, "secretKey")
+                .signWith(SignatureAlgorithm.HS512, "SECRETKEY")
                 .compact();
 	}
 	
@@ -51,7 +51,7 @@ public class JwtGenerator {
 		claims.put("role", UserRoles.AGENT);
 		return Jwts.builder()
                 .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, "secretKey")
+                .signWith(SignatureAlgorithm.HS512, "SECRETKEY")
                 .compact();
 	}
 }

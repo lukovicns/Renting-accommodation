@@ -9,7 +9,7 @@ import io.jsonwebtoken.Jwts;
 @Component
 public class JwtValidator {
 
-    private String secret = "secretKey";
+    private String secret = "SECRETKEY";
 
     public JwtUser validate(String token) {
     	JwtUser jwtUser = null;

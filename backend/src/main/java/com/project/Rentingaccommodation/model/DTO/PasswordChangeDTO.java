@@ -7,9 +7,16 @@ public class PasswordChangeDTO {
 	private String token;
 	
 	public PasswordChangeDTO() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
+	
+	public PasswordChangeDTO(String oldPassword, String newPassword, String token) {
+		super();
+		this.oldPassword = oldPassword;
+		this.newPassword = newPassword;
+		this.token = token;
+	}
+
 	public String getOldPassword() {
 		return oldPassword;
 	}

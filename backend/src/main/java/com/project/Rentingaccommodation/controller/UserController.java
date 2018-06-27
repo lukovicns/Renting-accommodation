@@ -1,6 +1,8 @@
 package com.project.Rentingaccommodation.controller;
 
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -131,20 +133,39 @@ public class UserController {
 			return new ResponseEntity<>("This user is blocked.", HttpStatus.FORBIDDEN);
 		}
 		
-//		if (u.getMax_tries() == 3) {
-//			return new ResponseEntity<>("Max tries 3.", HttpStatus.FORBIDDEN);
-//		}
+		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		if (u.getMax_tries() == 3) {
+			try {
+				String dateTime = dateTimeFormatter.format(new Date());
+				Date currentDateTime = dateTimeFormatter.parse(dateTime);
+				Date userBlockDateTime = dateTimeFormatter.parse(u.getBlock_time());
+				if (currentDateTime.getTime() - userBlockDateTime.getTime() >= 1*60*1000) {
+					u.setBlock_time(null);
+				    u.setMax_tries(0);
+				    userService.save(u);
+				} else {
+					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
+				}
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		String verifyHash = u.getPassword();
 		String verifyPass = user.getPassword();
 		
 		// Omoguceno logovanje test korisnika iz baze.
 		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset) && !u.getEmail().equals("test@test.com")) {
-//			u.setMax_tries(u.getMax_tries() + 1);
-//			userService.save(u);
+			u.setMax_tries(u.getMax_tries() + 1);
+			if (u.getMax_tries() == 3) {
+				u.setBlock_time(dateTimeFormatter.format(new Date()));
+			}
+			userService.save(u);
 			return new ResponseEntity<>("Password is invalid.", HttpStatus.UNAUTHORIZED);
 		}
 		
+		u.setMax_tries(0);
 		String token = generate(new JwtUser(u.getId(), u.getEmail(), UserRoles.USER.toString()));
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
@@ -153,6 +174,7 @@ public class UserController {
 	
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
 	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) throws ParseException {
+		System.out.println(passDTO);
 		if (passDTO.getOldPassword() == null || passDTO.getOldPassword() == "" ||
 			passDTO.getNewPassword() == null || passDTO.getNewPassword() == "" ||
 			passDTO.getToken() == null || passDTO.getToken() == "") {
@@ -177,7 +199,6 @@ public class UserController {
 		if(!PasswordUtil.verify(verifyHash, oldPassword.toCharArray(), charset)) {
 			return new ResponseEntity<>("Old password is incorrect.", HttpStatus.FORBIDDEN);
 		}
-
 		String password = PasswordUtil.hash(newPassword.toCharArray(), charset);
 		
 		loggedInUser.setPassword(password);
