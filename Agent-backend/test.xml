@@ -1,5 +1,1 @@
- <ns2:addReservation xmlns:ns2="http://com.project/web_service/wrappers">
-<apartmentId>8</apartmentId>
-<startDate>01/07/2018</startDate>
-<endDate>17/08/2018</endDate>
-</ns2:addReservation>
+<ns2:getAgentSentMessages xmlns:ns2="http://com.project/web_service/wrappers"></ns2:getAgentSentMessages>

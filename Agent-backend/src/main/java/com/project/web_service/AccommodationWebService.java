@@ -562,7 +562,9 @@ public class AccommodationWebService {
 		session.close();
 		
 		for(Reservation res : allReservations)
-		{	retVal.add(new ReservationDTO(res.getId().toString(), res.getUser().getName(), res.getUser().getSurname(), 
+		{	
+			if(res.getUser()!=null)
+			retVal.add(new ReservationDTO(res.getId().toString(), res.getUser().getName(), res.getUser().getSurname(), 
 					res.getApartment().getName(), res.getApartment().getAccommodation().getName(), res.getStartDate(),
 					res.getEndDate(), String.valueOf(res.getPrice()), res.getStatus().toString()));
 			System.out.println("res " + retVal);

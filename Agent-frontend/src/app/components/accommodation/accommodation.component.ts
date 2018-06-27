@@ -95,7 +95,7 @@ export class AccommodationComponent implements OnInit {
             text: res['return'],
             confirmButtonText: 'Ok',
         });
-           this.router.navigate(['/accommodationsTable');
+           this.router.navigate(['/accommodationsTable']);
       });
   }
 }

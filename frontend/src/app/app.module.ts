@@ -4,7 +4,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-
 import { AccommodationDetailComponent } from './components/accommodation-detail/accommodation-detail.component';
 import { AccommodationListComponent } from './components/accommodation-list/accommodation-list.component';
 import { HomeComponent } from './components/home/home.component';
@@ -88,7 +87,7 @@ import { ImageService } from './services/image.service';
     CommentService,
     ImageService,
     AuthGuard
-  ],
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

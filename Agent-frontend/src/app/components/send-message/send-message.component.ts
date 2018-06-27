@@ -50,7 +50,7 @@ export class SendMessageComponent implements OnInit {
 
   sendMessage() {
     const data = {
-      'id' : this.messageId;
+      'id' : this.messageId,
       'text': this.messageForm.value['content']
     }
     this.messageService.sendMessage(data)

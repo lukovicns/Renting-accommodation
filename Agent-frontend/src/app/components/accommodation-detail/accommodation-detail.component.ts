@@ -125,7 +125,7 @@ export class AccommodationDetailComponent implements OnInit {
           }
       });
   }
-  
+
   getApartment(id){
 //      this.apartmentService.getApartment(id);
       this.router.navigate(['/apartmentDetail/'+ id]);

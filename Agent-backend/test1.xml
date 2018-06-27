@@ -1,1 +1,1 @@
-<ns2:getApartments xmlns:ns2="http://com.project/web_service/wrappers"><id>20</id></ns2:getApartments>
+<ns2:getAgentReceivedMessages xmlns:ns2="http://com.project/web_service/wrappers"></ns2:getAgentReceivedMessages>

@@ -1,20 +1,20 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns2:getApartments xmlns:ns2="http://com.project/web_service/wrappers"><id>20</id><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>JseGhF95/20LMwnIZw9b85caEVw=</DigestValue></Reference></SignedInfo><SignatureValue>IsvRHeNEkUOLyV2vseD0C9u70Mzse51IZRVrQD/6mhNCbcNyfKm6j695nx2SnDpysv/ZE2x/efH7
-wkYiaHWwITdpGkKvsfzY/mU69TRyIhA0oWjy4xZpas7KkDyTfFEJ/Xy5kDiLw3/j+xla1dy80Y+x
-4IXLcaBvt2uXYW33B7eCGlYSSSwiUrJ/VIFlQ/VAF4A+OB0KaxGNhI8cBf7Yae5lfbyyY8rYykB9
-/ToWYAsZ4BacdSqEEo6kwg/754LBiH/e86KGgnt693NlxSK7UdC1fwqCzY3w36lV/WkL/+/E1HiC
-Pr60SDt++41XLFZXxhI5lfktc6UmdwskAtN5bw==</SignatureValue><KeyInfo><X509Data><X509SubjectName>UID=654321,1.2.840.113549.1.9.1=#161873616c652e6172616d626173696340676d61696c2e636f6d,C=,OU=,O=,2.5.4.42=#0c00,2.5.4.4=#0c00,CN=sale.arambasic@gmail.com</X509SubjectName><X509Certificate>MIIDZTCCAk2gAwIBAgIIn+UTaRai2XswDQYJKoZIhvcNAQELBQAwSTEKMAgGA1UEBhMBQTEKMAgG
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns2:getAgentReceivedMessages xmlns:ns2="http://com.project/web_service/wrappers"><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>27swvTNdzO7Lm379UioHFFmilAk=</DigestValue></Reference></SignedInfo><SignatureValue>dmi9q3+LdEuie2kktzVM03aTcF32Mep6dYGrd0ms7EhsfT9Ff6vCFFy6fnlE+ERCCDQKeocGLYJR
+sN/qDfzanpBpggA2u3qcZSjdIieaAyhTRJYUuh56OmuiS9S9SDt9WzSa/SKuQmzxjlI6i/LMTYy9
+BS4sp5ZFKKxtEr6L0+r360Tkd6bqY/rV6yXRQoIYcS12ot70BdidWGuNy8PKxo0hp9IseBQcIgoD
+FNiieEV+vGWGdGF5pBovNmviwKRCaQcTDofjahmGJYO5AmdQDJXlB6x+a8n6zj7DyUreRsBdVPK3
+eJjWVKrcO2Q0WyproBhM7J8euw8zLRDDZPDxfw==</SignatureValue><KeyInfo><X509Data><X509SubjectName>UID=654321,1.2.840.113549.1.9.1=#161873616c652e6172616d626173696340676d61696c2e636f6d,C=,OU=,O=,2.5.4.42=#0c00,2.5.4.4=#0c00,CN=sale.arambasic@gmail.com</X509SubjectName><X509Certificate>MIIDZTCCAk2gAwIBAgIIITr7b4ltcj4wDQYJKoZIhvcNAQELBQAwSTEKMAgGA1UEBhMBQTEKMAgG
 A1UECBMBQTEKMAgGA1UEBxMBQTEKMAgGA1UEChMBQTEKMAgGA1UECxMBQTELMAkGA1UEAxMCQUEw
-HhcNMTgwNjIzMTYzOTEzWhcNMTkwNjIzMTYzOTEzWjCBmzEhMB8GA1UEAwwYc2FsZS5hcmFtYmFz
+HhcNMTgwNjI2MDk0OTQxWhcNMTkwNjI2MDk0OTQxWjCBmzEhMB8GA1UEAwwYc2FsZS5hcmFtYmFz
 aWNAZ21haWwuY29tMQkwBwYDVQQEDAAxCTAHBgNVBCoMADEJMAcGA1UECgwAMQkwBwYDVQQLDAAx
 CTAHBgNVBAYTADEnMCUGCSqGSIb3DQEJARYYc2FsZS5hcmFtYmFzaWNAZ21haWwuY29tMRYwFAYK
-CZImiZPyLGQBAQwGNjU0MzIxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhpGdq04v
-YFNc/Ulba4UaocDeWHdOcAWdwenPMuBZ7kpeHMam+6htV7uny5nQOjrbiUhYYd8Z0V7EllRBWY+m
-/z1xPDXyRjOUC3oZwRxCfEVhTncxws8qA20lB1qqlbltgyxp7ZPKM7VJzYPi2Y9/sB8DCXk+sLzu
-qhwFssg01NfreqJfoXVGfVI6484Bc0hptPooP+ypke53fflg32PLYcT/vPBa3c5HQYKFRvUfP6rQ
-7ta/U0cLBZT2E0NMVqUPKc/NsCk++oF614uk6yvsqOD+v9WyJxbdIGLQvwT/cMTTyILnAAYXHakR
-1GZQ9MgYWtbjObhxzlKFKn1sKKR7iQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQA6EJzi1YTTp14R
-EICeEX6de9kNHMkaGwwY9bYmCz/kYTNT/BTinZRAGYAq8+3zuRE9gttAAlPchPXivBSVThr6icVS
-4fqYUfGgT4JVAtfUz7cJL0p+W7Kkbr1QVMdIJ973iX2pRg8/9Tjp6OKIF6s3tVh6u3h8qAYOeLkG
-wVp0Ow44vIBzX616tnc+dAy4Nws+Fm9ENtaYj2P4uP0YomOAxSq/+IgLeXIyO9I8u3cRtYQFqS4X
-te3LzP7nc0YIOZS+PhLS1pOtPgjjFux6Z8HhVO1KCf8UehvW6wqj1SD6yN0g6lt8ctodk/pTq0UQ
-P6aY8X0CnHB7W8GuwlT0age4</X509Certificate></X509Data></KeyInfo></Signature></ns2:getApartments>
+CZImiZPyLGQBAQwGNjU0MzIxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj+tAZZHh
+fPrrjRyceHWlwVJcBbiVNtRI35Y+6IMLHeOICwWHdigdEEf7rImlMRNGsoQ1TrNhgOYOq9Ee/aAi
+VCVSWIpzumuomjQmpxWLf6c8OqwljFOrWWECSWIazJhBTSBojKgw9JzYVLWKEkr1AKwmMF5l23m5
+VRIfvrTcJ/V/TvjWm1pt+xN+ZOxK/460WKHMysy2v3e/PSXFfR9e3cSMneCFSd+1LqxmiOHKObxx
+A+PsKCq49i5uUHmSl5/VyXMcxApZ6ovlNQ60kLrZI/vaRZVn53dEHsd9Fqmn9TKbSpmhrfPOmHh9
+cMPa/zbptW3BkIF9APyv8l+ryarCYwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAYGVBAEp+QPlVZ
+gnxsV/lcD55WYZ4J8spCmbi5fEvAsJwynwYp0IYtG+uww2ftQtOFq0bPM3nlGBih850lRB3mBEiW
+8+pZBPKVzojBpKuvCVX27pvCX3DlLETxJo55Bc7/aylK7Kaey5P7cydf/H0g7qSsO8/RSsftIqXr
+j8EipOIs05IEantSJzeIn4AsMTA6P/pmwnF00yR8tfNn7ZO0mOnuygDRZqsXg+Z481G/swUs66e4
+8yHbgi/PH7HBw8LxuzuoIwYb/BzpwBwDdDTW4wWDCbWEU2EwE88hvxHve0hfuj+mUpTLa4LuK3zr
+uI+6IuYexnPNsr+kSduIPqKK</X509Certificate></X509Data></KeyInfo></Signature></ns2:getAgentReceivedMessages>

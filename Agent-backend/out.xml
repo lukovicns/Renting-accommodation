@@ -1,24 +1,20 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns2:addReservation xmlns:ns2="http://com.project/web_service/wrappers">
-<apartmentId>8</apartmentId>
-<startDate>01/07/2018</startDate>
-<endDate>17/08/2018</endDate>
-<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>gavPFClNnn0tw3QE2DKpwstoW4A=</DigestValue></Reference></SignedInfo><SignatureValue>WAl1Ur9JPyIiWU1ZRMOSDQdmBjtWbUTBYvGAOJfudyW7O8lWqC/4pqboYFCigNdkdIAseNslOR4Q
-G8fxiWZ37hIS+dCuvWrfDAkwAC8rNX18TXFey3Mq+75hnzrp5a9tkMMzUmHRSI7B3KvZxHuqvMBa
-/Ubmhm4wJ4+m1ZohdC4WsioO2hFkFw1HNuqau3quwICEoRk1GnlCnZs75nQ7Q1qVRaFSS35mZaJo
-W89IOrhoagKrcHET4sE1Y3fyCEarGeTi9wXRKtZ3sEURm6gvCgQ9W6IJlxP4WiYTDaYM+mJVTfzw
-cJRZWcCgQk6zaMgmt8PKU4CALU+56oX9ivjyKg==</SignatureValue><KeyInfo><X509Data><X509SubjectName>UID=654321,1.2.840.113549.1.9.1=#161873616c652e6172616d626173696340676d61696c2e636f6d,C=,OU=,O=,2.5.4.42=#0c00,2.5.4.4=#0c00,CN=sale.arambasic@gmail.com</X509SubjectName><X509Certificate>MIIDZTCCAk2gAwIBAgIIn+UTaRai2XswDQYJKoZIhvcNAQELBQAwSTEKMAgGA1UEBhMBQTEKMAgG
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><ns2:getAgentSentMessages xmlns:ns2="http://com.project/web_service/wrappers"><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>QicGv96cPoLuniD85USvsI+Yjsg=</DigestValue></Reference></SignedInfo><SignatureValue>iefB9UoS+vXAWiyjJPxR2YcHGwcxmQvlaqfxIKB4GewiXwScl8jM197K7DmWr6iCW2E1SZAP2Zk+
+fazVwUw7MHY3vYVDo4Sh85qt2n+z291vDh2pM7bMpfifwhfPqAXxOFB6KbIRYzEnFfCLD9yrhKwP
+DZJLvHkco/yT/FfXUU0BXXuECIgbaKoOcQYu1XlFonBVoWdlQD/YF0LmDuljrSSV38GDVC11pkND
+WX8rNpEyvQLGZieYR7tb6LsUosWscEzqS8uIAVUY8gACp+QdwMcqSGA8E4iajDVt0AuLHVO8x7Er
+dy76rO0v6CVLr+seAloJGCdaepBH1xFUcuhMQQ==</SignatureValue><KeyInfo><X509Data><X509SubjectName>UID=654321,1.2.840.113549.1.9.1=#161873616c652e6172616d626173696340676d61696c2e636f6d,C=,OU=,O=,2.5.4.42=#0c00,2.5.4.4=#0c00,CN=sale.arambasic@gmail.com</X509SubjectName><X509Certificate>MIIDZTCCAk2gAwIBAgIIITr7b4ltcj4wDQYJKoZIhvcNAQELBQAwSTEKMAgGA1UEBhMBQTEKMAgG
 A1UECBMBQTEKMAgGA1UEBxMBQTEKMAgGA1UEChMBQTEKMAgGA1UECxMBQTELMAkGA1UEAxMCQUEw
-HhcNMTgwNjIzMTYzOTEzWhcNMTkwNjIzMTYzOTEzWjCBmzEhMB8GA1UEAwwYc2FsZS5hcmFtYmFz
+HhcNMTgwNjI2MDk0OTQxWhcNMTkwNjI2MDk0OTQxWjCBmzEhMB8GA1UEAwwYc2FsZS5hcmFtYmFz
 aWNAZ21haWwuY29tMQkwBwYDVQQEDAAxCTAHBgNVBCoMADEJMAcGA1UECgwAMQkwBwYDVQQLDAAx
 CTAHBgNVBAYTADEnMCUGCSqGSIb3DQEJARYYc2FsZS5hcmFtYmFzaWNAZ21haWwuY29tMRYwFAYK
-CZImiZPyLGQBAQwGNjU0MzIxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhpGdq04v
-YFNc/Ulba4UaocDeWHdOcAWdwenPMuBZ7kpeHMam+6htV7uny5nQOjrbiUhYYd8Z0V7EllRBWY+m
-/z1xPDXyRjOUC3oZwRxCfEVhTncxws8qA20lB1qqlbltgyxp7ZPKM7VJzYPi2Y9/sB8DCXk+sLzu
-qhwFssg01NfreqJfoXVGfVI6484Bc0hptPooP+ypke53fflg32PLYcT/vPBa3c5HQYKFRvUfP6rQ
-7ta/U0cLBZT2E0NMVqUPKc/NsCk++oF614uk6yvsqOD+v9WyJxbdIGLQvwT/cMTTyILnAAYXHakR
-1GZQ9MgYWtbjObhxzlKFKn1sKKR7iQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQA6EJzi1YTTp14R
-EICeEX6de9kNHMkaGwwY9bYmCz/kYTNT/BTinZRAGYAq8+3zuRE9gttAAlPchPXivBSVThr6icVS
-4fqYUfGgT4JVAtfUz7cJL0p+W7Kkbr1QVMdIJ973iX2pRg8/9Tjp6OKIF6s3tVh6u3h8qAYOeLkG
-wVp0Ow44vIBzX616tnc+dAy4Nws+Fm9ENtaYj2P4uP0YomOAxSq/+IgLeXIyO9I8u3cRtYQFqS4X
-te3LzP7nc0YIOZS+PhLS1pOtPgjjFux6Z8HhVO1KCf8UehvW6wqj1SD6yN0g6lt8ctodk/pTq0UQ
-P6aY8X0CnHB7W8GuwlT0age4</X509Certificate></X509Data></KeyInfo></Signature></ns2:addReservation>
+CZImiZPyLGQBAQwGNjU0MzIxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj+tAZZHh
+fPrrjRyceHWlwVJcBbiVNtRI35Y+6IMLHeOICwWHdigdEEf7rImlMRNGsoQ1TrNhgOYOq9Ee/aAi
+VCVSWIpzumuomjQmpxWLf6c8OqwljFOrWWECSWIazJhBTSBojKgw9JzYVLWKEkr1AKwmMF5l23m5
+VRIfvrTcJ/V/TvjWm1pt+xN+ZOxK/460WKHMysy2v3e/PSXFfR9e3cSMneCFSd+1LqxmiOHKObxx
+A+PsKCq49i5uUHmSl5/VyXMcxApZ6ovlNQ60kLrZI/vaRZVn53dEHsd9Fqmn9TKbSpmhrfPOmHh9
+cMPa/zbptW3BkIF9APyv8l+ryarCYwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQAYGVBAEp+QPlVZ
+gnxsV/lcD55WYZ4J8spCmbi5fEvAsJwynwYp0IYtG+uww2ftQtOFq0bPM3nlGBih850lRB3mBEiW
+8+pZBPKVzojBpKuvCVX27pvCX3DlLETxJo55Bc7/aylK7Kaey5P7cydf/H0g7qSsO8/RSsftIqXr
+j8EipOIs05IEantSJzeIn4AsMTA6P/pmwnF00yR8tfNn7ZO0mOnuygDRZqsXg+Z481G/swUs66e4
+8yHbgi/PH7HBw8LxuzuoIwYb/BzpwBwDdDTW4wWDCbWEU2EwE88hvxHve0hfuj+mUpTLa4LuK3zr
+uI+6IuYexnPNsr+kSduIPqKK</X509Certificate></X509Data></KeyInfo></Signature></ns2:getAgentSentMessages>
