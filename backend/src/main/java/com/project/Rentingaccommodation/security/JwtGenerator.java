@@ -1,5 +1,7 @@
 package com.project.Rentingaccommodation.security;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +26,10 @@ public class JwtGenerator {
         	claims.put("id", jwtUser.getId());
         	claims.put("email", jwtUser.getEmail());
     		claims.put("role", UserRoles.USER);
+    		claims.put("status", user.getStatus());
     		return Jwts.builder()
                     .setClaims(claims)
+                    .setExpiration(new Date(System.currentTimeMillis() + (10 * 60 * 1000)))
                     .signWith(SignatureAlgorithm.HS512, "SECRETKEY")
                     .compact();
     		
@@ -33,10 +37,10 @@ public class JwtGenerator {
         return "User with email " + jwtUser.getEmail() + " not found.";
     }
 
-	public String generateAdmin(JwtUser jwtUser) {
+	public String generateAdmin(JwtAdmin jwtAdmin) {
     	Claims claims = Jwts.claims();
-    	claims.put("id", jwtUser.getId());
-    	claims.put("email", jwtUser.getEmail());
+    	claims.put("id", jwtAdmin.getId());
+    	claims.put("email", jwtAdmin.getEmail());
 		claims.put("role", UserRoles.ADMIN);
 		return Jwts.builder()
                 .setClaims(claims)
@@ -44,10 +48,10 @@ public class JwtGenerator {
                 .compact();
 	}
 	
-	public String generateAgent(JwtUser jwtUser) {
+	public String generateAgent(JwtAgent jwtAgent) {
     	Claims claims = Jwts.claims();
-    	claims.put("id", jwtUser.getId());
-    	claims.put("email", jwtUser.getEmail());
+    	claims.put("id", jwtAgent.getId());
+    	claims.put("email", jwtAgent.getEmail());
 		claims.put("role", UserRoles.AGENT);
 		return Jwts.builder()
                 .setClaims(claims)

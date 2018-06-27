@@ -9,6 +9,10 @@ export class CityService {
 
   constructor(private http: HttpClient) { }
 
+  getCities() {
+    return this.http.get<City[]>(this.url);
+  }
+
   getCity(cityId) {
     return this.http.get<City>(this.url + cityId);
   }

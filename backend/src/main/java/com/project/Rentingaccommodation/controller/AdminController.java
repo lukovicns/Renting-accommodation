@@ -14,8 +14,8 @@ import com.project.Rentingaccommodation.model.Admin;
 import com.project.Rentingaccommodation.model.Comment;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserStatus;
+import com.project.Rentingaccommodation.security.JwtAdmin;
 import com.project.Rentingaccommodation.security.JwtGenerator;
-import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.UserService;
 
@@ -48,7 +48,7 @@ public class AdminController {
 			return new ResponseEntity<>("Password is invalid.", HttpStatus.FORBIDDEN);
 		}
 		
-		String token = jwtGenerator.generateAdmin(new JwtUser(admin.getId(), admin.getEmail(), admin.getPassword()));
+		String token = jwtGenerator.generateAdmin(new JwtAdmin(admin.getId(), admin.getEmail(), admin.getPassword()));
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
 		return new ResponseEntity<>(response, HttpStatus.OK);

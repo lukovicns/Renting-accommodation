@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,6 +28,7 @@ import com.project.Rentingaccommodation.model.DTO.PasswordChangeDTO;
 import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JwtGenerator;
 import com.project.Rentingaccommodation.security.JwtUser;
+import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.AgentService;
 import com.project.Rentingaccommodation.service.CityService;
@@ -51,6 +55,9 @@ public class UserController {
 	
 	@Autowired
 	private JwtGenerator jwtGenerator;
+	
+	@Autowired
+	private JwtValidator jwtValidator;
 	
 	private static final Charset charset = Charset.forName("UTF-8");
 	
@@ -95,8 +102,11 @@ public class UserController {
 			return new ResponseEntity<>("User with this email already exists.", HttpStatus.FORBIDDEN);
 		}
 		
-		if (user.getPassword().length() < 8) {
-			return new ResponseEntity<>("Password must be at least 8 characters long.", HttpStatus.NOT_ACCEPTABLE);
+		Pattern passwordPattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$");
+		Matcher passwordMatcher = passwordPattern.matcher(user.getPassword());
+		
+		if (!passwordMatcher.find()) {
+			return new ResponseEntity<>("Password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
 		Charset charset = Charset.forName("UTF-8");
@@ -129,8 +139,11 @@ public class UserController {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
 		}
 		
-		if (u.getStatus().equals(UserStatus.BLOCKED)) {
-			return new ResponseEntity<>("This user is blocked.", HttpStatus.FORBIDDEN);
+		Pattern passwordPattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$");
+		Matcher passwordMatcher = passwordPattern.matcher(user.getPassword());
+		
+		if (!passwordMatcher.find()) {
+			return new ResponseEntity<>("Password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
 		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -143,6 +156,7 @@ public class UserController {
 				if (currentDateTime.getTime() - userBlockDateTime.getTime() >= 1*60*1000) {
 					u.setBlock_time(null);
 				    u.setMax_tries(0);
+				    u.setStatus(UserStatus.ACTIVATED);
 				    userService.save(u);
 				} else {
 					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
@@ -152,13 +166,19 @@ public class UserController {
 			}
 		}
 		
+		if (u.getStatus().equals(UserStatus.BLOCKED)) {
+			return new ResponseEntity<>("This user is blocked.", HttpStatus.FORBIDDEN);
+		}
+		
 		String verifyHash = u.getPassword();
 		String verifyPass = user.getPassword();
 		
 		// Omoguceno logovanje test korisnika iz baze.
 		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset) && !u.getEmail().equals("test@test.com")) {
 			u.setMax_tries(u.getMax_tries() + 1);
-			if (u.getMax_tries() == 3) {
+			if (u.getMax_tries() == 2) {
+				u.setStatus(UserStatus.BLOCKED);
+				u.setMax_tries(3);
 				u.setBlock_time(dateTimeFormatter.format(new Date()));
 			}
 			userService.save(u);
@@ -166,14 +186,14 @@ public class UserController {
 		}
 		
 		u.setMax_tries(0);
-		String token = generate(new JwtUser(u.getId(), u.getEmail(), UserRoles.USER.toString()));
+		String token = generate(new JwtUser(u.getId(), u.getEmail(), UserRoles.USER.toString(), u.getStatus().toString()));
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
-	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) throws ParseException {
+	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) {
 		System.out.println(passDTO);
 		if (passDTO.getOldPassword() == null || passDTO.getOldPassword() == "" ||
 			passDTO.getNewPassword() == null || passDTO.getNewPassword() == "" ||
@@ -181,31 +201,74 @@ public class UserController {
 			return new ResponseEntity<>("Old password, new password and token must be provided.", HttpStatus.FORBIDDEN);
 		}
 		
-		if (passDTO.getNewPassword().length() < 8) {
-			return new ResponseEntity<>("Password must be at least 8 characters long.", HttpStatus.NOT_ACCEPTABLE);
+		Pattern passwordPattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$");
+		Matcher oldPasswordMatcher = passwordPattern.matcher(passDTO.getOldPassword());
+		Matcher newPasswordMatcher = passwordPattern.matcher(passDTO.getNewPassword());
+		
+		if (!oldPasswordMatcher.find()) {
+			return new ResponseEntity<>("Old password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
+		if (!newPasswordMatcher.find()) {
+			return new ResponseEntity<>("New password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
 		String oldPassword = passDTO.getOldPassword();
 		String newPassword = passDTO.getNewPassword();
 		
-		String body = testDecodeJWT(passDTO.getToken());
-		JSONParser parser = new JSONParser(); 
-		JSONObject json = (JSONObject) parser.parse(body);
-		String email = (String) json.get("email");
+		if (oldPassword.equals(newPassword)) {
+			return new ResponseEntity<>("Old password and new password must be different.", HttpStatus.NOT_ACCEPTABLE);
+		}
 		
-		User loggedInUser =  userService.findByEmail(email);
+		JwtUser jwtUser = jwtValidator.validate(passDTO.getToken());
+		
+		if (jwtUser == null) {
+			return new ResponseEntity<>("User with the given token doesn't exist.", HttpStatus.NOT_FOUND);
+		}
+		
+		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		User loggedInUser =  userService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
+		
+		if (loggedInUser.getMax_tries() == 3) {
+			try {
+				String dateTime = dateTimeFormatter.format(new Date());
+				Date currentDateTime = dateTimeFormatter.parse(dateTime);
+				Date userBlockDateTime = dateTimeFormatter.parse(loggedInUser.getBlock_time());
+				if (currentDateTime.getTime() - userBlockDateTime.getTime() >= 1*60*1000) {
+					loggedInUser.setBlock_time(null);
+					loggedInUser.setStatus(UserStatus.ACTIVATED);
+					loggedInUser.setMax_tries(0);
+				} else {
+					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
+				}
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		String verifyHash = loggedInUser.getPassword();
 		
 		if(!PasswordUtil.verify(verifyHash, oldPassword.toCharArray(), charset)) {
+			loggedInUser.setMax_tries(loggedInUser.getMax_tries() + 1);
+			if (loggedInUser.getMax_tries() == 3) {
+				loggedInUser.setStatus(UserStatus.BLOCKED);
+				loggedInUser.setBlock_time(dateTimeFormatter.format(new Date()));
+				loggedInUser.setMax_tries(3);
+				userService.save(loggedInUser);
+				return new ResponseEntity<>(loggedInUser, HttpStatus.FORBIDDEN);
+			}
+			userService.save(loggedInUser);
 			return new ResponseEntity<>("Old password is incorrect.", HttpStatus.FORBIDDEN);
 		}
 		String password = PasswordUtil.hash(newPassword.toCharArray(), charset);
 		
+		loggedInUser.setStatus(UserStatus.ACTIVATED);
 		loggedInUser.setPassword(password);
 		userService.save(loggedInUser);
-		return new ResponseEntity<>("Password is successfully changed.", HttpStatus.OK);
+		return new ResponseEntity<>(jwtUser, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/question/{email}", method = RequestMethod.GET)
 	public ResponseEntity<Object> getQuestion(@PathVariable String email) throws ParseException {
 		if (email == null || email == "") {
@@ -234,7 +297,35 @@ public class UserController {
 		String answer = questionDTO.getAnswer();
 		User user = userService.findByEmail(email);
 		
+		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		if (user.getMax_tries() == 3) {
+			try {
+				String dateTime = dateTimeFormatter.format(new Date());
+				Date currentDateTime = dateTimeFormatter.parse(dateTime);
+				Date userBlockDateTime = dateTimeFormatter.parse(user.getBlock_time());
+				if (currentDateTime.getTime() - userBlockDateTime.getTime() >= 1*60*1000) {
+					user.setBlock_time(null);
+					user.setStatus(UserStatus.ACTIVATED);
+					user.setMax_tries(0);
+				} else {
+					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
+				}
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		if(!PasswordUtil.verify(user.getAnswer(), answer.toCharArray(), charset)) {
+			user.setMax_tries(user.getMax_tries() + 1);
+			if (user.getMax_tries() == 3) {
+				user.setStatus(UserStatus.BLOCKED);
+				user.setBlock_time(dateTimeFormatter.format(new Date()));
+				user.setMax_tries(3);
+				userService.save(user);
+				return new ResponseEntity<>(user, HttpStatus.FORBIDDEN);
+			}
+			userService.save(user);
 			return new ResponseEntity<>("Answer is incorrect.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		

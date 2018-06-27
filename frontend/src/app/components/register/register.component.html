@@ -68,7 +68,9 @@
 	        </div>
           <div class="form-group">
             <label for="city">City</label>
-            <input formControlName="city" type="text" class="form-control" id="city" placeholder="Enter your city">
+            <select formControlName="city" id="city" class="form-control">
+              <option *ngFor="let city of cities" value="{{ city.id }}">{{ city.name }}</option>
+            </select>
           </div>
           <div *ngIf="registerForm.controls['city'].invalid && (registerForm.controls['city'].dirty || registerForm.controls['city'].touched)" class="alert alert-danger">
 	            <div *ngIf="registerForm.controls['city'].errors.required">
@@ -83,9 +85,9 @@
 	            <div *ngIf="registerForm.controls['password1'].errors.required">
 	            Password is required.
 	          	</div>
-	          	<div *ngIf="registerForm.controls['password1'].errors.minlength">
-	            Password must be at least 8 characters long.
-	          	</div>
+              <div *ngIf="registerForm.controls['password1'].errors.pattern">
+              Invalid password pattern (one uppercase, one lowercase, one digit, min. length is 10).
+              </div>
 	        </div>
           <div class="form-group">
             <label for="password2">Repeat password</label>
@@ -95,9 +97,9 @@
 	            <div *ngIf="registerForm.controls['password2'].errors.required">
 	            Password is required.
 	          	</div>
-	          	<div *ngIf="registerForm.controls['password2'].errors.minlength">
-	            Password must be at least 8 characters long.
-	          	</div>
+              <div *ngIf="registerForm.controls['password2'].errors.pattern">
+              Invalid repeat password pattern (one uppercase, one lowercase, one digit, min. length is 10).
+              </div>
 	        </div>
           <div class="form-group">
             <label for="question">Security question</label>
