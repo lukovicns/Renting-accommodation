@@ -16,7 +16,7 @@ insert into agent (agent_id, name, surname, password, email, city_id, street, ph
 insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id, status) values (2, 'Pera', 'Petrovic', 'passpass', 'p@p.com', 2, 'Novosadska 43', '0641111111', 2, 'WAITING');
 insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id, status) values (3, 'Stefan', 'Stefanovic', 'passpass', 's@s.com', 2, 'Kralja Petra 1', '0642222222', 3, 'WAITING');
 
-insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');
+insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'Passpass12.', 'a@a.com');
 
 insert into user (user_id, name, surname, password, email, city_id, street, phone, question, answer, status) values (1, 'Test', 'Test', 'passpass', 'test@test.com', 1, 'Test', 'Test', 'Test', 'Test', 'ACTIVATED');
 
