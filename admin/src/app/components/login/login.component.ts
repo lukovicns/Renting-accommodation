@@ -13,6 +13,7 @@ import { AdminService } from '../../services/admin.service';
 export class LoginComponent implements OnInit {
 
   errorMessage: String;
+  tokenExpiredMessage: string;
 
   constructor(
     private adminService: AdminService,
@@ -27,7 +28,7 @@ export class LoginComponent implements OnInit {
     ])],
     password: ['', Validators.compose([
       Validators.required,
-      Validators.minLength(8)
+      Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$')
     ])]
   });
 
@@ -35,17 +36,21 @@ export class LoginComponent implements OnInit {
     if (this.adminService.getCurrentAdmin()) {
       this.router.navigate(['/']);
     }
-  }
+    if (this.adminService.getTokenExpiredMessage() != null) {
+      this.tokenExpiredMessage = this.adminService.getTokenExpiredMessage();
+    }
+  };
 
   login() {
     this.adminService.loginAdmin(this.loginForm.value)
     .subscribe(res => {
       if (!!res['token']) {
         localStorage.setItem('token', res['token']);
-        this.router.navigate(['/']);
+        window.location.reload();
       }
     }, err => {
-      this.errorMessage = err.error;
+      this.errorMessage = err['error'];
+      this.loginForm.reset();
     })
   }
 }
