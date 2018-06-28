@@ -2,8 +2,12 @@ package com.project.Rentingaccommodation.controller;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -18,6 +22,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,6 +45,8 @@ import com.project.Rentingaccommodation.model.Country;
 import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.model.DTO.AgentDTO;
 import com.project.Rentingaccommodation.model.DTO.LoginDTO;
+import com.project.Rentingaccommodation.model.DTO.PasswordChangeDTO;
+import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JwtAgent;
 import com.project.Rentingaccommodation.security.JwtGenerator;
 import com.project.Rentingaccommodation.security.JwtUser;
@@ -48,6 +57,7 @@ import com.project.Rentingaccommodation.service.CityService;
 import com.project.Rentingaccommodation.service.CountryService;
 import com.project.Rentingaccommodation.service.UserService;
 import com.project.Rentingaccommodation.utils.PasswordUtil;
+import com.project.Rentingaccommodation.utils.SendMail;
 import com.project.Rentingaccommodation.utils.UserUtils;
 
 @RestController
@@ -233,19 +243,18 @@ public class AgentController {
 		String street = agent.getStreet();
 		String phone = agent.getPhone();
 		String password = PasswordUtil.hash(agent.getPassword().toCharArray(), charset);
-//		String question = agent.getQuestion();	
-//		String answer = PasswordUtil.hash(agent.getAnswer().toCharArray(), charset);	
+		String question = agent.getQuestion();	
+		String answer = PasswordUtil.hash(agent.getAnswer().toCharArray(), charset);	
 		
-		Agent regAgent = new Agent(name, surname, password, email, city, street, phone, businessId, AgentStatus.WAITING);
+		Agent regAgent = new Agent(name, surname, password, email, city,
+				 street, phone, question, answer, AgentStatus.WAITING, businessId);
 		service.save(regAgent);
 		
 		try {
 			createCertificate(regAgent.getEmail());
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -265,8 +274,6 @@ public class AgentController {
 		
 		System.out.println("aaaa " + agent);
 		System.out.println("aaaa " + agent.getEmail());
-		
-		Agent ag = service.findByEmail(agent.getEmail());
 		
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		
@@ -362,6 +369,149 @@ public class AgentController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
+	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) {
+		System.out.println(passDTO);
+		if (passDTO.getOldPassword() == null || passDTO.getOldPassword() == "" ||
+			passDTO.getNewPassword() == null || passDTO.getNewPassword() == "" ||
+			passDTO.getToken() == null || passDTO.getToken() == "") {
+			return new ResponseEntity<>("Old password, new password and token must be provided.", HttpStatus.FORBIDDEN);
+		}
+		
+		Pattern passwordPattern = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$");
+		Matcher oldPasswordMatcher = passwordPattern.matcher(passDTO.getOldPassword());
+		Matcher newPasswordMatcher = passwordPattern.matcher(passDTO.getNewPassword());
+		
+		if (!oldPasswordMatcher.find()) {
+			return new ResponseEntity<>("Old password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
+		if (!newPasswordMatcher.find()) {
+			return new ResponseEntity<>("New password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
+		String oldPassword = passDTO.getOldPassword();
+		String newPassword = passDTO.getNewPassword();
+		
+		if (oldPassword.equals(newPassword)) {
+			return new ResponseEntity<>("Old password and new password must be different.", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
+		JwtAgent jwtAgent = jwtValidator.validateAgent(passDTO.getToken());
+		
+		if (jwtAgent == null) {
+			return new ResponseEntity<>("User with the given token doesn't exist.", HttpStatus.NOT_FOUND);
+		}
+		
+		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		Agent loggedInAgent =  service.findByIdAndEmail(jwtAgent.getId(), jwtAgent.getEmail());
+		
+		if (loggedInAgent.getMax_tries() == 3) {
+			try {
+				String dateTime = dateTimeFormatter.format(new Date());
+				Date currentDateTime = dateTimeFormatter.parse(dateTime);
+				Date userBlockDateTime = dateTimeFormatter.parse(loggedInAgent.getBlock_time());
+				if (currentDateTime.getTime() - userBlockDateTime.getTime() >= 1*60*1000) {
+					loggedInAgent.setBlock_time(null);
+					loggedInAgent.setStatus(AgentStatus.APPROVED);
+					loggedInAgent.setMax_tries(0);
+				} else {
+					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
+				}
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		String verifyHash = loggedInAgent.getPassword();
+		
+		if(!PasswordUtil.verify(verifyHash, oldPassword.toCharArray(), charset)) {
+			loggedInAgent.setMax_tries(loggedInAgent.getMax_tries() + 1);
+			if (loggedInAgent.getMax_tries() == 3) {
+				loggedInAgent.setStatus(AgentStatus.BLOCKED);
+				loggedInAgent.setBlock_time(dateTimeFormatter.format(new Date()));
+				loggedInAgent.setMax_tries(3);
+				service.save(loggedInAgent);
+				return new ResponseEntity<>(loggedInAgent, HttpStatus.FORBIDDEN);
+			}
+			service.save(loggedInAgent);
+			return new ResponseEntity<>("Old password is incorrect.", HttpStatus.FORBIDDEN);
+		}
+		String password = PasswordUtil.hash(newPassword.toCharArray(), charset);
+		
+		loggedInAgent.setStatus(AgentStatus.APPROVED);
+		loggedInAgent.setPassword(password);
+		service.save(loggedInAgent);
+		return new ResponseEntity<>(jwtAgent, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/question/{email}", method = RequestMethod.GET)
+	public ResponseEntity<Object> getQuestion(@PathVariable String email) throws ParseException {
+		if (email == null || email == "") {
+			return new ResponseEntity<>("Email address is required.", HttpStatus.FORBIDDEN);
+		}
+		
+		Agent agent = service.findByEmail(email);
+		if (agent == null) {
+			return new ResponseEntity<>(new String("This agent doesn't exist."), HttpStatus.NOT_FOUND);
+		}
+		
+		String question = agent.getQuestion();
+		String jsonString = "{\"question\":\""+question+"\"}";
+		JSONParser parser = new JSONParser(); 
+		JSONObject json = (JSONObject) parser.parse(jsonString);
+		return new ResponseEntity<>(json, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/reset", method = RequestMethod.POST)
+	public ResponseEntity<Object> resetPassword(@RequestBody SecurityQuestionDTO questionDTO) throws ParseException {
+		if (questionDTO.getEmail() == null || questionDTO.getEmail() == "" ||
+			questionDTO.getAnswer() == null || questionDTO.getAnswer() == "") {
+			return new ResponseEntity<>("Email and answer must be provided.", HttpStatus.FORBIDDEN);
+		}
+		String email = questionDTO.getEmail();
+		String answer = questionDTO.getAnswer();
+		Agent agent = service.findByEmail(email);
+		
+		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		
+		if (agent.getMax_tries() == 3) {
+			try {
+				String dateTime = dateTimeFormatter.format(new Date());
+				Date currentDateTime = dateTimeFormatter.parse(dateTime);
+				Date userBlockDateTime = dateTimeFormatter.parse(agent.getBlock_time());
+				if (currentDateTime.getTime() - userBlockDateTime.getTime() >= 1*60*1000) {
+					agent.setBlock_time(null);
+					agent.setStatus(AgentStatus.APPROVED);
+					agent.setMax_tries(0);
+				} else {
+					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
+				}
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(!PasswordUtil.verify(agent.getAnswer(), answer.toCharArray(), charset)) {
+			agent.setMax_tries(agent.getMax_tries() + 1);
+			if (agent.getMax_tries() == 3) {
+				agent.setStatus(AgentStatus.BLOCKED);
+				agent.setBlock_time(dateTimeFormatter.format(new Date()));
+				agent.setMax_tries(3);
+				service.save(agent);
+				return new ResponseEntity<>(agent, HttpStatus.FORBIDDEN);
+			}
+			service.save(agent);
+			return new ResponseEntity<>("Answer is incorrect.", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
+		String randomPassword = SendMail.sendEmail("\""+email+"\"");
+		
+		String password = PasswordUtil.hash(randomPassword.toCharArray(), charset);
+		agent.setPassword(password);
+		service.save(agent);
+		return new ResponseEntity<>(agent, HttpStatus.OK);
+	}
 	
 	
 	private void buildSessionFactory(String email) {
@@ -416,7 +566,7 @@ public class AgentController {
 	
 	public String generate(JwtAgent jwtAgent) {
     	if (jwtAgent.getEmail() == null) {
-    		return "User with this email doesn't exist.";
+    		return "agent with this email doesn't exist.";
     	}
         return jwtGenerator.generateAgent(jwtAgent);
     }

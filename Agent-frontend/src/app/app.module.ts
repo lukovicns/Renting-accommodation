@@ -22,7 +22,9 @@ import { MessageDetailComponent } from './components/message-detail/message-deta
 import { SendMessageComponent } from './components/send-message/send-message.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-//import { DomSanitizerImpl } from '@angular/platform-browser/src/security/dom_sanitization_service';     
+//import { DomSanitizerImpl } from '@angular/platform-browser/src/security/dom_sanitization_service'; 
+import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
+import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
 import { CookieService } from 'ngx-cookie-service';
 import { UserService } from './services/user.service';
 import { HttpInterceptorService } from './services/httpinterceptor.service';
@@ -49,7 +51,9 @@ import { ApartmentImagesComponent } from './components/apartment-images/apartmen
     LoginComponent,
     TruncatePipe,
     RegisterComponent,
-    ApartmentImagesComponent
+    ApartmentImagesComponent,
+    RecoveryEmailComponent,
+    RecoveryQuestionComponent
   ],
   imports: [
     BrowserModule,

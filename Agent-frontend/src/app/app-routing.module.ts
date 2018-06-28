@@ -9,8 +9,11 @@ import { ApartmentTableComponent } from './components/apartment-table/apartment-
 import { PricePlanComponent } from './components/price-plan/price-plan.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ApartmentDetailComponent } from './components/apartment-detail/apartment-detail.component';
+import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
 import { ReservationListComponent } from './components/reservation-list/reservation-list.component';
 import { InboxComponent } from './components/inbox/inbox.component';
+import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
+
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { MessageDetailComponent } from './components/message-detail/message-detail.component';
@@ -34,6 +37,8 @@ const routes: Routes = [
   ] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'recovery', component: RecoveryEmailComponent},
+  { path: 'question', component: RecoveryQuestionComponent},
   { path: 'reply/:id', component: SendMessageComponent},
   { path: 'apartmentImages/:id', component: ApartmentImagesComponent}
 
