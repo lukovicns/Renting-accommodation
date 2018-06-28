@@ -49,11 +49,22 @@ import org.w3c.dom.Element;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "X509DataType", propOrder = { "name", "x509IssuerSerialOrX509SKIOrX509SubjectName" })
+@XmlType(name = "X509DataType", propOrder = { "name", "X509Certificate", "x509IssuerSerialOrX509SKIOrX509SubjectName" })
 public class X509DataType {
 
 	@XmlElement(name = "X509SubjectName")
 	private String name;
+	
+	@XmlElement(name = "X509Certificate")
+	private String X509Certificate;
+	
+	public String getX509Certificate() {
+		return X509Certificate;
+	}
+
+	public void setX509Certificate(String x509Certificate) {
+		X509Certificate = x509Certificate;
+	}
 
 	public String getName() {
 		return name;

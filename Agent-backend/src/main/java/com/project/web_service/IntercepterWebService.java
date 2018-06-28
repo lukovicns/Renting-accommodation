@@ -9,8 +9,8 @@
  import java.io.IOException;
  import java.io.InputStreamReader;
  import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.security.InvalidAlgorithmParameterException;
+ import java.io.PrintWriter;
+ import java.security.InvalidAlgorithmParameterException;
  import java.security.KeyStore;
  import java.security.KeyStoreException;
  import java.security.NoSuchAlgorithmException;
@@ -18,14 +18,15 @@ import java.security.InvalidAlgorithmParameterException;
  import java.security.UnrecoverableEntryException;
  import java.security.cert.CertificateException;
  import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
- import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+ import java.text.SimpleDateFormat;
+ import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+ import java.util.Date;
+ import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.bind.JAXBException;
+ import javax.xml.bind.DatatypeConverter;
+ import javax.xml.bind.JAXBException;
  import javax.xml.crypto.MarshalException;
  import javax.xml.crypto.dsig.CanonicalizationMethod;
  import javax.xml.crypto.dsig.DigestMethod;
@@ -72,7 +73,8 @@ import javax.xml.bind.JAXBException;
  import org.springframework.web.bind.annotation.RequestMapping;
  import org.springframework.web.bind.annotation.RestController;
  import org.w3c.dom.Document;
- import org.xml.sax.SAXException;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.project.config.BlankingResolver;
@@ -118,6 +120,13 @@ public class IntercepterWebService {
 				"</ns2:addAccommodation>"; 
 		
 		signXml(body, email,"test.xml", "out.xml");
+		
+		String filepath = "out.xml";
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory
+                .newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        Document doc = docBuilder.parse(filepath);
+
 		File file = new File("out.xml");
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(
 		                file));
@@ -128,6 +137,8 @@ public class IntercepterWebService {
 		soap +=fileStr;
 		soap += "</soap:Body></soap:Envelope>";
 		bin.close();
+        
+		System.out.println("poruka "+soap);
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		
@@ -322,7 +333,6 @@ public class IntercepterWebService {
 		soap +=fileStr;
 		soap += "</soap:Body></soap:Envelope>";
 		bin.close();
-		System.out.println("types  " + soap);
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		
@@ -391,9 +401,7 @@ public class IntercepterWebService {
 		soap +=fileStr;
 		soap += "</soap:Body></soap:Envelope>";
 		bin.close();
-		System.out.println("caaat  " + soap);
 		JSONObject xmlJSONObj = httpClientExecute(soap);
-		System.out.println("xml caaaat" + xmlJSONObj);
 		
         JSONObject retVal =  new JSONObject();
         
@@ -423,13 +431,10 @@ public class IntercepterWebService {
 		bin.read(buffer);
 		String fileStr = new String(buffer);
 //		fileStr = "<ns2" + fileStr.split("<ns2")[1];
-		System.out.println("fff " + fileStr);
 		fileStr = fileStr.substring(54, fileStr.length());
 		soap +=fileStr;
 		soap += "</soap:Body></soap:Envelope>";
 		bin.close();
-		
-		System.out.println("cities  " + soap);
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 
@@ -1047,7 +1052,6 @@ public class IntercepterWebService {
 		System.out.println(email);
 		X509Certificate cert = (X509Certificate)ks.getCertificate(email);
 		
-		System.out.println("asdf "+cert);
 		// Create a DOM XMLSignatureFactory that will be used to
 		// generate the enveloped signature.
 		XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
