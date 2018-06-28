@@ -14,6 +14,7 @@ import { CityService } from '../../services/city.service';
 export class RegisterComponent implements OnInit {
 
   errorMessage: String;
+  private cities: any = [];
 
   constructor(
     private userService: UserService,
@@ -37,11 +38,11 @@ export class RegisterComponent implements OnInit {
     city: ['', Validators.required],
     password1: ['', Validators.compose([
       Validators.required,
-      Validators.minLength(8)
+      Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$')
     ])],
     password2: ['', Validators.compose([
       Validators.required,
-      Validators.minLength(8)
+      Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$')
     ])],
     question: ['', Validators.required],
     answer: ['', Validators.required],
@@ -50,6 +51,14 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     if (this.userService.getCurrentUser()) {
       this.router.navigate(['/']);
+    } else {
+      this.cityService.getCities()
+      .subscribe(res => {
+        this.cities = res;
+        if (this.cities && this.cities.length > 0) {
+          this.registerForm.controls['city'].setValue(this.cities[0].id);
+        }
+      })
     }
   }
 
@@ -57,7 +66,7 @@ export class RegisterComponent implements OnInit {
     if (this.registerForm.value['password1'] != this.registerForm.value['password2']) {
       this.errorMessage = 'Passwords don\t match!';
     } else {
-      this.cityService.getCityByName(this.registerForm.value['city'])
+      this.cityService.getCity(this.registerForm.value['city'])
       .subscribe(res => {
         const data = {
           'name': this.registerForm.value.name,

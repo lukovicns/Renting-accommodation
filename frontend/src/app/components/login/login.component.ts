@@ -12,9 +12,14 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  errorMessage: String;
+  errorMessage: string;
+  tokenExpiredMessage: string;
 
-  constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
+  constructor(
+    private userService: UserService,
+    private formBuilder: FormBuilder,
+    private router: Router
+  ) { }
 
   loginForm = this.formBuilder.group({
     email: ['', Validators.compose([
@@ -23,7 +28,7 @@ export class LoginComponent implements OnInit {
     ])],
     password: ['', Validators.compose([
       Validators.required,
-      Validators.minLength(8)
+      Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$')
     ])]
   });
 
@@ -31,19 +36,21 @@ export class LoginComponent implements OnInit {
     if (this.userService.getCurrentUser()) {
       this.router.navigate(['/']);
     }
+    if (this.userService.getTokenExpiredMessage() != null) {
+      this.tokenExpiredMessage = this.userService.getTokenExpiredMessage();
+    }
   }
 
   login() {
     this.userService.loginUser(this.loginForm.value)
     .subscribe(res => {
-      if (!!res['token']) {
+      if (res['token'] != null) {
         localStorage.setItem('token', res['token']);
-        this.router.navigate(['/accommodations']);
+        window.location.reload();
       }
     }, err => {
       this.errorMessage = err['error'];
-      console.log(err);
+      this.loginForm.reset();
     });
   }
-
 }

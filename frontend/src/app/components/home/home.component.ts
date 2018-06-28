@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { fadeIn } from '../../animations';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -9,10 +10,15 @@ import { fadeIn } from '../../animations';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  private currentUser: string = '';
+
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
+    if(this.userService.getCurrentUser() != null) {
+      this.currentUser = this.userService.getCurrentUser()['email'];
+    }
   }
 
-  title = 'The Booking App';
+  title = 'Renting accommodation app';
 }

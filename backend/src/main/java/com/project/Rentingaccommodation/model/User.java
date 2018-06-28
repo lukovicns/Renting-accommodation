@@ -48,8 +48,11 @@ public class User {
 	@Column(name="answer", columnDefinition="VARCHAR(100)", nullable=false)
 	private String answer;
 	
-//	@Column(name="max_tries", columnDefinition="INT(11)", nullable=false)
-//	private int max_tries = 0;
+	@Column(name="block_time", columnDefinition="VARCHAR(50)", nullable=true)
+	private String block_time;
+	
+	@Column(name="max_tries", columnDefinition="INT(11) DEFAULT 0", nullable=false)
+	private int max_tries;
 	
 	@Enumerated(EnumType.STRING)
 	private UserStatus status;
@@ -161,12 +164,19 @@ public class User {
 		this.answer = answer;
 	}
 
-//	public int getMax_tries() {
-//		return max_tries;
-//	}
-//
-//	public void setMax_tries(int max_tries) {
-//		this.max_tries = max_tries;
-//	}
+	public int getMax_tries() {
+		return max_tries;
+	}
 
+	public void setMax_tries(int max_tries) {
+		this.max_tries = max_tries;
+	}
+
+	public String getBlock_time() {
+		return block_time;
+	}
+
+	public void setBlock_time(String block_time) {
+		this.block_time = block_time;
+	}
 }

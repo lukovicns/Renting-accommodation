@@ -38,6 +38,7 @@ import com.project.Rentingaccommodation.model.Country;
 import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.model.DTO.AgentDTO;
 import com.project.Rentingaccommodation.model.DTO.LoginDTO;
+import com.project.Rentingaccommodation.security.JwtAgent;
 import com.project.Rentingaccommodation.security.JwtGenerator;
 import com.project.Rentingaccommodation.security.JwtUser;
 import com.project.Rentingaccommodation.security.JwtValidator;
@@ -347,8 +348,8 @@ public class AgentController {
 			tx.commit();
 			session.close();
 			
-			String token = generate(new JwtUser(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));
-			System.out.println("jwt " + new JwtUser(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));
+			String token = jwtGenerator.generateAgent(new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));
+			System.out.println("jwt " + new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));
 			
 			
 			System.out.println("toke " + token);
@@ -413,10 +414,10 @@ public class AgentController {
 
 	}
 	
-	public String generate(JwtUser jwtUser) {
-    	if (jwtUser.getEmail() == null) {
+	public String generate(JwtAgent jwtAgent) {
+    	if (jwtAgent.getEmail() == null) {
     		return "User with this email doesn't exist.";
     	}
-        return jwtGenerator.generateAgent(jwtUser);
+        return jwtGenerator.generateAgent(jwtAgent);
     }
 }

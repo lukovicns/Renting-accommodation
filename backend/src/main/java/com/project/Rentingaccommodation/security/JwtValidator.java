@@ -1,6 +1,7 @@
 package com.project.Rentingaccommodation.security;
 
 
+
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -9,7 +10,7 @@ import io.jsonwebtoken.Jwts;
 @Component
 public class JwtValidator {
 
-    private String secret = "secretKey";
+    private String secret = "SECRETKEY";
 
     public JwtUser validate(String token) {
     	JwtUser jwtUser = null;
@@ -18,7 +19,12 @@ public class JwtValidator {
                     .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
-            jwtUser = new JwtUser(Long.parseLong(body.get("id").toString()), (String) body.get("email"), (String) body.get("role"));
+            jwtUser = new JwtUser(
+        		Long.parseLong(body.get("id").toString()),
+        		(String) body.get("email"),
+        		(String) body.get("role"),
+        		(String) body.get("status")
+            );
         }
         catch (Exception e) {
             System.out.println(e);
