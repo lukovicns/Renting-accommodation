@@ -8,12 +8,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Rentingaccommodation.logger.AdditionalServiceLogger;
 import com.project.Rentingaccommodation.model.AdditionalService;
+import com.project.Rentingaccommodation.model.UserPrivileges;
+import com.project.Rentingaccommodation.model.UserRoles;
+import com.project.Rentingaccommodation.security.JwtUserPermissions;
 import com.project.Rentingaccommodation.service.AdditionalServiceService;
 
 @RestController
@@ -22,6 +26,9 @@ public class AdditionalServiceController {
 
 	@Autowired
 	private AdditionalServiceService service;
+	
+	@Autowired
+	private JwtUserPermissions jwtUserPermissions;
 	
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ResponseEntity<List<AdditionalService>> getAdditionalServices() {
@@ -38,7 +45,10 @@ public class AdditionalServiceController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<Object> addAdditionalService(@RequestBody AdditionalService data) {
+	public ResponseEntity<Object> addAdditionalService(@RequestBody AdditionalService data, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		if (data.getName() == null || data.getName() == "") {
 			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
 		}
@@ -53,7 +63,10 @@ public class AdditionalServiceController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> updateAdditionalService(@PathVariable Long id, @RequestBody AdditionalService data) {
+	public ResponseEntity<Object> updateAdditionalService(@PathVariable Long id, @RequestBody AdditionalService data, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		AdditionalService additionalService = service.findOne(id);
 		if (additionalService == null) {
 			return new ResponseEntity<>("Additional service not found.", HttpStatus.NOT_FOUND);
@@ -72,7 +85,10 @@ public class AdditionalServiceController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteAdditionalService(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteAdditionalService(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		AdditionalService additionalService = service.findOne(id);
 		if (additionalService == null) {
 			return new ResponseEntity<>("Additional service not found.", HttpStatus.NOT_FOUND);

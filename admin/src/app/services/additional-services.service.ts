@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AdditionalService } from '../models/AdditionalService';
 
 @Injectable({
@@ -8,7 +8,10 @@ import { AdditionalService } from '../models/AdditionalService';
 export class AdditionalServicesService {
 
   private url: string = 'http://localhost:8081/api/additional-services/';
-
+  private headers = new HttpHeaders()
+    .append('Content-Type', 'application/json')
+    .append('Authorization', 'Bearer ' + localStorage.getItem('token'))
+    
   constructor(private http: HttpClient) { }
 
   getAdditionalServices() {
@@ -20,14 +23,14 @@ export class AdditionalServicesService {
   }
 
   addAdditionalService(data) {
-    return this.http.post(this.url, data);
+    return this.http.post(this.url, data, { headers: this.headers });
   }
 
   editAdditionalService(additionalServiceId, data) {
-    return this.http.put(this.url + additionalServiceId, data);
+    return this.http.put(this.url + additionalServiceId, data, { headers: this.headers });
   }
 
   deleteAdditionalService(additionalServiceId) {
-    return this.http.delete(this.url + additionalServiceId);
+    return this.http.delete(this.url + additionalServiceId, { headers: this.headers });
   }
 }

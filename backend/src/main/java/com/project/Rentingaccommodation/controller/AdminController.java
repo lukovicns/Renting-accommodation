@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,11 +26,13 @@ import com.project.Rentingaccommodation.model.Admin;
 import com.project.Rentingaccommodation.model.AdminStatus;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserPrivileges;
+import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.model.UserStatus;
 import com.project.Rentingaccommodation.model.DTO.PasswordChangeDTO;
 import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JwtGenerator;
 import com.project.Rentingaccommodation.security.JwtUser;
+import com.project.Rentingaccommodation.security.JwtUserPermissions;
 import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.UserService;
@@ -50,6 +53,9 @@ public class AdminController {
 	
 	@Autowired
 	private JwtValidator jwtValidator;
+	
+	@Autowired
+	private JwtUserPermissions jwtUserPermissions;
 	
 	@RequestMapping(value="/email/{email}", method=RequestMethod.GET)
 	public ResponseEntity<Object> getAdminByEmail(@PathVariable String email) {
@@ -286,7 +292,10 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/activate-user/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> activateUser(@PathVariable Long id) {
+	public ResponseEntity<Object> activateUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -297,7 +306,10 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/block-user/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> blockUser(@PathVariable Long id) {
+	public ResponseEntity<Object> blockUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.READ_WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -308,7 +320,10 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/delete-user/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.READ_WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);

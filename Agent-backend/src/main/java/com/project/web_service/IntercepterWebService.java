@@ -88,7 +88,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.project.config.BlankingResolver;
-import com.project.logger.AgentLogger;
+import com.project.Rentingaccommodation.logger.AgentLogger;
 import com.project.model.UserPrivileges;
 import com.project.model.UserRoles;
 import com.project.model.DTO.AccommodationDTO;

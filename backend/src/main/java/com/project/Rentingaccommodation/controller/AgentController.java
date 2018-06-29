@@ -51,6 +51,7 @@ import com.project.Rentingaccommodation.model.DTO.SecurityQuestionDTO;
 import com.project.Rentingaccommodation.security.JwtAgent;
 import com.project.Rentingaccommodation.security.JwtGenerator;
 import com.project.Rentingaccommodation.security.JwtUser;
+import com.project.Rentingaccommodation.security.JwtUserPermissions;
 import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.AgentService;
@@ -82,6 +83,9 @@ public class AgentController {
 	
 	@Autowired
 	private JwtValidator jwtValidator;
+	
+	@Autowired
+	private JwtUserPermissions jwtUserPermissions;
 	
 	@Autowired
 	private CountryService countryService;
@@ -155,6 +159,9 @@ public class AgentController {
 	
 	@RequestMapping(value="/{id}/approve", method=RequestMethod.PUT)
 	public ResponseEntity<Object> approveAgent(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(authHeader, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
@@ -179,6 +186,9 @@ public class AgentController {
 	
 	@RequestMapping(value="/{id}/decline", method=RequestMethod.PUT)
 	public ResponseEntity<Object> declineAgent(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(authHeader, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
@@ -203,6 +213,9 @@ public class AgentController {
 	
 	@RequestMapping(value="/{id}/remove-approval", method=RequestMethod.PUT)
 	public ResponseEntity<Object> removeApprovalOfAgent(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(authHeader, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Admin } from '../models/Admin';
 import * as decode from 'jwt-decode';
 import { User } from '../models/User';
@@ -14,6 +14,9 @@ export class AdminService {
   private tokenUrl: string = 'http://localhost:8081/token/';
   private email: string;
   private tokenExpiredMessage: string;
+  private headers = new HttpHeaders()
+  .append('Content-Type', 'application/json')
+  .append('Authorization', 'Bearer ' + localStorage.getItem('token'))
 
   constructor(private http: HttpClient) { }
 
@@ -30,15 +33,15 @@ export class AdminService {
   }
   
   blockUser(userId) {
-    return this.http.put<User>(this.url + 'block-user/' + userId, "B");
+    return this.http.put<User>(this.url + 'block-user/' + userId, null, { headers: this.headers });
   }
 
   activateUser(userId) {
-    return this.http.put<User>(this.url + 'activate-user/' + userId, null);
+    return this.http.put<User>(this.url + 'activate-user/' + userId, null, { headers: this.headers });
   }
 
   deleteUser(userId) {
-    return this.http.delete<User>(this.url + 'delete-user/' + userId);
+    return this.http.delete<User>(this.url + 'delete-user/' + userId, { headers: this.headers });
   }
 
   getTokenExpirationDate(token: string): Date {

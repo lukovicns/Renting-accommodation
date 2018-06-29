@@ -21,7 +21,10 @@ import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Rating;
 import com.project.Rentingaccommodation.model.Reservation;
 import com.project.Rentingaccommodation.model.User;
+import com.project.Rentingaccommodation.model.UserPrivileges;
+import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.security.JwtUser;
+import com.project.Rentingaccommodation.security.JwtUserPermissions;
 import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.ApartmentService;
 import com.project.Rentingaccommodation.service.RatingService;
@@ -45,6 +48,9 @@ public class RatingController {
     private JwtValidator jwtValidator;
     
     @Autowired
+    private JwtUserPermissions jwtUserPermissions;
+    
+    @Autowired
     private ReservationService reservationService;
     
 	@RequestMapping(value="", method=RequestMethod.GET)
@@ -63,6 +69,9 @@ public class RatingController {
 	
 	@RequestMapping(value="/apartment/{id}/user", method=RequestMethod.GET)
 	public ResponseEntity<Object> getUserRatingForApartment(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(authHeader, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
@@ -86,7 +95,10 @@ public class RatingController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<Object> addRatingForApartment(@RequestBody Rating data) {
+	public ResponseEntity<Object> addRatingForApartment(@RequestBody Rating data, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		if (data.getRating() <= 0 || data.getRating() > 5) {
 			return new ResponseEntity<>("Rating must be value from 1 to 5.", HttpStatus.FORBIDDEN);
 		}
@@ -141,7 +153,10 @@ public class RatingController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteRating(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteRating(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		Rating rating = service.findOne(id);
 		if (rating == null) {
 			return new ResponseEntity<>("Rating not found.", HttpStatus.NOT_FOUND);

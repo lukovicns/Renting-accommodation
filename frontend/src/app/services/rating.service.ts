@@ -12,7 +12,7 @@ export class RatingService {
   constructor(private http: HttpClient) { }
 
   getAverageRatingForApartment(apartmentId) {
-    return this.http.get(this.url + 'apartment/'+  apartmentId + '/average');
+    return this.http.get(this.url + 'apartment/'+  apartmentId + '/average', { headers: this.headers });
   }
 
   getUserRatingForApartment(apartmentId) {
@@ -20,6 +20,6 @@ export class RatingService {
   }
 
   rateApartment(data) {
-    return this.http.post(this.url, data);
+    return this.http.post(this.url, data, { headers: this.headers });
   }
 }

@@ -29,7 +29,6 @@ export class ReservationService {
   }
 
   makeReservations(reservation) {
-      console.log(this.headers.get('token'))
     return this.http.post(this.url, reservation, { headers: this.headers });
   }
 

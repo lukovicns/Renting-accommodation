@@ -24,7 +24,10 @@ import com.project.Rentingaccommodation.model.Message;
 import com.project.Rentingaccommodation.model.MessageStatus;
 import com.project.Rentingaccommodation.model.SendMessage;
 import com.project.Rentingaccommodation.model.User;
+import com.project.Rentingaccommodation.model.UserPrivileges;
+import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.security.JwtUser;
+import com.project.Rentingaccommodation.security.JwtUserPermissions;
 import com.project.Rentingaccommodation.security.JwtValidator;
 import com.project.Rentingaccommodation.service.AdminService;
 import com.project.Rentingaccommodation.service.AgentService;
@@ -54,6 +57,9 @@ public class MessageController {
 	@Autowired
 	private JwtValidator jwtValidator;
 	
+	@Autowired
+	private JwtUserPermissions jwtUserPermissions;
+	
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ResponseEntity<List<Message>> getMessages() {
 		return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
@@ -69,7 +75,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/user/{id}/sent", method=RequestMethod.GET)
-	public ResponseEntity<Object> getUserSentMessages(@PathVariable Long id) {
+	public ResponseEntity<Object> getUserSentMessages(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -78,7 +87,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/user/{id}/sent/{messageId}", method=RequestMethod.GET)
-	public ResponseEntity<Object> getUserSentMessage(@PathVariable Long id, @PathVariable Long messageId) {
+	public ResponseEntity<Object> getUserSentMessage(@PathVariable Long id, @PathVariable Long messageId, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -91,7 +103,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/user/{id}/received", method=RequestMethod.GET)
-	public ResponseEntity<Object> getUserReceivedMessages(@PathVariable Long id) {
+	public ResponseEntity<Object> getUserReceivedMessages(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -100,7 +115,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/user/{id}/received/{messageId}", method=RequestMethod.GET)
-	public ResponseEntity<Object> getUserReceivedMessage(@PathVariable Long id, @PathVariable Long messageId) {
+	public ResponseEntity<Object> getUserReceivedMessage(@PathVariable Long id, @PathVariable Long messageId, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -113,7 +131,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/user/{id}/received/{messageId}/mark-as-read", method=RequestMethod.PUT)
-	public ResponseEntity<Object> markAsReadUserReceivedMessage(@PathVariable Long id, @PathVariable Long messageId) {
+	public ResponseEntity<Object> markAsReadUserReceivedMessage(@PathVariable Long id, @PathVariable Long messageId, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		User user = userService.findOne(id);
 		if (user == null) {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -127,7 +148,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/agent/{id}/sent", method=RequestMethod.GET)
-	public ResponseEntity<Object> getAgentSentMessages(@PathVariable Long id) {
+	public ResponseEntity<Object> getAgentSentMessages(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		Agent agent = agentService.findOne(id);
 		if (agent == null) {
 			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
@@ -136,7 +160,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/agent/{id}/received", method=RequestMethod.GET)
-	public ResponseEntity<Object> getAgentReceivedMessages(@PathVariable Long id) {
+	public ResponseEntity<Object> getAgentReceivedMessages(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		Agent agent = agentService.findOne(id);
 		if (agent == null) {
 			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
@@ -145,7 +172,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/user-to-agent", method=RequestMethod.POST)
-	public ResponseEntity<Object> sendMessageToAgent(@RequestBody SendMessage data) {
+	public ResponseEntity<Object> sendMessageToAgent(@RequestBody SendMessage data, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		if (data.getApartment() == null || Long.valueOf(data.getApartment()) == 0 ||
 			data.getUser() == null || Long.valueOf(data.getUser()) == 0 ||
 			data.getAgent() == null || Long.valueOf(data.getAgent()) == 0 ||
@@ -179,7 +209,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/agent-to-user", method=RequestMethod.POST)
-	public ResponseEntity<Object> sendMessageToUser(@RequestBody SendMessage data) {
+	public ResponseEntity<Object> sendMessageToUser(@RequestBody SendMessage data, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		if (data.getApartment() == null || Long.valueOf(data.getApartment()) == 0 ||
 			data.getUser() == null || Long.valueOf(data.getUser()) == 0 ||
 			data.getAgent() == null || Long.valueOf(data.getAgent()) == 0 ||
@@ -213,6 +246,9 @@ public class MessageController {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteMessage(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(authHeader, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		try {
 			String token = authHeader.split(" ")[1].trim();
 			JwtUser jwtUser = jwtValidator.validate(token);
@@ -239,7 +275,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}/delete-user-sent", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteUserSentMessage(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteUserSentMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		Message message = service.findOne(id);
 		if (message == null) {
 			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
@@ -258,7 +297,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}/delete-user-received", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteUserReceivedMessage(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteUserReceivedMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		Message message = service.findOne(id);
 		if (message == null) {
 			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
@@ -277,7 +319,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}/delete-agent-sent", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteAgentSentMessage(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteAgentSentMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		Message message = service.findOne(id);
 		if (message == null) {
 			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);
@@ -296,7 +341,10 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}/delete-agent-received", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteAgentReceivedMessage(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteAgentReceivedMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		Message message = service.findOne(id);
 		if (message == null) {
 			return new ResponseEntity<>("Message not found.", HttpStatus.NOT_FOUND);

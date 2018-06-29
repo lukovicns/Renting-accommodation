@@ -33,9 +33,9 @@ const routes: Routes = [
     { path: '', component: AdditionalServicesListComponent },
     { path: ':id/edit', component: EditAdditionalServiceComponent }
   ] },
-  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'recovery', component: RecoveryEmailComponent},
-  { path: 'question', component: RecoveryQuestionComponent},
+  // { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  // { path: 'recovery', component: RecoveryEmailComponent},
+  // { path: 'question', component: RecoveryQuestionComponent},
   { path: 'comments', component: CommentListComponent }
 ];
 

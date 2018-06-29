@@ -18,7 +18,7 @@ insert into agent (agent_id, name, surname, password, email, city_id, street, ph
 
 insert into administrator(admin_id, name, surname, password, email, question, answer, status) values (1, 'Admin', 'Admin', 'Passpass123', 'a@a.com', 'How are you?', 'Fine', 'ACTIVATED');
 
-insert into user (user_id, name, surname, password, email, city_id, street, phone, question, answer, status) values (1, 'Test', 'Test', 'passpass', 'test@test.com', 1, 'Test', 'Test', 'Test', 'Test', 'ACTIVATED');
+insert into user (user_id, name, surname, password, email, city_id, street, phone, question, answer, status) values (1, 'Test', 'Test', 'Passpass123', 'test@test.com', 1, 'Test', 'Test', 'Test', 'Test', 'ACTIVATED');
 
 insert into accommodation (accommodation_id, name, accommodation_type_id, city_id, street, description, accommodation_category_id, agent_id) values (1, 'Hotel Putnik', 1, 1, 'Ilije Ognjanovica 24', 'Hotel putnik se nalazi u centru Novog Sada.', 1, 1);
 insert into accommodation (accommodation_id, name, accommodation_type_id, city_id, street, description, accommodation_category_id, agent_id) values (2, 'Hotel Master', 1, 1, 'Brace Popovic bb', 'Hotel se nalazi kod sajma.', 1, 1);

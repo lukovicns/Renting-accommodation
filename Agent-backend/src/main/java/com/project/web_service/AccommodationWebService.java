@@ -71,7 +71,7 @@ import com.mysql.jdbc.PreparedStatement;
 import com.project.model.User;
 import com.project.config.BlankingResolver;
 import com.project.config.X509KeySelector;
-import com.project.logger.AgentLogger;
+import com.project.Rentingaccommodation.logger.AgentLogger;
 import com.project.model.Accommodation;
 import com.project.model.AccommodationCategory;
 import com.project.model.AccommodationType;

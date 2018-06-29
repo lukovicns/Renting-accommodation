@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.Rentingaccommodation.logger.AccommodationCategoryLogger;
 import com.project.Rentingaccommodation.model.AccommodationType;
 import com.project.Rentingaccommodation.model.AccommodationTypeStatus;
+import com.project.Rentingaccommodation.model.UserPrivileges;
+import com.project.Rentingaccommodation.model.UserRoles;
+import com.project.Rentingaccommodation.security.JwtUserPermissions;
 import com.project.Rentingaccommodation.service.AccommodationTypeService;
 
 @RestController
@@ -23,6 +27,9 @@ public class AccommodationTypeController {
 
 	@Autowired
 	private AccommodationTypeService service;
+	
+	@Autowired
+	private JwtUserPermissions jwtUserPermissions;
 	
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ResponseEntity<List<AccommodationType>> getTypes() {
@@ -49,7 +56,10 @@ public class AccommodationTypeController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<Object> addAccommodationType(@RequestBody AccommodationType data) {
+	public ResponseEntity<Object> addAccommodationType(@RequestBody AccommodationType data, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		if (data.getName() == null || data.getName() == "") {
 			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
 		}
@@ -64,7 +74,10 @@ public class AccommodationTypeController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> updateAccommodationType(@PathVariable Long id, @RequestBody AccommodationType data) {
+	public ResponseEntity<Object> updateAccommodationType(@PathVariable Long id, @RequestBody AccommodationType data, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		AccommodationType type = service.findOne(id);
 		if (type == null) {
 			return new ResponseEntity<>("Accommodation type not found.", HttpStatus.NOT_FOUND);
@@ -83,7 +96,10 @@ public class AccommodationTypeController {
 	}
 	
 	@RequestMapping(value="/{id}/activate", method=RequestMethod.PUT)
-	public ResponseEntity<Object> activateType(@PathVariable Long id) {
+	public ResponseEntity<Object> activateType(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		AccommodationType type = service.findOne(id);
 		if (type == null) {
 			return new ResponseEntity<>("Accommodation type not found.", HttpStatus.NOT_FOUND);
@@ -94,7 +110,10 @@ public class AccommodationTypeController {
 	}
 
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteAccommodationType(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteAccommodationType(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		AccommodationType type = service.findOne(id);
 		if (type == null) {
 			return new ResponseEntity<>("Accommodation type not found.", HttpStatus.NOT_FOUND);
