@@ -159,5 +159,7 @@ export class ApartmentDetailComponent implements OnInit {
               }
           });
       }
+      this.apartmentService.addReservation(this.reservationForm.value, this.apartmentId).subscribe(res =>
+      console.log(res));
   }
 }

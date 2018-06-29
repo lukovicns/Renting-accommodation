@@ -1,6 +1,7 @@
 package com.project.Rentingaccommodation.controller;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.project.Rentingaccommodation.logger.AdditionalServiceLogger;
 import com.project.Rentingaccommodation.model.AdditionalService;
 import com.project.Rentingaccommodation.service.AdditionalServiceService;
 
@@ -39,7 +42,13 @@ public class AdditionalServiceController {
 		if (data.getName() == null || data.getName() == "") {
 			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
 		}
+		AdditionalService foundAdditionalService = service.findByName(data.getName());
+		if (foundAdditionalService != null) {
+			AdditionalServiceLogger.log(Level.WARNING, "Tried to add additional service, but another additional service with this name already exists.");
+			return new ResponseEntity<>("Additional service with this name already exists.", HttpStatus.FORBIDDEN);
+		}
 		AdditionalService additionalService = new AdditionalService(data.getName());
+		AdditionalServiceLogger.log(Level.INFO, "Additional service '" + additionalService.getName() + "' is successfully added.");
 		return new ResponseEntity<>(service.save(additionalService), HttpStatus.OK);
 	}
 	
@@ -52,7 +61,13 @@ public class AdditionalServiceController {
 		if (data.getName() == null || data.getName() == "") {
 			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
 		}
+		AdditionalService as = service.findByName(data.getName());
+		if (as != null && as.getId() != additionalService.getId()) {
+			AdditionalServiceLogger.log(Level.WARNING, "Tried to update additional service, but another additional service with this name already exists.");
+			return new ResponseEntity<>("Another additional service with this name already exists.", HttpStatus.FORBIDDEN);
+		}
 		additionalService.setName(data.getName());
+		AdditionalServiceLogger.log(Level.INFO, "Additional service '" + additionalService.getName() +  "' is successfully updated.");
 		return new ResponseEntity<>(service.save(additionalService), HttpStatus.OK);
 	}
 	
@@ -63,6 +78,7 @@ public class AdditionalServiceController {
 			return new ResponseEntity<>("Additional service not found.", HttpStatus.NOT_FOUND);
 		}
 		service.delete(additionalService);
+		AdditionalServiceLogger.log(Level.INFO, "Additional service '" + additionalService.getName() + "' is successfully deleted.");
 		return new ResponseEntity<>(additionalService, HttpStatus.OK);
 	}	
 }

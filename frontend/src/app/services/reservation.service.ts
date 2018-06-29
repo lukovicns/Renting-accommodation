@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Reservation } from '../models/Reservation';
+import { UserService } from './user.service';
 
 @Injectable()
 export class ReservationService {
@@ -8,13 +9,14 @@ export class ReservationService {
   private url: string = 'http://localhost:8081/api/reservations/'
   private headers = new HttpHeaders()
     .append('Content-Type', 'application/json')
-    .append('Authorization', 'Bearer ' + localStorage.getItem('token'))
+    .append('Authorization', 'Bearer ' + (localStorage.getItem('token')))
 
   private userReservations = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private userService: UserService) { }
   
   getReservations() {
+    console.log(localStorage.getItem('token'));
     return this.http.get<Reservation[]>(this.url);
   }
 

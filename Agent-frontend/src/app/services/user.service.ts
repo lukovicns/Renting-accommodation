@@ -9,7 +9,8 @@ export class UserService {
   private url: string = 'http://localhost:8081/api/agents/';
   private tokenUrl: string = 'http://localhost:8081/token/';
   private email: string;
-
+  private tokenExpiredMessage: string;
+  
   constructor(private http: HttpClient) { }
 
   loginUser(user) {
@@ -27,9 +28,8 @@ export class UserService {
               'country': user.country,
               'city': user.city,
               'email': user.email,
-//              'question': user.question,
-//              'answer': user.answer,
-//              'agent': user.agent,
+              'question': user.question,
+              'answer': user.answer,
               'businessId': user.businessId
             };
             console.log(user);
@@ -45,6 +45,30 @@ export class UserService {
       }
       return null;
   }
+  
+  getTokenExpirationDate(token: string): Date {
+      const decoded = decode(token);
+      if (decoded.exp === undefined) return null;
+      const date = new Date(0); 
+      date.setUTCSeconds(decoded.exp);
+      return date;
+    }
+
+    isTokenExpired(token?: string): boolean {
+      if(!token) token = localStorage.getItem('token');
+      if(!token) return true;
+      const date = this.getTokenExpirationDate(token);
+      if(date === undefined) return false;
+      return !(date.valueOf() > new Date().valueOf());
+    }
+
+    getTokenExpiredMessage() {
+      return this.tokenExpiredMessage;
+    }
+
+    setTokenExpiredMessage(message) {
+      this.tokenExpiredMessage = message;
+    }
 
   changePassword(passwords) {
     const token = localStorage.getItem('token');

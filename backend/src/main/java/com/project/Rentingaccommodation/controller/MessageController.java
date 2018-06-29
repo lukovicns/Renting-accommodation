@@ -3,6 +3,7 @@ package com.project.Rentingaccommodation.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.Rentingaccommodation.logger.MessageLogger;
 import com.project.Rentingaccommodation.model.Admin;
 import com.project.Rentingaccommodation.model.Agent;
 import com.project.Rentingaccommodation.model.Apartment;
@@ -172,6 +174,7 @@ public class MessageController {
 		String time = timeFormatter.format(new Date());
 		
 		Message userSentMessage = new Message(user, agent, apartment, date, time, data.getText(), MessageStatus.UNREAD, Direction.USER_TO_AGENT);
+		MessageLogger.log(Level.INFO, "User " + user.getEmail() + " has successfully sent a message to agent " + agent.getEmail() + " .");
 		return new ResponseEntity<>(service.save(userSentMessage), HttpStatus.OK);
 	}
 	
@@ -204,6 +207,7 @@ public class MessageController {
 		String time = timeFormatter.format(new Date());
 		
 		Message message = new Message(user, agent, apartment, date, time, data.getText(), MessageStatus.UNREAD, Direction.AGENT_TO_USER);
+		MessageLogger.log(Level.INFO, "Agent " + agent.getEmail() + " has successfully sent a message to user " + user.getEmail() + " .");
 		return new ResponseEntity<>(service.save(message), HttpStatus.OK);
 	}
 	
@@ -216,6 +220,7 @@ public class MessageController {
 				Message message = service.findOne(id);
 				Admin admin = adminService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
 				if (admin == null) {
+					MessageLogger.log(Level.WARNING, "User " + jwtUser.getEmail() + " tried to delete message #" + message.getId() + ", but he doesn't have permissions to do that.");
 					return new ResponseEntity<>("User with this token doesn't have admin permissions.", HttpStatus.NOT_FOUND);
 				}
 				if (message == null) {
@@ -224,9 +229,11 @@ public class MessageController {
 				service.delete(message);
 				return new ResponseEntity<>(message, HttpStatus.OK);
 			} else {
+				MessageLogger.log(Level.WARNING, "Given token is not valid. User doesn't exist.");
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
+			MessageLogger.log(Level.WARNING, "Exception occured while validating token.");
 			return new ResponseEntity<>("Token not provided.", HttpStatus.FORBIDDEN);
 		}
 	}
@@ -243,6 +250,7 @@ public class MessageController {
 		}
 		if (message.getDirection().equals(Direction.USER_TO_AGENT)) {
 			message.setStatus(MessageStatus.DELETED_FOR_USER);
+			MessageLogger.log(Level.INFO, "User " + user.getEmail() + " has successfully deleted sent message for himself.");
 			return new ResponseEntity<>(service.save(message), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -261,6 +269,7 @@ public class MessageController {
 		}
 		if (message.getDirection().equals(Direction.AGENT_TO_USER)) {
 			message.setStatus(MessageStatus.DELETED_FOR_USER);
+			MessageLogger.log(Level.INFO, "User " + user.getEmail() + " has successfully deleted received message for himself.");
 			return new ResponseEntity<>(service.save(message), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>("User not found.", HttpStatus.NOT_FOUND);
@@ -279,6 +288,7 @@ public class MessageController {
 		}
 		if (message.getDirection().equals(Direction.AGENT_TO_USER)) {
 			message.setStatus(MessageStatus.DELETED_FOR_AGENT);
+			MessageLogger.log(Level.INFO, "Agent " + agent.getEmail() + " has successfully deleted sent message for himself.");
 			return new ResponseEntity<>(service.save(message), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);
@@ -297,6 +307,7 @@ public class MessageController {
 		}
 		if (message.getDirection().equals(Direction.USER_TO_AGENT)) {
 			message.setStatus(MessageStatus.DELETED_FOR_AGENT);
+			MessageLogger.log(Level.INFO, "Agent " + agent.getEmail() + " has successfully deleted received message for himself.");
 			return new ResponseEntity<>(service.save(message), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>("Agent not found.", HttpStatus.NOT_FOUND);

@@ -9,7 +9,11 @@ import { User } from '../models/User';
 })
 export class AdminService {
 
+  private data = {};
   private url: string = 'http://localhost:8081/api/admins/';
+  private tokenUrl: string = 'http://localhost:8081/token/';
+  private email: string;
+  private tokenExpiredMessage: string;
 
   constructor(private http: HttpClient) { }
 
@@ -35,5 +39,63 @@ export class AdminService {
 
   deleteUser(userId) {
     return this.http.delete<User>(this.url + 'delete-user/' + userId);
+  }
+
+  getTokenExpirationDate(token: string): Date {
+    const decoded = decode(token);
+    if (decoded.exp === undefined) return null;
+    const date = new Date(0); 
+    date.setUTCSeconds(decoded.exp);
+    return date;
+  }
+
+  isTokenExpired(token?: string): boolean {
+    if(!token) token = localStorage.getItem('token');
+    if(!token) return true;
+    const date = this.getTokenExpirationDate(token);
+    if(date === undefined) return false;
+    return !(date.valueOf() > new Date().valueOf());
+  }
+
+  getTokenExpiredMessage() {
+    return this.tokenExpiredMessage;
+  }
+
+  setTokenExpiredMessage(message) {
+    this.tokenExpiredMessage = message;
+  }
+
+  changePassword(passwords) {
+    const token = localStorage.getItem('token');
+    this.data = {
+      'oldPassword': passwords.oldPassword,
+      'newPassword': passwords.newPassword,
+      'token': token
+    };
+    return this.http.post(this.url + 'change', this.data);
+  }
+
+  resetPassword(sqDTO) {
+    return this.http.post(this.url + 'reset', sqDTO);
+  }
+
+  getQuestion(email) {
+    return this.http.get(this.url + 'question/' + email);
+  }
+
+  setEmail(email) {
+    this.email = email;
+  }
+
+  getEmail() {
+    return this.email;
+  }
+
+  emailEntered() {
+    return this.email != null;
+  }
+
+  getAdminByEmail(email) {
+    return this.http.get(this.url + 'email/' + email);
   }
 }

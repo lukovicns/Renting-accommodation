@@ -12,11 +12,11 @@ insert into accommodation_type (accommodation_type_id, accommodation_type_name, 
 insert into accommodation_category (accommodation_category_id, accommodation_category_name, status) values (1, '1-5 stars', 'ACTIVE');
 insert into accommodation_category (accommodation_category_id, accommodation_category_name, status) values (2, 'Uncategorized', 'ACTIVE');
 
-insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id, status) values (1, 'Goran', 'Goranovic', 'passpass', 'g@g.com', 1, 'Narodnog fronta 1', '0640000000', 1, 'WAITING');
-insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id, status) values (2, 'Pera', 'Petrovic', 'passpass', 'p@p.com', 2, 'Novosadska 43', '0641111111', 2, 'WAITING');
-insert into agent (agent_id, name, surname, password, email, city_id, street, phone, bussiness_id, status) values (3, 'Stefan', 'Stefanovic', 'passpass', 's@s.com', 2, 'Kralja Petra 1', '0642222222', 3, 'WAITING');
+insert into agent (agent_id, name, surname, password, email, city_id, street, phone, question, answer, bussiness_id, status) values (1, 'Goran', 'Goranovic', 'passpass', 'g@g.com', 1, 'Narodnog fronta 1', '0640000000', 'What is up?', 'Nothing', 1, 'WAITING');
+insert into agent (agent_id, name, surname, password, email, city_id, street, phone, question, answer, bussiness_id, status) values (2, 'Pera', 'Petrovic', 'passpass', 'p@p.com', 2, 'Novosadska 43', '0641111111', 'How are you?', 'I am fine', 2, 'WAITING');
+insert into agent (agent_id, name, surname, password, email, city_id, street, phone, question, answer, bussiness_id, status) values (3, 'Stefan', 'Stefanovic', 'passpass', 's@s.com', 2, 'Kralja Petra 1', '0642222222', 'How old are you?', '23 years old', 3, 'WAITING');
 
-insert into administrator(admin_id, name, surname, password, email) values (1, 'Admin', 'Admin', 'passpass', 'a@a.com');
+insert into administrator(admin_id, name, surname, password, email, question, answer, status) values (1, 'Admin', 'Admin', 'Passpass123', 'a@a.com', 'How are you?', 'Fine', 'ACTIVATED');
 
 insert into user (user_id, name, surname, password, email, city_id, street, phone, question, answer, status) values (1, 'Test', 'Test', 'passpass', 'test@test.com', 1, 'Test', 'Test', 'Test', 'Test', 'ACTIVATED');
 
@@ -28,8 +28,8 @@ insert into bed_type (bed_type_id, bed_type_name) values (1, 'King size bed');
 insert into bed_type (bed_type_id, bed_type_name) values (2, 'Small bed');
 
 insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (1, 'Room 1', 1, 'Room 1 description', 1, 80, 4, 4);
-insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (2, 'Room 2', 1, 'Room 2 description', 1, 80, 4, 4);
-insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (3, 'Room 3', 1, 'Room 3 description', 2, 50, 2, 2);
+insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (2, 'Room 2', 1, 'Room 2 description', 2, 80, 4, 4);
+insert into apartment (apartment_id, name, bed_type_id, description, accommodation_id, size, number_of_guests, number_of_rooms) values (3, 'Room 3', 1, 'Room 3 description', 3, 50, 2, 2);
 
 insert into additional_service(additional_service_id, additional_service_name) values (1, 'Parking');
 insert into additional_service(additional_service_id, additional_service_name) values (2, 'Wifi');

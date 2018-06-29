@@ -1,9 +1,9 @@
+/* #logout-nav-link {
+  margin-left: 10px;
+  border-left: 1px solid #4e5863;
+  padding-left: 15px;
+} */
+
 #logout {
   cursor: pointer;
-}
-
-#user-nav-link {
-  margin-right: 10px;
-  border-right: 1px solid #4e5863;
-  padding-right: 15px;
 }

@@ -15,6 +15,7 @@ export class RecoveryQuestionComponent implements OnInit {
   data = {};
   question;
   errorMessage: String;
+  userBlocked: boolean;
 
   constructor(
     private userService: UserService,
@@ -43,17 +44,17 @@ export class RecoveryQuestionComponent implements OnInit {
     }
   }
 
-  userExists(email) {
-    this.userService.getUserByEmail(email)
-    .subscribe(res => {
-      console.log(res);
-      return true;
-    }, err => {
-      this.errorMessage = err['error'];
-      console.log(this.errorMessage);
-      return false;
-    });
-  }
+  // userExists(email) {
+  //   this.userService.getUserByEmail(email)
+  //   .subscribe(res => {
+  //     console.log(res);
+  //     return true;
+  //   }, err => {
+  //     this.errorMessage = err['error'];
+  //     console.log(this.errorMessage);
+  //     return false;
+  //   });
+  // }
 
   sendMail() {
     this.data = {
@@ -65,7 +66,13 @@ export class RecoveryQuestionComponent implements OnInit {
       this.router.navigate(['login']);
       this.userService.setEmail('');
     }, err => {
-      this.errorMessage = err['error'];
+      if (err['error'].status != null && err['error'].status === 'BLOCKED') {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      } else {
+        this.errorMessage = err['error'];
+      }
+      this.questionForm.reset();
     });
   }
 }

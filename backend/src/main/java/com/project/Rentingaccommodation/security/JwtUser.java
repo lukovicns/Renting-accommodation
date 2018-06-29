@@ -5,16 +5,18 @@ public class JwtUser {
 	private Long id;
     private String email;
     private String role;
+    private String status;
 	
     public JwtUser() {
     	
     }
     
-	public JwtUser(Long id, String email, String role) {
+	public JwtUser(Long id, String email, String role, String status) {
 		super();
 		this.id = id;
 		this.email = email;
 		this.role = role;
+		this.status = status;
 	}
 
 	public Long getId() {
@@ -39,5 +41,13 @@ public class JwtUser {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

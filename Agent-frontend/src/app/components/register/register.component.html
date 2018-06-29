@@ -6,7 +6,9 @@
     </ol>
   </nav>
   <div class="container">
-    
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
     <div class="card">
       <div class="card-header">
         <h1>Register here</h1>
@@ -61,8 +63,7 @@
 	              Invalid phone pattern.
 	          	</div>
 	        </div>
-	        
-	       <div class="form-group">
+	        <div class="form-group">
             <label for="country">Country</label>
             <select formControlName="country" required class="form-control" (change)="onCountryChange($event.target.value)">
 			    <option *ngFor="let c of countries" [value]="c.id">{{c.name}}</option>
@@ -102,9 +103,9 @@
 	            <div *ngIf="registerForm.controls['password1'].errors.required">
 	            Password is required.
 	          	</div>
-	          	<div *ngIf="registerForm.controls['password1'].errors.minlength">
-	            Password must be at least 8 characters long.
-	          	</div>
+              <div *ngIf="registerForm.controls['password1'].errors.pattern">
+              Invalid password pattern (one uppercase, one lowercase, one digit, min. length is 10).
+              </div>
 	        </div>
           <div class="form-group">
             <label for="password2">Repeat password</label>
@@ -114,28 +115,32 @@
 	            <div *ngIf="registerForm.controls['password2'].errors.required">
 	            Password is required.
 	          	</div>
-	          	<div *ngIf="registerForm.controls['password2'].errors.minlength">
-	            Password must be at least 8 characters long.
-	          	</div>
+              <div *ngIf="registerForm.controls['password2'].errors.pattern">
+              Invalid repeat password pattern (one uppercase, one lowercase, one digit, min. length is 10).
+              </div>
 	        </div>
-	        <div *ngIf="errorMessage" class="alert alert-danger">
-		      {{ errorMessage }}
-		    </div>
-           <div class="form-group">
+          <div class="form-group">
+            <label for="question">Security question</label>
+            <input formControlName="question" type="text" class="form-control" id="question" placeholder="Enter your security question">
+          </div>
+          <div *ngIf="registerForm.controls['question'].invalid && (registerForm.controls['question'].dirty || registerForm.controls['question'].touched)" class="alert alert-danger">
+            Security question is required.
+          </div>
+          <div class="form-group">
+            <label for="answer">Security answer</label>
+            <input formControlName="answer" type="text" class="form-control" id="answer" placeholder="Enter your answer">
+          </div>
+          <div *ngIf="registerForm.controls['answer'].invalid && (registerForm.controls['answer'].dirty || registerForm.controls['answer'].touched)" class="alert alert-danger">
+            Security answer is required.
+          </div>
+          <div class="form-group">
             <label for="businessId">Business ID</label>
             <input formControlName="businessId" type="text" class="form-control" id="businessId" placeholder="Enter your business ID here">
           </div>
           <div *ngIf="registerForm.controls['businessId'].invalid && (registerForm.controls['businessId'].dirty || registerForm.controls['businessId'].touched)" class="alert alert-danger">
             Business ID is required.
           </div>
-        <!--  <div class="form-group">
-            <label for="answer">Security answer</label>
-            <input formControlName="answer" type="text" class="form-control" id="answer" placeholder="Enter your answer">
-          </div>
-          <div *ngIf="registerForm.controls['answer'].invalid && (registerForm.controls['answer'].dirty || registerForm.controls['answer'].touched)" class="alert alert-danger">
-            Security answer is required.
-          </div>  -->
-          <button type="submit" class="btn btn-outline-info btn-block" [disabled]="!registerForm.valid">Register</button>
+          <button type="submit" class="btn btn-primary btn-block" [disabled]="!registerForm.valid">Register</button>
         </form>
       </div>
     </div>

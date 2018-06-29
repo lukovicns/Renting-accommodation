@@ -15,6 +15,8 @@ import swal from 'sweetalert2';
 })
 export class LoginComponent implements OnInit {
   cookieValue: string;
+  errorMessage: string;
+  tokenExpiredMessage: string;
 
   constructor(private cookieService: CookieService, private userService: UserService, private formBuilder: FormBuilder, private router: Router, @Inject(DOCUMENT) private document: any) { }
   
@@ -23,13 +25,19 @@ export class LoginComponent implements OnInit {
       Validators.required,
       Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
     ])],
-    password: ['', Validators.required]
+    password: ['', Validators.compose([
+      Validators.required,
+      Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$')
+      ])]
   });
 
   ngOnInit() {
     if (this.userService.getCurrentUser()) {
       this.router.navigate(['/']);
     }
+    if (this.userService.getTokenExpiredMessage() != null) {
+        this.tokenExpiredMessage = this.userService.getTokenExpiredMessage();
+      }
   }
 
   login() {
@@ -73,12 +81,16 @@ export class LoginComponent implements OnInit {
         });
 
     /*.subscribe(res => {
+=======
+    this.userService.loginUser(this.loginForm.value)
+    .subscribe(res => {
+>>>>>>> c434c8abd3691dd00f7c0468fc6778da6c401a6e
       console.log(res);
       if (!!res['token']) {
           
           localStorage.setItem( 'token', res['token'] );
-//          localStorage = localStorage.get('token');
           console.log(localStorage);
+<<<<<<< HEAD
           this.router.navigate(['/']);*/
         //sessionStorage.setItem('token', res['token']);
         //const token = storage.get('token');
@@ -90,5 +102,7 @@ export class LoginComponent implements OnInit {
         else if (user['role'] === 'USER') {
           this.router.navigate(['/']);
         }*/
-  }
+          this.router.navigate(['/']);
+      }
+  
 }

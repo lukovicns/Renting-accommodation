@@ -16,6 +16,9 @@ import { EditCategoryComponent } from './components/edit-category/edit-category.
 import { CommentListComponent } from './components/comment-list/comment-list.component';
 import { AdditionalServicesListComponent } from './components/additional-services-list/additional-services-list.component';
 import { EditAdditionalServiceComponent } from './components/edit-additional-service/edit-additional-service.component';
+import { RecoveryEmailComponent } from './components/recovery-email/recovery-email.component';
+import { RecoveryQuestionComponent } from './components/recovery-question/recovery-question.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 
 @NgModule({
@@ -31,7 +34,10 @@ import { EditAdditionalServiceComponent } from './components/edit-additional-ser
     EditCategoryComponent,
     CommentListComponent,
     AdditionalServicesListComponent,
-    EditAdditionalServiceComponent
+    EditAdditionalServiceComponent,
+    RecoveryEmailComponent,
+    RecoveryQuestionComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

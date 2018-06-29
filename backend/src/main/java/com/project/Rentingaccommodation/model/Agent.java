@@ -42,17 +42,30 @@ public class Agent {
 	@Column(name="phone", columnDefinition="VARCHAR(50)", nullable=false)
 	private String phone;
 
+	@Column(name="question", columnDefinition="VARCHAR(100)", nullable=false)
+	private String question;
+	
+	@Column(name="answer", columnDefinition="VARCHAR(100)", nullable=false)
+	private String answer;
+	
 	@Column(name="bussiness_id", unique=true, nullable=false)
 	private int businessId;
+	
+	@Column(name="block_time", columnDefinition="VARCHAR(50)", nullable=true)
+	private String block_time;
+	
+	@Column(name="max_tries", columnDefinition="INT(11) DEFAULT 0", nullable=false)
+	private int max_tries;
 
 	@Enumerated(EnumType.STRING)
 	private AgentStatus status;
-
-	public Agent() {
-	}
 	
-	public Agent(String name, String surname, String password, String email, City city, String street,
-			String phone, int businessId, AgentStatus status) {
+	public Agent() {
+		
+	}
+
+	public Agent(String name, String surname, String password, String email, City city,
+			String street, String phone, String question, String answer, AgentStatus status, int businessId) {
 		super();
 		this.name = name;
 		this.surname = surname;
@@ -62,6 +75,8 @@ public class Agent {
 		this.street = street;
 		this.phone = phone;
 		this.businessId = businessId;
+		this.question = question;
+		this.answer = answer;
 		this.status = status;
 	}
 
@@ -144,4 +159,38 @@ public class Agent {
 	public void setStatus(AgentStatus status) {
 		this.status = status;
 	}
+
+	public String getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+
+	public String getBlock_time() {
+		return block_time;
+	}
+
+	public void setBlock_time(String block_time) {
+		this.block_time = block_time;
+	}
+
+	public int getMax_tries() {
+		return max_tries;
+	}
+
+	public void setMax_tries(int max_tries) {
+		this.max_tries = max_tries;
+	}
+	
+	
 }

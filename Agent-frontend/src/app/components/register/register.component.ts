@@ -47,16 +47,15 @@ export class RegisterComponent implements OnInit {
     street: ['',  Validators.required,
     ],
     password1: ['', Validators.compose([
-      Validators.minLength(8),
-      Validators.required
-    ])],
-    password2: ['', Validators.compose([
-      Validators.minLength(8),
-      Validators.required
-    ])],
-//    question: ['', Validators.required],
-//    answer: ['', Validators.required],
-//    agent: [false],
+                                        Validators.required,
+                                        Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$')
+                                      ])],
+                                      password2: ['', Validators.compose([
+                                        Validators.required,
+                                        Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$')
+                                      ])],
+    question: ['', Validators.required],
+    answer: ['', Validators.required],
     businessId: ['', Validators.required]
   });
       

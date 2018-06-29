@@ -1,7 +1,15 @@
 package com.project;
 
 
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
+import java.util.List;
+
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.handler.Handler;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +26,7 @@ public class AgentModuleApplication {
 //	private static AccommodationWebService accWebService;
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, IOException, Exception {
 		SpringApplication.run(AgentModuleApplication.class, args);
 		
 		Endpoint.publish("http://localhost:9090/Agent-backend/AccommodationWebService",

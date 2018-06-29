@@ -1,9 +1,18 @@
 package com.project.web_service;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +32,12 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.jws.soap.SOAPBinding.Use;
+import javax.management.loading.PrivateClassLoader;
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
@@ -33,6 +48,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+import org.hibernate.loader.plan.exec.process.spi.ReturnReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
@@ -44,10 +60,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.w3._2000._09.xmldsig.SignatureType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.project.model.Direction;
 import com.mysql.jdbc.PreparedStatement;
+import com.project.model.User;
+import com.project.config.BlankingResolver;
+import com.project.config.X509KeySelector;
 import com.project.model.Accommodation;
 import com.project.model.AccommodationCategory;
 import com.project.model.AccommodationType;
@@ -108,17 +130,33 @@ import com.project.service.impl.JpaMessageService;
 import com.project.service.impl.JpaPricePlanService;
 import com.project.service.impl.JpaReservationService;
 
+import net.bytebuddy.asm.Advice.Return;
+
 @CrossOrigin(origins = "http://localhost:4200")
 @WebService(serviceName = "AccommodationWebService",
 			targetNamespace = "http://com.project/web_service/wrappers")
 @SOAPBinding(style = Style.DOCUMENT, use = Use.LITERAL, parameterStyle = ParameterStyle.WRAPPED)
 public class AccommodationWebService {
 	
+	public AccommodationWebService() throws Exception, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, IOException {
+		// TODO Auto-generated constructor stub
+		ks = KeyStore.getInstance("JKS", "SUN");
+		String location = System.getProperty("user.dir").replace("Agent-backend", "Certificate-Generator");
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(location + "\\KeyStore.jks"));
+		ks.load(in, "sale131195".toCharArray());
+		
+		dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+	}	
+	
 	private HashMap<String, SessionFactory> sessions = new HashMap<>();
 	
+	private KeyStore ks;
+	
+	private DocumentBuilderFactory dbf;
 //	instantiating repositories and services
 	@Autowired
-	private AccommodationRepository accRepository;
+ 	private AccommodationRepository accRepository;
 	
 	@Autowired
 	private AccommodationTypeRepository accTypeRepository;
@@ -189,7 +227,7 @@ public class AccommodationWebService {
 	public String addAccommodation(@WebParam(name = "name") String name, @WebParam(name = "type") String type,
 			@WebParam(name = "city") String city, @WebParam(name = "street") String street, @WebParam(name = "description") String description,
 			@WebParam(name = "category") String category, @WebParam(name = "image") String image,
-			@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws IOException, XPathExpressionException, ParserConfigurationException, SAXException
+			@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception
 	{
 		
 		AccommodationType accType = accTypeService.findOne(Long.valueOf(type));
@@ -198,6 +236,13 @@ public class AccommodationWebService {
 		
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
@@ -578,7 +623,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetCitiesRequest")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetCitiesResponse")
-	public List<City> getCities(){
+	public List<City> getCities() throws Exception{
 		
 		List<City> cities = cityService.findAll();
 		List<City> retVal = new ArrayList<>();
@@ -1294,6 +1339,56 @@ public class AccommodationWebService {
 		
 		sessions.put(email, sessionFactory);
 		return sessionFactory.openSession();
+	}
+	
+	@WebMethod(exclude = true)
+	public boolean isCertificateValid(String email, String certificate) throws Exception {
+
+		X509Certificate cert = (X509Certificate)ks.getCertificate(email);
+		System.out.println("null "+cert);
+		if (cert == null) {
+			return false;
+		}
+		String encodedString = Base64.getEncoder().encodeToString(cert.getEncoded());
+		if (encodedString.equals(certificate.replace("\n", "").replace("\r", ""))) {
+			return true;
+		}
+		return false;
+	}
+	
+	@WebMethod(exclude = true)
+	public boolean isSignatureValid(String xml, String value) throws Exception {
+
+		DocumentBuilder builder = dbf.newDocumentBuilder();
+		builder.setEntityResolver( new BlankingResolver() );
+		Document doc = builder.parse
+		    (new FileInputStream(xml));
+		
+		NodeList nl =
+			    doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
+		if (nl.getLength() == 0) {
+		    throw new Exception("Cannot find Signature element");
+		}
+		
+		System.out.println("xml "+doc.getElementsByTagName("SignatureValue").item(0).getTextContent());
+		System.out.println("soap "+value);
+		
+		if(!doc.getElementsByTagName("SignatureValue").item(0).getTextContent().replace("\n", "").replace("\r", "").equals(value))
+		{
+			return false;
+		}
+		// Create a DOMValidateContext and specify a KeySelector
+		// and document context.
+		DOMValidateContext valContext = new DOMValidateContext
+		    (new X509KeySelector(), nl.item(0));
+		// Unmarshal the XMLSignature.
+		XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+		XMLSignature signature = fac.unmarshalXMLSignature(valContext);
+
+		// Validate the XMLSignature.
+		boolean coreValidity = signature.validate(valContext);
+		
+		return coreValidity;
 	}
 	
 }
