@@ -46,8 +46,8 @@ export class LoginComponent implements OnInit {
     .subscribe(res => {
       if (!!res['token']) {
         localStorage.setItem('token', res['token']);
-        window.location.reload();
       }
+      this.router.navigate(['/']);
     }, err => {
       this.errorMessage = err['error'];
       this.loginForm.reset();

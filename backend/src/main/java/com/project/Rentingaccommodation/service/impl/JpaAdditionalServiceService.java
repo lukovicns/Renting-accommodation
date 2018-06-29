@@ -39,4 +39,14 @@ public class JpaAdditionalServiceService implements AdditionalServiceService {
 	public void delete(AdditionalService additionalService) {
 		repository.delete(additionalService);
 	}
+
+	@Override
+	public AdditionalService findByName(String name) {
+		for (AdditionalService additionalService : findAll()) {
+			if (additionalService.getName().toLowerCase().equals(name.toLowerCase())) {
+				return additionalService;
+			}
+		}
+		return null;
+	}
 }

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.Rentingaccommodation.logger.UserLogger;
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserRoles;
@@ -100,6 +102,7 @@ public class UserController {
 		}
 		
 		if (UserUtils.userExists(user.getEmail(), userService, adminService, agentService)) {
+			UserLogger.log(Level.WARNING, "Registration failed, because user with the given email address already exists.");
 			return new ResponseEntity<>("User with this email already exists.", HttpStatus.FORBIDDEN);
 		}
 		
@@ -107,6 +110,7 @@ public class UserController {
 		Matcher passwordMatcher = passwordPattern.matcher(user.getPassword());
 		
 		if (!passwordMatcher.find()) {
+			UserLogger.log(Level.WARNING, "Invalid regex pattern for password provided.");
 			return new ResponseEntity<>("Password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
@@ -124,7 +128,7 @@ public class UserController {
 		
 		User regUser = new User(name, surname, password, email, city, street, phone, question, answer, UserStatus.ACTIVATED);	
 		userService.save(regUser);
-		
+		UserLogger.log(Level.INFO, "User was successfully registered.");
 		return new ResponseEntity<>(regUser, HttpStatus.OK);
 	}
 	
@@ -144,6 +148,7 @@ public class UserController {
 		Matcher passwordMatcher = passwordPattern.matcher(user.getPassword());
 		
 		if (!passwordMatcher.find()) {
+			UserLogger.log(Level.WARNING, "Invalid regex pattern for password provided.");
 			return new ResponseEntity<>("Password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
@@ -160,7 +165,8 @@ public class UserController {
 				    u.setStatus(UserStatus.ACTIVATED);
 				    userService.save(u);
 				} else {
-					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
+					UserLogger.log(Level.WARNING, "Login failed because user is blocked for 10 minutes.");
+					return new ResponseEntity<>("User is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
 				}
 			} catch (java.text.ParseException e) {
 				e.printStackTrace();
@@ -168,7 +174,27 @@ public class UserController {
 		}
 		
 		if (u.getStatus().equals(UserStatus.BLOCKED)) {
-			return new ResponseEntity<>("This user is blocked.", HttpStatus.FORBIDDEN);
+			try {
+				if (u.getBlock_time() != null) {	
+					String dateTime = dateTimeFormatter.format(new Date());
+					Date currentDateTime = dateTimeFormatter.parse(dateTime);
+					Date userBlockDateTime = dateTimeFormatter.parse(u.getBlock_time());
+					if (currentDateTime.getTime() - userBlockDateTime.getTime() >= 1*60*1000) {
+						u.setBlock_time(null);
+					    u.setMax_tries(0);
+					    u.setStatus(UserStatus.ACTIVATED);
+					    userService.save(u);
+					} else {
+						UserLogger.log(Level.WARNING, "Login failed because user is blocked for 10 minutes.");
+						return new ResponseEntity<>("User is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
+					}
+				} else {
+					UserLogger.log(Level.WARNING, "Login failed because user is blocked.");
+					return new ResponseEntity<>("This user is blocked.", HttpStatus.FORBIDDEN);
+				}
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		String verifyHash = u.getPassword();
@@ -182,11 +208,13 @@ public class UserController {
 				u.setBlock_time(dateTimeFormatter.format(new Date()));
 			}
 			userService.save(u);
+			UserLogger.log(Level.WARNING, "Login failed because provided password is invalid.");
 			return new ResponseEntity<>("Password is invalid.", HttpStatus.UNAUTHORIZED);
 		}
 		
 		u.setMax_tries(0);
 		String token = generate(new JwtUser(u.getId(), u.getEmail(), UserRoles.USER.toString(), u.getStatus().toString()));
+		UserLogger.log(Level.INFO, "User authentication is successful.");
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -206,29 +234,41 @@ public class UserController {
 		Matcher newPasswordMatcher = passwordPattern.matcher(passDTO.getNewPassword());
 		
 		if (!oldPasswordMatcher.find()) {
+			UserLogger.log(Level.WARNING, "Invalid regex pattern for old password provided.");
 			return new ResponseEntity<>("Old password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
 		if (!newPasswordMatcher.find()) {
+			UserLogger.log(Level.WARNING, "Invalid regex pattern for new password provided.");
 			return new ResponseEntity<>("New password must be one uppercase, one lowercase, one number and at least 10 characters long.", HttpStatus.NOT_ACCEPTABLE);
 		}
 		
 		String oldPassword = passDTO.getOldPassword();
 		String newPassword = passDTO.getNewPassword();
 		
-		if (oldPassword.equals(newPassword)) {
-			return new ResponseEntity<>("Old password and new password must be different.", HttpStatus.NOT_ACCEPTABLE);
-		}
-		
+		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		JwtUser jwtUser = jwtValidator.validate(passDTO.getToken());
 		
 		if (jwtUser == null) {
 			return new ResponseEntity<>("User with the given token doesn't exist.", HttpStatus.NOT_FOUND);
 		}
-		
-		SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		
+
 		User loggedInUser =  userService.findByIdAndEmail(jwtUser.getId(), jwtUser.getEmail());
+		
+		if (oldPassword.equals(newPassword)) {
+			loggedInUser.setMax_tries(loggedInUser.getMax_tries() + 1);
+			if (loggedInUser.getMax_tries() == 3) {
+				loggedInUser.setStatus(UserStatus.BLOCKED);
+				loggedInUser.setBlock_time(dateTimeFormatter.format(new Date()));
+				loggedInUser.setMax_tries(3);
+				userService.save(loggedInUser);
+				return new ResponseEntity<>(loggedInUser, HttpStatus.FORBIDDEN);
+			}
+			userService.save(loggedInUser);
+			UserLogger.log(Level.WARNING, "Provided passwords must be different for successful password change.");
+			return new ResponseEntity<>("Old password and new password must be different.", HttpStatus.NOT_ACCEPTABLE);
+		}
+		
 		
 		if (loggedInUser.getMax_tries() == 3) {
 			try {
@@ -240,6 +280,7 @@ public class UserController {
 					loggedInUser.setStatus(UserStatus.ACTIVATED);
 					loggedInUser.setMax_tries(0);
 				} else {
+					UserLogger.log(Level.WARNING, "User doesn't have permissions, because he is blocked for 10 minutes.");
 					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
 				}
 			} catch (java.text.ParseException e) {
@@ -259,6 +300,7 @@ public class UserController {
 				return new ResponseEntity<>(loggedInUser, HttpStatus.FORBIDDEN);
 			}
 			userService.save(loggedInUser);
+			UserLogger.log(Level.WARNING, "Unsuccessful password change, because old password is invalid.");
 			return new ResponseEntity<>("Old password is incorrect.", HttpStatus.FORBIDDEN);
 		}
 		String password = PasswordUtil.hash(newPassword.toCharArray(), charset);
@@ -266,6 +308,7 @@ public class UserController {
 		loggedInUser.setStatus(UserStatus.ACTIVATED);
 		loggedInUser.setPassword(password);
 		userService.save(loggedInUser);
+		UserLogger.log(Level.INFO, "User changed password successfully.");
 		return new ResponseEntity<>(jwtUser, HttpStatus.OK);
 	}
 
@@ -309,6 +352,7 @@ public class UserController {
 					user.setStatus(UserStatus.ACTIVATED);
 					user.setMax_tries(0);
 				} else {
+					UserLogger.log(Level.WARNING, "Reset password failed because user is blocked for 10 minutes.");
 					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
 				}
 			} catch (java.text.ParseException e) {
