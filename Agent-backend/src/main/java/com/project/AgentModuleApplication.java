@@ -41,16 +41,23 @@ public class AgentModuleApplication {
 	public static void main(String[] args) throws KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, IOException, Exception {
 		SpringApplication.run(AgentModuleApplication.class, args);
 		
+		//System.setProperty("javax.net.ssl.trustStore", "C:\\Program Files\\Java\\jdk1.8.0_172\\jre\\lib\\security\\jssecacerts");
+		//System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+		
+		System.setProperty("javax.net.ssl.trustStore", "Agent-backend.p12");
+		System.setProperty("javax.net.ssl.trustStorePassword", "password");
+		//java.lang.System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
+		
 		Endpoint endpoint = Endpoint.create(new AccommodationWebService());
         SSLContext ssl =  SSLContext.getInstance("TLSv1.2");
          
          
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()); 
-        KeyStore store = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore store = KeyStore.getInstance("PKCS12");
  
  
         //Load the JKS file (located, in this case, at D:\keystore.jks, with password 'test'
-        store.load(new FileInputStream(System.getProperty("user.dir").toString().replace("Agent-backend", "backend")+"\\keystore.p12"), "password".toCharArray()); 
+        store.load(new FileInputStream(System.getProperty("user.dir")+"\\WS.p12"), "password".toCharArray()); 
  
         //init the key store, along with the password 'test'
         kmf.init(store, "password".toCharArray());
@@ -66,7 +73,6 @@ public class AgentModuleApplication {
         tmf.init(store);
          
         TrustManager[] trustManagers = tmf.getTrustManagers();
-         
          
         ssl.init(keyManagers, trustManagers, new SecureRandom());
  

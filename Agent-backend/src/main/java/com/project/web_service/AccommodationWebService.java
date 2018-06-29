@@ -333,7 +333,7 @@ public class AccommodationWebService {
 			@WebParam(name = "description") String description,
 			@WebParam(name = "image") String image, @WebParam(name = "additionalService") String additionalJSON,
 			@WebParam(name = "pricePlans") String pricePlansJSON,
-			@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws IOException, ParseException, XPathExpressionException, ParserConfigurationException, SAXException
+			@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception
 	{
 		BedType bt = bedTypeService.findOne(Long.valueOf(bedType));
 		Optional<Accommodation> accDb= accService.findOne(Long.valueOf(accommodationId));
@@ -345,6 +345,13 @@ public class AccommodationWebService {
 		
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
@@ -468,12 +475,19 @@ public class AccommodationWebService {
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.AddPricePlan")
 	@ResponseWrapper(className="com.project.web_service.wrappers.responses.AddPricePlanResponse")
 	public String addPricePlan(@WebParam(name="apartmentId") String apartmentId, @WebParam(name = "startDate") String startDate, 
-			@WebParam(name = "endDate") String endDate, @WebParam(name = "price") String price, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+			@WebParam(name = "endDate") String endDate, @WebParam(name = "price") String price, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception
 	{
 		System.out.println("tuu sm");
 		Optional<Apartment> optional = apartmentService.findOne(Long.valueOf(apartmentId));
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
@@ -591,10 +605,17 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.GetReservations")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetReservationsResponse")
-	public List<ReservationDTO> getReservations(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+	public List<ReservationDTO> getReservations(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception
 	{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return null;
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return null;
+		}
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 //		List<Reservation> allReservations = reservationService.findAll();
@@ -619,10 +640,17 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.ConfirmReservation")
 	@ResponseWrapper(className="com.project.web_service.wrappers.ConfirmReservationResponse")
-	public String confirmReservation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+	public String confirmReservation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception
 	{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
@@ -843,12 +871,19 @@ public class AccommodationWebService {
 	@SuppressWarnings("unchecked")
 	@RequestWrapper(className="com.project.web_service.wrappers.DeleteAccommodation")
 	@ResponseWrapper(className="com.project.web_service.wrappers.DeleteAccommodationResponse")
-	public String deleteAccommodation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public String deleteAccommodation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception{
 		
 		List<PricePlan> pricePlans = new ArrayList<>();
 		
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
@@ -923,11 +958,18 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.DeleteApartment")
 	@ResponseWrapper(className="com.project.web_service.wrappers.DeleteApartmentResponse")
-	public String deleteApartment(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public String deleteApartment(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception{
 		
 		List<PricePlan> pricePlans = new ArrayList<>();
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
@@ -956,9 +998,16 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentSentMessages")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentSentMessagesResponse")
-	public List<MessageDTO> getAgentSentMessages(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public List<MessageDTO> getAgentSentMessages(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return null;
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return null;
+		}
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
 		List<Message> messages = s.createNativeQuery("select * from  message where direction = 'AGENT_TO_USER' and status != 'DELETED_FOR_AGENT'", Message.class).getResultList();
@@ -977,9 +1026,16 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentSentMessage")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentSentMessageResponse")
-	public MessageDTO getAgentSentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public MessageDTO getAgentSentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return null;
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return null;
+		}
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
 		Message message = s.get(Message.class, Long.valueOf(id));
@@ -992,9 +1048,16 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessage")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessageResponse")
-	public MessageDTO getAgentReceivedMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public MessageDTO getAgentReceivedMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return null;
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return null;
+		}
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
 		Message message = s.get(Message.class, Long.valueOf(id));
@@ -1007,9 +1070,16 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessages")
 	@ResponseWrapper(className="com.project.web_service.wrappers.GetAgentReceivedMessagesResponse")
-	public List<MessageDTO> getAgentReceivedMessages(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public List<MessageDTO> getAgentReceivedMessages(@WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return null;
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return null;
+		}
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
 		List<Message> messages = s.createNativeQuery("select * from  message where direction = 'USER_TO_AGENT' and status!='DELETED_FOR_AGENT'", Message.class).getResultList();
@@ -1046,9 +1116,16 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.DeleteAgentSentMessage")
 	@ResponseWrapper(className="com.project.web_service.wrappers.DeleteAgentSentMessageResponse")
-	public String deleteAgentSentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public String deleteAgentSentMessage(@WebParam (name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
 		
@@ -1065,10 +1142,17 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.AddReservationRequest")
 	@ResponseWrapper(className="com.project.web_service.wrappers.responses.AddReservationResponse")
-	public String addReservation(@WebParam(name="apartmentId") String apartmentId, @WebParam(name = "startDate") String startDate, @WebParam(name = "endDate") String endDate, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws SQLException, XPathExpressionException, ParserConfigurationException, SAXException, IOException, java.text.ParseException
+	public String addReservation(@WebParam(name="apartmentId") String apartmentId, @WebParam(name = "startDate") String startDate, @WebParam(name = "endDate") String endDate, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception
 	{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
 		
@@ -1117,9 +1201,16 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.SendMessageToUser")
 	@ResponseWrapper(className="com.project.web_service.wrappers.SendMessageToUserResponse")
-	public String sendMessageToUser(@WebParam (name = "messageId") String messageId, @WebParam (name = "messageText") String messageText, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException{
+	public String sendMessageToUser(@WebParam (name = "messageId") String messageId, @WebParam (name = "messageText") String messageText, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws Exception{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
+		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			return "Invalid certificate.";
+		}
+		
+		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			return "Invalid signature.";
+		}
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
 		

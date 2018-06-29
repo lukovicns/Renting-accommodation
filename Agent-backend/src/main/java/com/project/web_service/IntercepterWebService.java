@@ -25,7 +25,9 @@ import java.util.Collections;
  import java.util.Date;
  import java.util.List;
 
- import javax.xml.bind.DatatypeConverter;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+import javax.xml.bind.DatatypeConverter;
  import javax.xml.bind.JAXBException;
  import javax.xml.crypto.MarshalException;
  import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -57,9 +59,11 @@ import java.util.Collections;
  import org.apache.http.client.ClientProtocolException;
  import org.apache.http.client.HttpClient;
  import org.apache.http.client.methods.HttpPost;
- import org.apache.http.entity.StringEntity;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.entity.StringEntity;
  import org.apache.http.impl.client.HttpClientBuilder;
- import org.json.JSONException;
+import org.apache.tomcat.jni.SSLContext;
+import org.json.JSONException;
  import org.json.JSONObject;
  import org.json.XML;
  import org.json.simple.parser.ParseException;
@@ -417,6 +421,7 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getCities", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getCities(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		System.out.println("token "+token);
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -998,7 +1003,7 @@ public class IntercepterWebService {
 	
 	public static JSONObject httpClientExecute(String soap) throws UnsupportedOperationException, IOException
 	{
-		HttpClient client = HttpClientBuilder.create().build();
+		HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
 		
 		HttpPost post = new HttpPost(url);
 		
@@ -1006,7 +1011,7 @@ public class IntercepterWebService {
 		post.setHeader("Content-Type", CONTENT_TYPE);
 
 		post.setEntity(new StringEntity(soap, URL_ENCODING));
-
+		
 		HttpResponse response = client.execute(post);
 		
 		System.out.println("Response Code : " 
@@ -1038,7 +1043,7 @@ public class IntercepterWebService {
 	
 	public String getEmailFromToken(String token) {
 		Claims claims = Jwts.parser()         
-			       .setSigningKey(DatatypeConverter.parseBase64Binary("secretKey"))
+			       .setSigningKey(DatatypeConverter.parseBase64Binary("SECRETKEY"))
 			       .parseClaimsJws(token.split(" ")[1]).getBody();
 		return (String) claims.get("email");
 	}
@@ -1096,6 +1101,45 @@ public class IntercepterWebService {
 		bin1.close();		
 		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		String FEATURE = null;
+	     try {
+	       // This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all XML entity attacks are prevented
+	       // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
+	       FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+	       dbf.setFeature(FEATURE, true);
+	 
+	       // If you can't completely disable DTDs, then at least do the following:
+	       // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
+	       // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
+	       // JDK7+ - http://xml.org/sax/features/external-general-entities    
+	       FEATURE = "http://xml.org/sax/features/external-general-entities";
+	       dbf.setFeature(FEATURE, false);
+	 
+	       // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-parameter-entities
+	       // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-parameter-entities
+	       // JDK7+ - http://xml.org/sax/features/external-parameter-entities    
+	       FEATURE = "http://xml.org/sax/features/external-parameter-entities";
+	       dbf.setFeature(FEATURE, false);
+	 
+	       // Disable external DTDs as well
+	       FEATURE = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+	       dbf.setFeature(FEATURE, false);
+	 
+	       // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+	       dbf.setXIncludeAware(false);
+	       dbf.setExpandEntityReferences(false);
+	  
+	       // And, per Timothy Morgan: "If for some reason support for inline DOCTYPEs are a requirement, then 
+	       // ensure the entity settings are disabled (as shown above) and beware that SSRF attacks
+	       // (http://cwe.mitre.org/data/definitions/918.html) and denial 
+	       // of service attacks (such as billion laughs or decompression bombs via "jar:") are a risk."
+	 
+	       // remaining parser logic
+	       } catch (ParserConfigurationException e) {
+	             // This should catch a failed setFeature feature
+	             System.out.println("ParserConfigurationException was thrown. The feature '" +
+	                 FEATURE + "' is probably not supported by your XML processor.");
+	       }
 		dbf.setNamespaceAware(true);
 		DocumentBuilder builder = dbf.newDocumentBuilder();
 		builder.setEntityResolver( new BlankingResolver() );
@@ -1116,6 +1160,7 @@ public class IntercepterWebService {
 		signature.sign(dsc);
 		
 		OutputStream os = new FileOutputStream(outPath);
+		System.out.println("path out "+outPath);
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer trans = tf.newTransformer();
 		trans.transform(new DOMSource(doc), new StreamResult(os));
