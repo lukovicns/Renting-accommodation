@@ -94,7 +94,6 @@ public class ApartmentController {
 			return new ResponseEntity<>("All query parameters are required (city, startDate, endDate, persons).", HttpStatus.FORBIDDEN);
 		} else {
 			City city = cityService.findOne(cityId);
-			
 			if (city == null) {
 				return new ResponseEntity<>("City not found.", HttpStatus.NOT_FOUND);
 			}
@@ -102,7 +101,7 @@ public class ApartmentController {
 			if (!reservationService.checkDates(startDate, endDate)) {
 				return new ResponseEntity<>("Start date must be lower than end date.", HttpStatus.FORBIDDEN);
 			}
-
+			
 			List<Apartment> queryApartments = service.findByBasicQueryParams(city, persons, startDate, endDate);
 			return new ResponseEntity<>(queryApartments, HttpStatus.OK);
 		}

@@ -24,7 +24,6 @@ export class SearchApartmentsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.route.snapshot.queryParamMap);
     const city = this.route.snapshot.queryParams['city'];
     const persons = this.route.snapshot.queryParams['persons'];
     const startDate = this.route.snapshot.queryParams['startDate'];

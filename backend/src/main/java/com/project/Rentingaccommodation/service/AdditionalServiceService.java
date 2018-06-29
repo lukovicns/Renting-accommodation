@@ -9,4 +9,5 @@ public interface AdditionalServiceService {
 	AdditionalService findOne(Long id);
 	AdditionalService save(AdditionalService additionalService);
 	void delete(AdditionalService additionalService);
+	AdditionalService findByName(String name);
 }

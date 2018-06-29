@@ -24,14 +24,15 @@ export class AccommodationListComponent implements OnInit {
   private additionalServices = [];
   private advancedOptions: boolean;
   private images = {};
+  private cities: any = [];
   private apartmentImages = [];
+  private errorMessage: string;
 
   constructor(
     private additionalServiceService: AdditionalServiceService,
     private categoryService: AccommodationCategoryService,
     private accommodationService: AccommodationService,
     private typeService: AccommodationTypeService,
-    private imageService: ImageService,
     private cityService: CityService,
     private formBuilder: FormBuilder,
     private router: Router
@@ -40,6 +41,8 @@ export class AccommodationListComponent implements OnInit {
   ngOnInit() {
     datepicker();
     this.advancedOptions = false;
+    this.cityService.getCities()
+    .subscribe(res => this.cities = res);
     this.additionalServiceService.getAdditionalServices()
     .subscribe(res => this.additionalServices = res);
     this.categoryService.getCategories()
@@ -55,7 +58,6 @@ export class AccommodationListComponent implements OnInit {
   }
 
   searchForm = this.formBuilder.group({
-    city: ['', Validators.required],
     persons: [0, Validators.compose([
       Validators.required,
       Validators.min(1)
@@ -63,7 +65,7 @@ export class AccommodationListComponent implements OnInit {
   });
 
   searchApartments() {
-    this.cityService.getCityByName(this.searchForm.value['city'])
+    this.cityService.getCity(document.querySelector('#city')['value'])
     .subscribe(res => {
       const queryParams = {
         'city': res['id'],
@@ -82,7 +84,7 @@ export class AccommodationListComponent implements OnInit {
       }
       this.router.navigate(['/accommodations/search'], { queryParams: queryParams });
     }, err => {
-      console.log(err);
+      this.errorMessage = err['error'];
     });
   }
 

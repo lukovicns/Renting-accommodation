@@ -39,6 +39,10 @@ public class AdditionalServiceController {
 		if (data.getName() == null || data.getName() == "") {
 			return new ResponseEntity<>("Name field is required.", HttpStatus.FORBIDDEN);
 		}
+		AdditionalService foundAdditionalService = service.findByName(data.getName());
+		if (foundAdditionalService != null) {
+			return new ResponseEntity<>("Additional service with this name already exists.", HttpStatus.FORBIDDEN);
+		}
 		AdditionalService additionalService = new AdditionalService(data.getName());
 		return new ResponseEntity<>(service.save(additionalService), HttpStatus.OK);
 	}
