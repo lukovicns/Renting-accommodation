@@ -30,8 +30,7 @@ public class Image {
 	private Apartment apartment;
 	
 	public Image() {
-		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Image(String url, Accommodation accommodation, Apartment apartment) {

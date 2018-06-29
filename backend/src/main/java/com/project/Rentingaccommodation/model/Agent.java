@@ -59,6 +59,10 @@ public class Agent {
 
 	@Enumerated(EnumType.STRING)
 	private AgentStatus status;
+	
+	public Agent() {
+		
+	}
 
 	public Agent(String name, String surname, String password, String email, City city,
 			String street, String phone, String question, String answer, AgentStatus status, int businessId) {

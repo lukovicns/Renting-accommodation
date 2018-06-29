@@ -40,7 +40,10 @@ export class UserService {
 
   isTokenExpired(token?: string): boolean {
     if(!token) token = localStorage.getItem('token');
-    if(!token) return true;
+    if (token == null) {
+      return false;
+    }
+    // if(!token) return true;
     const date = this.getTokenExpirationDate(token);
     if(date === undefined) return false;
     return !(date.valueOf() > new Date().valueOf());

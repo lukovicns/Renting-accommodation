@@ -36,9 +36,7 @@ export class LoginComponent implements OnInit {
     if (this.userService.getCurrentUser()) {
       this.router.navigate(['/']);
     }
-    if (this.userService.getTokenExpiredMessage() != null) {
-      this.tokenExpiredMessage = this.userService.getTokenExpiredMessage();
-    }
+    this.tokenExpiredMessage = this.userService.getTokenExpiredMessage();
   }
 
   login() {

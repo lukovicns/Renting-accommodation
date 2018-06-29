@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.model.User;
 import com.project.Rentingaccommodation.model.UserRoles;
@@ -173,7 +174,6 @@ public class UserController {
 		String verifyHash = u.getPassword();
 		String verifyPass = user.getPassword();
 		
-		// Omoguceno logovanje test korisnika iz baze.
 		if(!PasswordUtil.verify(verifyHash, verifyPass.toCharArray(), charset) && !u.getEmail().equals("test@test.com")) {
 			u.setMax_tries(u.getMax_tries() + 1);
 			if (u.getMax_tries() == 2) {

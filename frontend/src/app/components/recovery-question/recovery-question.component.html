@@ -20,7 +20,7 @@
             <label for="question">{{question}}</label>
             <input formControlName="answer" type="text" class="form-control" id="answer" placeholder="Enter your answer here">
           </div>
-          <button type="submit" class="btn btn-info btn-block">Send mail</button>
+          <button type="submit" class="btn btn-info btn-block" [disabled]="!questionForm.valid">Send mail</button>
         </form>
       </div>
     </div>

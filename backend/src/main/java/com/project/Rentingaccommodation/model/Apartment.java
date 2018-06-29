@@ -47,7 +47,6 @@ public class Apartment {
 	private DeleteStatus status;
 	
 	
-	
 	public DeleteStatus getStatus() {
 		return status;
 	}
