@@ -87,6 +87,8 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.project.config.BlankingResolver;
+import com.project.model.UserPrivileges;
+import com.project.model.UserRoles;
 import com.project.model.DTO.AccommodationDTO;
  import com.project.model.DTO.ApartmentDTO;
 import com.project.model.DTO.MakeReservationDTO;
@@ -108,9 +110,38 @@ public class IntercepterWebService {
 	
 	public static int PRETTY_PRINT_INDENT_FACTOR = 4;
 	
+	public boolean hasRoleAndPrivilege(String token, UserRoles checkRole, UserPrivileges checkPrivilege) 
+	{
+		String role = getRoleFromToken(token);
+		String privilege = getPrivilegeFromToken(token);
+		
+		if(!role.equals(checkRole.toString()))
+			return false;
+		if(privilege.equals(checkPrivilege.toString()) || privilege.equals(UserPrivileges.READ_WRITE_PRIVILEGE.toString()))
+			return true;
+		return false;
+	}
+	
+	public String getRoleFromToken(String token) {
+		Claims claims = Jwts.parser()         
+			       .setSigningKey(DatatypeConverter.parseBase64Binary("SECRETKEY"))
+			       .parseClaimsJws(token.split(" ")[1]).getBody();
+		return (String) claims.get("role");
+	}
+	
+	public String getPrivilegeFromToken(String token) {
+		Claims claims = Jwts.parser()         
+			       .setSigningKey(DatatypeConverter.parseBase64Binary("SECRETKEY"))
+			       .parseClaimsJws(token.split(" ")[1]).getBody();
+		return (String) claims.get("privilege");
+	}
+	
 	@RequestMapping(value="/addAccommodation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addAccommodation(@Valid @RequestBody AccommodationDTO accommodation, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		if (bindingResult.hasErrors()) {
             return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
         }
@@ -160,9 +191,12 @@ public class IntercepterWebService {
         return new ResponseEntity<String>(retVal.toString(), HttpStatus.OK);
 	}
     
-	@RequestMapping(value="/addApartment/{accommodationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addApartment(@PathVariable String accommodationId, @Valid @RequestBody ApartmentDTO apartment, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		if (bindingResult.hasErrors()) {
 			System.out.println("add apartment " + bindingResult);
             return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
@@ -212,6 +246,9 @@ public class IntercepterWebService {
 	@RequestMapping(value="/addReservation/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addReservation(@PathVariable String id, @Valid @RequestBody MakeReservationDTO reservation, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException, java.text.ParseException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		System.out.println(reservation.getStartDate() + " aa " + reservation.getEndDate());
 		System.out.println("bb " + bindingResult);
 		if (bindingResult.hasErrors()) {
@@ -271,6 +308,10 @@ public class IntercepterWebService {
 	@RequestMapping(value="/addPricePlan/{apartmentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> addPricePlan(@PathVariable String apartmentId, @Valid @RequestBody PricePlanDTO pricePlan, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		System.out.println("add price plan " + pricePlan.getEndDate() + pricePlan.getStartDate() + pricePlan.getPrice());
 		
 		if (bindingResult.hasErrors()) {
@@ -315,6 +356,10 @@ public class IntercepterWebService {
 	public ResponseEntity<String> confirmReservation(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
+		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -345,6 +390,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getAccommodationTypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAccommodationTypes(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -387,6 +435,10 @@ public class IntercepterWebService {
 	public ResponseEntity<String> getReservations(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
+		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -421,6 +473,10 @@ public class IntercepterWebService {
 	public ResponseEntity<String> getAccommodationCategories(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
+		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -454,6 +510,10 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getCities", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getCities(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		System.out.println("token "+token);
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
@@ -490,6 +550,10 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getAllAccommodations", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAllAccommodations(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -521,6 +585,10 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getBedTypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getBedTypes(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -554,6 +622,10 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getApartments/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getApartments(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws KeyStoreException, ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		System.out.println("id " + id);
@@ -594,6 +666,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getApartment/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getApartment(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws KeyStoreException, ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -633,6 +708,10 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/deleteAccommodation/{id}")
 	public ResponseEntity<String> deleteAccommodation(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws KeyStoreException, ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -663,6 +742,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getAccommodation/{id}")
 	public ResponseEntity<String> getAccommodation(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws KeyStoreException, ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -705,6 +787,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/deleteApartment/{id}")
 	public ResponseEntity<String> deleteApartment(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws KeyStoreException, ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -735,6 +820,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getPricePlans", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getPricePlans(@RequestHeader(value="Authorization") String token) throws KeyStoreException, ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -768,6 +856,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getAdditionalServices", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAdditionalServices(@RequestHeader(value="Authorization") String token) throws KeyStoreException, ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -802,6 +893,10 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getAgentSentMessages", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAgentSentMessages(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -836,6 +931,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getAgentReceivedMessages", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAgentReceivedMessages(@RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -869,6 +967,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getAgentSentMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAgentSentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -904,6 +1005,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/getAgentReceivedMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getAgentReceivedMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.READ_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -940,6 +1044,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/markAsReadAgentMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> markAsReadAgentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		
 		
 		String email = getEmailFromToken(token);
@@ -977,6 +1084,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/deleteAgentSentMessage/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> deleteAgentSentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -1012,6 +1122,9 @@ public class IntercepterWebService {
 	@RequestMapping(value = "/sendMessageToUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> sendMessageToUser(@PathVariable (name = "id") String id, @RequestBody String text, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
+			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
+		}
 		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
