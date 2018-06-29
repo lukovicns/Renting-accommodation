@@ -18,13 +18,12 @@ public class AccommodationDTO {
 	@NotNull
 	private String city;
 	
-	@NotNull
 	private String country;
 	
 	@NotNull
 	private String street;
 	
-	@NotNull @Size(max = 900)
+	@Size(max = 900)
 	private String description;
 	
 	@NotNull

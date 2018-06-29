@@ -191,13 +191,14 @@ export class ApartmentComponent implements OnInit {
       }else{
           this.apartmentService.addApartment(this.apartmentForm.value, JSON.stringify(this.checkedList), JSON.stringify(this.finalPricePlans), this.accommodationId, this.url)
           .subscribe(res => { 
+              this.router.navigate(['/accommodationDetail/'+ this.accommodationId]);
               swal({
                   text: res['return'],
                   confirmButtonText: 'Ok',
               });
-                 this.router.navigate(['/accommodationDetail/'+ this.accommodationId]);
-            }, err => { 
-                this.router.navigate(['/notFound'])
+                 
+            /*}, err => { 
+                this.router.navigate(['/notFound'])*/
             });
       }
    }

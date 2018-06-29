@@ -24,7 +24,7 @@ public class ApartmentDTO {
 	@NotNull @Pattern(regexp ="[0-9]+")
 	private String numOfGuests;
 	
-	@NotNull @Size(max = 900)
+	@Size(max = 900)
 	private String description;
 	
 	@NotNull

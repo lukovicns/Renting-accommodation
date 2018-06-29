@@ -357,7 +357,7 @@ public class AgentController {
 			session.close();
 			
 			String token = jwtGenerator.generateAgent(new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString(), UserPrivileges.READ_WRITE_PRIVILEGE.toString()));
-			System.out.println("jwt " + new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString(), UserPrivileges.READ_WRITE_PRIVILEGE.toString()));
+			System.out.println("jwt " + new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString(), UserPrivileges.WRITE_PRIVILEGE.toString()));
 			
 			System.out.println("toke " + token);
 			response = new HashMap<String, Object>();

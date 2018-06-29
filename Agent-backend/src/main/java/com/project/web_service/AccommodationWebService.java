@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,6 +71,7 @@ import com.mysql.jdbc.PreparedStatement;
 import com.project.model.User;
 import com.project.config.BlankingResolver;
 import com.project.config.X509KeySelector;
+import com.project.logger.AgentLogger;
 import com.project.model.Accommodation;
 import com.project.model.AccommodationCategory;
 import com.project.model.AccommodationType;
@@ -237,10 +239,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add accommodation but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add accommodation but xml signature is not valid.");
 			return "Invalid signature.";
 		}
 		Session session = getSession(email);
@@ -265,7 +269,10 @@ public class AccommodationWebService {
 		Accommodation saved = accService.save(newAccommodation);
 		
 		if(saved == null)
+		{
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add accommodation but database failed to save entity.");
 			return "error";
+		}
 		
 		Long id = null;
 		File outputfile = null;
@@ -341,7 +348,7 @@ public class AccommodationWebService {
 		saved.getCity().getId() + "," + saved.getType().getId() + ")").executeUpdate();*/
 		
 		retVal = "Accommodation successfully added";
-		
+		AgentLogger.log(Level.INFO, "Agent " + email + " added accommodation" + saved.getId());
 		tx.commit();
 		session.close();
 		
@@ -375,10 +382,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add apartment but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add apartment but xml signature is not valid.");
 			return "Invalid signature.";
 		}
 		Session session = getSession(email);
@@ -520,10 +529,13 @@ public class AccommodationWebService {
 			tx.commit();
 			session.close();
 			
+			AgentLogger.log(Level.INFO, "Agent " + email + " added apartment " + saved.getId());
+			
 			retVal = "Apartment successfully added";
-		}else
+		}else {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add apartment but database failed to saved entity.");
 			return "error";
-		
+		}
 		return retVal;
 		
 	}
@@ -538,18 +550,22 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add price plan but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add price plan but xml signature is not valid.");
 			return "Invalid signature.";
 		}
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
 		if(!optional.isPresent())
+		{
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add price plan but database failed to save entity.");
 			return "error";
-		
+		}
 		Apartment apartment = optional.get();
 		
 		PricePlan newPricePlan = new PricePlan(apartment, startDate, endDate, Integer.parseInt(price));
@@ -560,9 +576,11 @@ public class AccommodationWebService {
 		
 		// Check date formats.
 		if (!startDateMatcher.find()) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add price plan but start date format is invalid.");
 			return "Wrong format";
 		}
 		if (!endDateMatcher.find()) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add price plan but end date format is invalid.");
 			return "Wrong format";
 		}
 		
@@ -572,11 +590,13 @@ public class AccommodationWebService {
 		Date checkEndDate = dateFormatter.parse(endDate);
 		
 		if (checkStartDate.before(new Date()) || checkEndDate.before(new Date())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add price plan but entered past dates.");
 			return "You must enter future dates.";
 		}
 		
 		// Check if start date is before end date.
 		if (!checkStartDate.before(checkEndDate)) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add price plan but end date is before start date.");
 			return "Start date must be before end date.";
 		}
 		
@@ -587,8 +607,10 @@ public class AccommodationWebService {
 		
 		PricePlan saved = pricePlanService.save(newPricePlan);
 		if(saved == null)
+		{
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add price plan but database failed to save entity.");
 			return "error";
-		
+		}
 		Query<?> q = session.createNativeQuery("insert into price_plan values(?, ?, ?, ?, ?, ?)");
 		q.setParameter(1, saved.getId());
 		q.setParameter(2, saved.getEndDate());
@@ -600,6 +622,8 @@ public class AccommodationWebService {
 		
 		tx.commit();
 		session.close();
+		
+		AgentLogger.log(Level.INFO, "Agent " + email + " added price plan " + saved.getId());
 		
 		return "New price plan successfully added.";
 	}
@@ -710,10 +734,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to get reservation but certificate is not valid.");
 			return null;
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to get reservation but signature is invalid.");
 			return null;
 		}
 		Session session = getSession(email);
@@ -747,10 +773,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to confirm reservation but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to confirm reservation but signature is not valid.");
 			return "Invalid signature.";
 		}
 		Session session = getSession(email);
@@ -764,12 +792,15 @@ public class AccommodationWebService {
 			
 		Date startDate = dateFormatter.parse(reservation.getStartDate());
 		if (startDate.compareTo(new Date()) < 0) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to confirm reservation but reservation hasn't started yet.");
 			return "Unable to confirm reservation until it starts.";
 		}
 		
 		reservation.setStatus(ReservationStatus.VISIT);
 		reservationService.save(reservation);
 		session.update(reservation);
+		
+		AgentLogger.log(Level.INFO, "Agent " + email + " confirmed reservation " + reservation.getId());
 		
 		tx.commit();
 		session.close();
@@ -992,10 +1023,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to delete accommodation but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to delete accommodation but signature is not valid");
 			return "Invalid signature.";
 		}
 		Session session = getSession(email);
@@ -1031,6 +1064,7 @@ public class AccommodationWebService {
 
 		tx.commit();
 		session.close();
+		AgentLogger.log(Level.INFO, "Agent " + email + " deleted accommodation " + id);
 		
 		return "Accommodation deleted";
 	} 
@@ -1084,10 +1118,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to delete apartment but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to delete apartment but signature is not valid.");
 			return "Invalid signature.";
 		}
 		Session session = getSession(email);
@@ -1115,7 +1151,7 @@ public class AccommodationWebService {
 			tx.commit();
 			session.close();
 		}	
-		
+		AgentLogger.log(Level.INFO, "Agent " + email + " deleted apartment " + id);
 		return "Apartment deleted";
 	} 
 	
@@ -1125,10 +1161,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to read message but certificate is not valid.");
 			return null;
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to read message but signature is not valid.");
 			return null;
 		}
 		Session s = getSession(email);
@@ -1153,10 +1191,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to read message " + id + " but certificate is not valid.");
 			return null;
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to read message " + id + " but signature is not valid.");
 			return null;
 		}
 		Session s = getSession(email);
@@ -1179,10 +1219,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to read message" + id + " but certificate is not valid.");
 			return null;
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to read message" + id + " but signature is not valid.");
 			return null;
 		}
 		Session s = getSession(email);
@@ -1201,10 +1243,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to read messages but certificate is not valid.");
 			return null;
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to read messages but signature is not valid.");
 			return null;
 		}
 		Session s = getSession(email);
@@ -1256,10 +1300,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to delete message " + id + " but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to delete message  " + id + " but signature is not valid.");
 			return "Invalid signature.";
 		}
 		Session s = getSession(email);
@@ -1283,10 +1329,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add reservation for apartment " + apartmentId + " but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to  add reservation for apartment " + apartmentId + " but signature is not valid.");
 			return "Invalid signature.";
 		}
 		Session s = getSession(email);
@@ -1302,9 +1350,11 @@ public class AccommodationWebService {
 		
 		// Check date formats.
 		if (!startDateMatcher.find()) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add reservation but start date format is invalid.");
 			return "Wrong format";
 		}
 		if (!endDateMatcher.find()) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add reservation but end date format is invalid.");
 			return "Wrong format";
 		}
 		
@@ -1313,16 +1363,19 @@ public class AccommodationWebService {
 		Date checkStartDate = dateFormatter.parse(reservation.getStartDate());
 		Date checkEndDate = dateFormatter.parse(reservation.getEndDate());
 		if (checkStartDate.before(new Date()) || checkEndDate.before(new Date())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add reservation but entered past dates.");
 			return "You must enter future dates.";
 		}
 		
 		// Check if start date is before end date.
 		if (!checkStartDate.before(checkEndDate)) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add reservation but start date must be before end date.");
 			return "Start date must be before end date.";
 		}
 		
 		// Check if apartment is available in that period.
 		if (!reservationService.isAvailable(reservation.getApartment(), reservation.getStartDate(), reservation.getEndDate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to add reservation but apartment " + apartmentId + " is not available at the given period.");
 			return "Apartment is not available at the given period.";
 		}
 		
@@ -1362,6 +1415,8 @@ public class AccommodationWebService {
 		 
 		 tx.commit();
 		 s.close();
+		 
+		 AgentLogger.log(Level.INFO, "Agent " + email + " added reservation " + r.getId() + "for apartment " + apartmentId + ".");
 		
 		return "Reservation successfully added";
 	}
@@ -1372,10 +1427,12 @@ public class AccommodationWebService {
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
 		if (!isCertificateValid(email, signature.getKeyInfo().getX509Data().getX509Certificate())) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to send message " + messageId + " but certificate is not valid.");
 			return "Invalid certificate.";
 		}
 		
 		if(!isSignatureValid("out.xml",Base64.getEncoder().encodeToString(signature.getSignatureValue().getValue()))) {
+			AgentLogger.log(Level.WARNING, "Agent " + email + " tried to send message " + messageId + " but signature is not valid.");
 			return "Invalid signature.";
 		}
 		Session s = getSession(email);
@@ -1409,6 +1466,8 @@ public class AccommodationWebService {
 		tx.commit();
 		s.close();
 
+		AgentLogger.log(Level.INFO, "Agent " + email + " sent message " + messageId + ".");
+		
 		return "Message sent";
 	}
 	

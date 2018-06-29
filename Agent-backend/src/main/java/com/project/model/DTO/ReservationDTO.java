@@ -26,7 +26,7 @@ public class ReservationDTO {
 	@NotNull @Pattern(regexp="[0-9]{4}-[0-9]{2}-[0-9]{2}")
 	private String endDate;
 	
-	@NotNull @Pattern(regexp ="[0-9]+")
+    @Pattern(regexp ="[0-9]+")
 	private String price;
 	
 	private String status;
