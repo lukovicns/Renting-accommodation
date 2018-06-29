@@ -1,16 +1,14 @@
 package com.project.Rentingaccommodation.security;
 
-import java.nio.charset.Charset;
 import java.util.Date;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.project.Rentingaccommodation.model.User;
+import com.project.Rentingaccommodation.model.UserPrivileges;
 import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.service.UserService;
-import com.project.Rentingaccommodation.utils.PasswordUtil;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -30,6 +28,7 @@ public class JwtGenerator {
         	claims.put("email", jwtUser.getEmail());
     		claims.put("role", UserRoles.USER);
     		claims.put("status", user.getStatus());
+    		claims.put("privilege", UserPrivileges.READ_WRITE_PRIVILEGE);
     		return Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(new Date(System.currentTimeMillis() + (10 * 60 * 1000)))
@@ -40,13 +39,15 @@ public class JwtGenerator {
         return "User with email " + jwtUser.getEmail() + " not found.";
     }
 
-	public String generateAdmin(JwtAdmin jwtAdmin) {
+	public String generateAdmin(JwtUser jwtUser) {
     	Claims claims = Jwts.claims();
-    	claims.put("id", jwtAdmin.getId());
-    	claims.put("email", jwtAdmin.getEmail());
+    	claims.put("id", jwtUser.getId());
+    	claims.put("email", jwtUser.getEmail());
 		claims.put("role", UserRoles.ADMIN);
+		claims.put("privilege", UserPrivileges.READ_WRITE_PRIVILEGE);
 		return Jwts.builder()
                 .setClaims(claims)
+                .setExpiration(new Date(System.currentTimeMillis() + (10 * 60 * 1000)))
                 .signWith(SignatureAlgorithm.HS512, "SECRETKEY")
                 .compact();
 	}
@@ -56,27 +57,10 @@ public class JwtGenerator {
     	claims.put("id", jwtAgent.getId());
     	claims.put("email", jwtAgent.getEmail());
 		claims.put("role", UserRoles.AGENT);
+		claims.put("privilege", UserPrivileges.READ_WRITE_PRIVILEGE);
 		return Jwts.builder()
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS512, "SECRETKEY")
                 .compact();
-	}
-	
-	public String generateToken() {
-    	Claims claims = Jwts.claims();
-//    	claims.put("id", jwtAgent.getId());
-//    	claims.put("email", jwtAgent.getEmail());
-//		claims.put("role", UserRoles.AGENT);
-		return Jwts.builder()
-                .setClaims(claims)
-//                .setId(jti)
-                .signWith(SignatureAlgorithm.HS512, "SECRETKEY")
-                .compact();
-	}
-	
-	public String generateRandomString() {
-		String randomString = RandomStringUtils.randomAlphanumeric(20);
-		String hashedRandomString = PasswordUtil.hash(randomString.toCharArray(), Charset.forName("UTF-8"));
-		return hashedRandomString;
 	}
 }

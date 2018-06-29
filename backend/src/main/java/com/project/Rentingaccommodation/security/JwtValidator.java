@@ -23,7 +23,8 @@ public class JwtValidator {
         		Long.parseLong(body.get("id").toString()),
         		(String) body.get("email"),
         		(String) body.get("role"),
-        		(String) body.get("status")
+        		(String) body.get("status"),
+        		(String) body.get("privilege")
             );
         }
         catch (Exception e) {
@@ -43,7 +44,8 @@ public class JwtValidator {
             jwtAgent = new JwtAgent(
         		Long.parseLong(body.get("id").toString()),
         		(String) body.get("email"),
-        		(String) body.get("role")
+        		(String) body.get("role"),
+        		(String) body.get("privilege")
             );
         }
         catch (Exception e) {
@@ -53,23 +55,23 @@ public class JwtValidator {
         return jwtAgent;
     }
     
-    public JwtAdmin validateAdmin(String token) {
-    	JwtAdmin jwtAdmin = null;
-        try {
-            Claims body = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-            jwtAdmin = new JwtAdmin(
-        		Long.parseLong(body.get("id").toString()),
-        		(String) body.get("email"),
-        		(String) body.get("role")
-            );
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        
-        return jwtAdmin;
-    }
+//    public JwtAdmin validateAdmin(String token) {
+//    	JwtAdmin jwtAdmin = null;
+//        try {
+//            Claims body = Jwts.parser()
+//                    .setSigningKey(secret)
+//                    .parseClaimsJws(token)
+//                    .getBody();
+//            jwtAdmin = new JwtAdmin(
+//        		Long.parseLong(body.get("id").toString()),
+//        		(String) body.get("email"),
+//        		(String) body.get("role")
+//            );
+//        }
+//        catch (Exception e) {
+//            System.out.println(e);
+//        }
+//        
+//        return jwtAdmin;
+//    }
 }

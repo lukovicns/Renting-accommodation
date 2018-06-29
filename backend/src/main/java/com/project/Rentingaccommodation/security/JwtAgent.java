@@ -5,12 +5,14 @@ public class JwtAgent {
 	private Long id;
     private String email;
     private String role;
+    private String privilege;
     
-	public JwtAgent(Long id, String email, String role) {
+	public JwtAgent(Long id, String email, String role, String privilege) {
 		super();
 		this.id = id;
 		this.email = email;
 		this.role = role;
+		this.privilege = privilege;
 	}
 	
 	public Long getId() {
@@ -36,4 +38,13 @@ public class JwtAgent {
 	public void setRole(String role) {
 		this.role = role;
 	}
+
+	public String getPrivilege() {
+		return privilege;
+	}
+
+	public void setPrivilege(String privilege) {
+		this.privilege = privilege;
+	}
+	
 }

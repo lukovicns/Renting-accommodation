@@ -6,17 +6,19 @@ public class JwtUser {
     private String email;
     private String role;
     private String status;
-	
+    private String privilege;
+    
     public JwtUser() {
     	
     }
     
-	public JwtUser(Long id, String email, String role, String status) {
+	public JwtUser(Long id, String email, String role, String status, String privilege) {
 		super();
 		this.id = id;
 		this.email = email;
 		this.role = role;
 		this.status = status;
+		this.privilege = privilege;
 	}
 
 	public Long getId() {
@@ -41,6 +43,14 @@ public class JwtUser {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+	
+	public String getPrivilege() {
+		return privilege;
+	}
+
+	public void setPrivilege(String privilege) {
+		this.privilege = privilege;
 	}
 
 	public String getStatus() {

@@ -1,19 +1,7 @@
 package com.project.Rentingaccommodation.controller;
 
-import java.io.BufferedInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,30 +9,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.util.EntityUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -56,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -70,6 +42,7 @@ import com.project.Rentingaccommodation.model.Agent;
 import com.project.Rentingaccommodation.model.AgentStatus;
 import com.project.Rentingaccommodation.model.City;
 import com.project.Rentingaccommodation.model.Country;
+import com.project.Rentingaccommodation.model.UserPrivileges;
 import com.project.Rentingaccommodation.model.UserRoles;
 import com.project.Rentingaccommodation.model.DTO.AgentDTO;
 import com.project.Rentingaccommodation.model.DTO.LoginDTO;
@@ -90,7 +63,6 @@ import com.project.Rentingaccommodation.utils.UserUtils;
 
 @RestController
 @RequestMapping(value = "/api/agents")
-@CrossOrigin(value = "https://localhost:4200")
 public class AgentController {
 
 	@Autowired
@@ -254,7 +226,7 @@ public class AgentController {
 	}
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<Object> registerAgent(@RequestBody AgentDTO agent) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, CertificateException {
+	public ResponseEntity<Object> registerAgent(@RequestBody AgentDTO agent) {
 		
 		if (UserUtils.userExists(agent.getEmail(), userService, adminService, service)) {
 			return new ResponseEntity<>("User with this email already exists.", HttpStatus.FORBIDDEN);
@@ -384,9 +356,8 @@ public class AgentController {
 			tx.commit();
 			session.close();
 			
-			String token = jwtGenerator.generateAgent(new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));
-			System.out.println("jwt " + new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString()));
-			
+			String token = jwtGenerator.generateAgent(new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString(), UserPrivileges.READ_WRITE_PRIVILEGE.toString()));
+			System.out.println("jwt " + new JwtAgent(agent.getId(), agent.getEmail(), UserRoles.AGENT.toString(), UserPrivileges.READ_WRITE_PRIVILEGE.toString()));
 			
 			System.out.println("toke " + token);
 			response = new HashMap<String, Object>();
@@ -583,8 +554,7 @@ public class AgentController {
 		return new ResponseEntity<>(agent, HttpStatus.OK);	
 	}
 	
-	public void createCertificate(String email) throws ClientProtocolException, IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, NoSuchProviderException, CertificateException {
-		
+	public void createCertificate(String email) throws ClientProtocolException, IOException {
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(url);
 		post.setEntity(new StringEntity(email,charset));
