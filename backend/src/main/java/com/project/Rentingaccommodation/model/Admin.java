@@ -23,6 +23,21 @@ public class Admin {
 	@Column(name="email", columnDefinition="VARCHAR(50)", unique=true, nullable=false)
 	private String email;
 	
+	@Column(name="question", columnDefinition="VARCHAR(100)", nullable=false)
+	private String question;
+	
+	@Column(name="answer", columnDefinition="VARCHAR(100)", nullable=false)
+	private String answer;
+	
+	@Column(name="block_time", columnDefinition="VARCHAR(50)", nullable=true)
+	private String block_time;
+	
+	@Column(name="max_tries", columnDefinition="INT(11) DEFAULT 0", nullable=false)
+	private int max_tries;
+	
+	@Enumerated(EnumType.STRING)
+	private AdminStatus status;
+	
 	public Admin() {
 		
 	}
@@ -73,6 +88,46 @@ public class Admin {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+
+	public String getBlock_time() {
+		return block_time;
+	}
+
+	public void setBlock_time(String block_time) {
+		this.block_time = block_time;
+	}
+
+	public int getMax_tries() {
+		return max_tries;
+	}
+
+	public void setMax_tries(int max_tries) {
+		this.max_tries = max_tries;
+	}
+
+	public AdminStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AdminStatus status) {
+		this.status = status;
 	}
 
 	@Override

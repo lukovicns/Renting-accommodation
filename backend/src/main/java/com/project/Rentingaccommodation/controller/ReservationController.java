@@ -3,6 +3,7 @@ package com.project.Rentingaccommodation.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.project.Rentingaccommodation.logger.ReservationLogger;
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.PricePlan;
 import com.project.Rentingaccommodation.model.Reservation;
@@ -118,9 +121,11 @@ public class ReservationController {
 				
 				// Check date formats.
 				if (!startDateMatcher.find()) {
+					ReservationLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to make reservation, but start date is invalid.");
 					return new ResponseEntity<>("Start date must be in format dd/MM/yyyy.", HttpStatus.FORBIDDEN);
 				}
 				if (!endDateMatcher.find()) {
+					ReservationLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to make reservation, but end date is invalid.");
 					return new ResponseEntity<>("End date must be in format dd/MM/yyyy.", HttpStatus.FORBIDDEN);
 				}
 				
@@ -129,25 +134,24 @@ public class ReservationController {
 				Date startDate = dateFormatter.parse(reservation.getStartDate());
 				Date endDate = dateFormatter.parse(reservation.getEndDate());
 				if (startDate.before(new Date()) || endDate.before(new Date())) {
+					ReservationLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to make reservation, but he entered passed dates.");
 					return new ResponseEntity<>("You must enter future dates.", HttpStatus.FORBIDDEN);
 				}
 				
 				// Check if start date is before end date.
 				if (!startDate.before(endDate)) {
+					ReservationLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to make reservation, but he entered start date greater than end date.");
 					return new ResponseEntity<>("Start date must be before end date.", HttpStatus.FORBIDDEN);
 				}
 				
 				// Check if apartment is available in that period.
 				if (!service.isAvailable(reservation.getApartment(), reservation.getStartDate(), reservation.getEndDate())) {
+					ReservationLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to make reservation, but apartment #" + apartment.getId() + " is not available at the given period.");
 					return new ResponseEntity<>("Apartment is not available at the given period.", HttpStatus.FORBIDDEN);
 				}
 				
 				// Setup price plan for apartment based on given start and end date.
 				PricePlan pricePlan = pricePlanService.setReservationPricePlan(apartment, reservation.getStartDate(), reservation.getEndDate());
-				System.out.println(pricePlan);
-				if (pricePlan == null) {
-					
-				}
 				
 				Reservation newReservation = new Reservation(
 					user,
@@ -157,11 +161,14 @@ public class ReservationController {
 					pricePlan.getPrice(),
 					ReservationStatus.RESERVATION
 				);
+				ReservationLogger.log(Level.INFO, "User " + user.getEmail() + " successfully made reservation for apartment #" + apartment.getId() + " from " + reservation.getStartDate() + " to " + reservation.getEndDate() + ".");
 				return new ResponseEntity<>(service.save(newReservation), HttpStatus.OK);
 			} else {
+				ReservationLogger.log(Level.WARNING, "Given token is not valid. User doesn't exist.");
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
+			ReservationLogger.log(Level.WARNING, "Exception occured while validating token.");
 			return new ResponseEntity<>("Token not provided.", HttpStatus.FORBIDDEN);
 		}
 	}

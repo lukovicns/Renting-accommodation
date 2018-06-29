@@ -1,6 +1,7 @@
 package com.project.Rentingaccommodation.controller;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.Rentingaccommodation.logger.AccommodationCategoryLogger;
 import com.project.Rentingaccommodation.model.AccommodationType;
 import com.project.Rentingaccommodation.model.AccommodationTypeStatus;
 import com.project.Rentingaccommodation.service.AccommodationTypeService;
@@ -53,9 +55,11 @@ public class AccommodationTypeController {
 		}
 		AccommodationType t = service.findByTypeName(data.getName());
 		if (t != null) {
+			AccommodationCategoryLogger.log(Level.WARNING, "Tried to add accommodation type, but another accommodation type with this name already exists.");
 			return new ResponseEntity<>("Type with this name already exists.", HttpStatus.FORBIDDEN);
 		}
 		AccommodationType type = new AccommodationType(data.getName(), AccommodationTypeStatus.ACTIVE);
+		AccommodationCategoryLogger.log(Level.INFO, "Accommodation type '" + type.getName() + "' is successfully added.");
 		return new ResponseEntity<>(service.save(type), HttpStatus.OK);
 	}
 	
@@ -70,9 +74,11 @@ public class AccommodationTypeController {
 		}
 		AccommodationType t = service.findByTypeName(data.getName());
 		if (t != null && t.getId() != type.getId()) {
+			AccommodationCategoryLogger.log(Level.WARNING, "Tried to edit accommodation type, but another accommodation type with this name already exists.");
 			return new ResponseEntity<>("Another type with this name already exists.", HttpStatus.FORBIDDEN);
 		}
 		type.setName(data.getName());
+		AccommodationCategoryLogger.log(Level.INFO, "Accommodation type '" + type.getName() + "' is successfully updated.");
 		return new ResponseEntity<>(service.save(type), HttpStatus.OK);
 	}
 	
@@ -83,6 +89,7 @@ public class AccommodationTypeController {
 			return new ResponseEntity<>("Accommodation type not found.", HttpStatus.NOT_FOUND);
 		}
 		type.setStatus(AccommodationTypeStatus.ACTIVE);
+		AccommodationCategoryLogger.log(Level.WARNING, "Accommodation type '" + type.getName() + "' is activated.");
 		return new ResponseEntity<>(service.save(type), HttpStatus.OK);
 	}
 
@@ -93,6 +100,7 @@ public class AccommodationTypeController {
 			return new ResponseEntity<>("Accommodation type not found.", HttpStatus.NOT_FOUND);
 		}
 		type.setStatus(AccommodationTypeStatus.INACTIVE);
+		AccommodationCategoryLogger.log(Level.WARNING, "Accommodation type '" + type.getName() + "' is deactivated.");
 		return new ResponseEntity<>(service.save(type), HttpStatus.OK);
 	}	
 }

@@ -14,7 +14,11 @@ export class ProfileComponent {
 
   errorMessage: String;
 
-  constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
+  constructor(
+    private userService: UserService,
+    private formBuilder: FormBuilder,
+    private router: Router
+  ) { }
 
   changePassForm = this.formBuilder.group({
     oldPassword: ['', Validators.compose([

@@ -165,7 +165,7 @@ public class UserController {
 				    u.setStatus(UserStatus.ACTIVATED);
 				    userService.save(u);
 				} else {
-					UserLogger.log(Level.WARNING, "Login failed because user is blocked for 10 minutes.");
+					UserLogger.log(Level.WARNING, "Login failed because user " + u.getEmail() + " is blocked for 10 minutes.");
 					return new ResponseEntity<>("User is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
 				}
 			} catch (java.text.ParseException e) {
@@ -174,27 +174,8 @@ public class UserController {
 		}
 		
 		if (u.getStatus().equals(UserStatus.BLOCKED)) {
-			try {
-				if (u.getBlock_time() != null) {	
-					String dateTime = dateTimeFormatter.format(new Date());
-					Date currentDateTime = dateTimeFormatter.parse(dateTime);
-					Date userBlockDateTime = dateTimeFormatter.parse(u.getBlock_time());
-					if (currentDateTime.getTime() - userBlockDateTime.getTime() >= 1*60*1000) {
-						u.setBlock_time(null);
-					    u.setMax_tries(0);
-					    u.setStatus(UserStatus.ACTIVATED);
-					    userService.save(u);
-					} else {
-						UserLogger.log(Level.WARNING, "Login failed because user is blocked for 10 minutes.");
-						return new ResponseEntity<>("User is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
-					}
-				} else {
-					UserLogger.log(Level.WARNING, "Login failed because user is blocked.");
-					return new ResponseEntity<>("This user is blocked.", HttpStatus.FORBIDDEN);
-				}
-			} catch (java.text.ParseException e) {
-				e.printStackTrace();
-			}
+			UserLogger.log(Level.WARNING, "Login failed because user " + u.getEmail() + " is blocked.");
+			return new ResponseEntity<>("This user is blocked.", HttpStatus.FORBIDDEN);
 		}
 		
 		String verifyHash = u.getPassword();
@@ -214,7 +195,7 @@ public class UserController {
 		
 		u.setMax_tries(0);
 		String token = generate(new JwtUser(u.getId(), u.getEmail(), UserRoles.USER.toString(), u.getStatus().toString()));
-		UserLogger.log(Level.INFO, "User authentication is successful.");
+		UserLogger.log(Level.INFO, "User " + u.getEmail() + " logged in successfully.");
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -222,7 +203,6 @@ public class UserController {
 	
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
 	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) {
-		System.out.println(passDTO);
 		if (passDTO.getOldPassword() == null || passDTO.getOldPassword() == "" ||
 			passDTO.getNewPassword() == null || passDTO.getNewPassword() == "" ||
 			passDTO.getToken() == null || passDTO.getToken() == "") {
@@ -280,7 +260,7 @@ public class UserController {
 					loggedInUser.setStatus(UserStatus.ACTIVATED);
 					loggedInUser.setMax_tries(0);
 				} else {
-					UserLogger.log(Level.WARNING, "User doesn't have permissions, because he is blocked for 10 minutes.");
+					UserLogger.log(Level.WARNING, "User " + loggedInUser.getEmail() + "doesn't have permissions, because he is blocked for 10 minutes.");
 					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
 				}
 			} catch (java.text.ParseException e) {
@@ -308,7 +288,7 @@ public class UserController {
 		loggedInUser.setStatus(UserStatus.ACTIVATED);
 		loggedInUser.setPassword(password);
 		userService.save(loggedInUser);
-		UserLogger.log(Level.INFO, "User changed password successfully.");
+		UserLogger.log(Level.INFO, "User " + loggedInUser.getEmail() + "changed password successfully.");
 		return new ResponseEntity<>(jwtUser, HttpStatus.OK);
 	}
 
@@ -352,7 +332,7 @@ public class UserController {
 					user.setStatus(UserStatus.ACTIVATED);
 					user.setMax_tries(0);
 				} else {
-					UserLogger.log(Level.WARNING, "Reset password failed because user is blocked for 10 minutes.");
+					UserLogger.log(Level.WARNING, "Reset password failed because user " + user.getEmail() + "is blocked for 10 minutes.");
 					return new ResponseEntity<>("This user is blocked for 10 minutes.", HttpStatus.FORBIDDEN);
 				}
 			} catch (java.text.ParseException e) {

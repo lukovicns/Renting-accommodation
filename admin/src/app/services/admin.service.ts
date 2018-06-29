@@ -65,4 +65,37 @@ export class AdminService {
     this.tokenExpiredMessage = message;
   }
 
+  changePassword(passwords) {
+    const token = localStorage.getItem('token');
+    this.data = {
+      'oldPassword': passwords.oldPassword,
+      'newPassword': passwords.newPassword,
+      'token': token
+    };
+    return this.http.post(this.url + 'change', this.data);
+  }
+
+  resetPassword(sqDTO) {
+    return this.http.post(this.url + 'reset', sqDTO);
+  }
+
+  getQuestion(email) {
+    return this.http.get(this.url + 'question/' + email);
+  }
+
+  setEmail(email) {
+    this.email = email;
+  }
+
+  getEmail() {
+    return this.email;
+  }
+
+  emailEntered() {
+    return this.email != null;
+  }
+
+  getAdminByEmail(email) {
+    return this.http.get(this.url + 'email/' + email);
+  }
 }

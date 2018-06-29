@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.Rentingaccommodation.logger.CommentLogger;
 import com.project.Rentingaccommodation.model.Admin;
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Comment;
@@ -114,6 +116,7 @@ public class CommentController {
 				List<Reservation> userReservations = reservationService.findUserReservationsByApartmentId(user, apartment.getId());
 				
 				if (userReservations.isEmpty()) {
+					CommentLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to make comment, but he doesn't have a reservation of this apartment.");
 					return new ResponseEntity<>("You must first make reservations to make comments.", HttpStatus.FORBIDDEN);
 				}
 				
@@ -121,6 +124,7 @@ public class CommentController {
 					try {
 						Date endDate = dateFormatter.parse(reservation.getEndDate());
 						if (endDate.compareTo(new Date()) > 0) {
+							CommentLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to make comment, but his reservation didn't pass yet.");
 							return new ResponseEntity<>("You can comment after the reservation has passed.", HttpStatus.FORBIDDEN);
 						}
 					} catch (ParseException e) {
@@ -131,8 +135,10 @@ public class CommentController {
 				for (Comment c : service.findAll()) {
 					if (c.getApartment().getId() == apartment.getId() && c.getUser().getId() == user.getId()) {
 						if (c.getStatus().equals(CommentStatus.APPROVED)) {
+							CommentLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to make comment, but he already commented this apartment.");
 							return new ResponseEntity<>("User already commented this apartment.", HttpStatus.FORBIDDEN);
 						} else {
+							CommentLogger.log(Level.WARNING, "User " + user.getEmail() + " already made comment for this apartment.");
 							return new ResponseEntity<>("User already commented this apartment. Waiting for approval.", HttpStatus.FORBIDDEN);
 						}
 					}
@@ -142,9 +148,11 @@ public class CommentController {
 				
 		        return new ResponseEntity<>(service.save(comment), HttpStatus.OK);
 			} else {
+				CommentLogger.log(Level.WARNING, "Given token is not valid. User doesn't exist.");
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
+			CommentLogger.log(Level.WARNING, "Exception occured while validating token.");
 			return new ResponseEntity<>("Error validating token.", HttpStatus.FORBIDDEN);
 		}
     }
@@ -166,9 +174,11 @@ public class CommentController {
 				comment.setStatus(CommentStatus.APPROVED);
 				return new ResponseEntity<>(service.save(comment), HttpStatus.OK);
 			} else {
+				CommentLogger.log(Level.WARNING, "Given token is not valid. User doesn't exist.");
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
+			CommentLogger.log(Level.WARNING, "Exception occured while validating token.");
 			return new ResponseEntity<>("Error validating token.", HttpStatus.FORBIDDEN);
 		}
     }
@@ -190,9 +200,11 @@ public class CommentController {
 				service.delete(comment);
 				return new ResponseEntity<>(comment, HttpStatus.OK);
 			}  else {
+				CommentLogger.log(Level.WARNING, "Given token is not valid. User doesn't exist.");
 				return new ResponseEntity<>("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception e) {
+			CommentLogger.log(Level.WARNING, "Exception occured while validating token.");
 			return new ResponseEntity<>("Error validating token.", HttpStatus.FORBIDDEN);
 		}
     }
