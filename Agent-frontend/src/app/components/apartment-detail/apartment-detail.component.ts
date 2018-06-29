@@ -25,7 +25,7 @@ export class ApartmentDetailComponent implements OnInit {
     additionalServices = [];
     pricePlans = [];
     jsonPP: any;
-    
+    today : any;
 //    pomocne varijable za prikaz odredjenih formi 
     showAS = false;
     showPP = false;
@@ -104,20 +104,60 @@ export class ApartmentDetailComponent implements OnInit {
       this.addNewPP = false;
   }
   
+  getToday(): string {
+      return new Date().toISOString().split('T')[0]
+   }
+  
   addPricePlan(){
+      
       console.log(this.pricePlanForm.value);
+      
+      if(this.pricePlanForm.value.startDatePP < this.getToday() || this.pricePlanForm.value.endDatePP < this.getToday())
+      {
+          swal('Past date cannot be selected.');
+      }
+      else{
       this.apartmentService.addNewPricePlan(this.pricePlanForm.value, this.apartmentId).subscribe(res => {console.log('jfkajfkla');
               
               this.addNewPP = false;
-      this.getData()});
+              this.getData()});
       
-      console.log("tttt");
+              console.log("tttt");
+      }
   }
   
   addReservation(){
       console.log(this.reservationForm.value);
-      this.apartmentService.addReservation(this.reservationForm.value, this.apartmentId).subscribe(res =>
-      console.log(res);
-      );
+      if(this.pricePlanForm.value.startDateR < this.getToday() || this.pricePlanForm.value.endDateR < this.getToday())
+      {
+          swal('Past date cannot be selected.');
+      }
+      else{
+          this.apartmentService.addReservation(this.reservationForm.value, this.apartmentId).subscribe(res =>
+          { console.log(res);
+         
+              if(res['return'] == 'You must enter future dates.')
+              {     swal(
+                          'You must enter future dates.'
+                        )
+              }else if(res['return'] == 'Start date must be before end date.')
+              {
+                  swal(
+                          'Start date must be before end date.'
+                        )
+              }else if(res['return'] == 'Apartment is not available at the given period.')
+              {
+                  swal(
+                          'Apartment is not available at the given period.'
+                        )
+              }else if(res['return'] == 'Reservation successfully added')
+              {
+                  swal(
+                          'Reservation successfully added.'
+                        )
+                        this.addNewR = false;
+              }
+          });
+      }
   }
 }

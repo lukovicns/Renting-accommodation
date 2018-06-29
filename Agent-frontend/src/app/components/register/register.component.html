@@ -33,6 +33,9 @@
 	            <div *ngIf="registerForm.controls['name'].errors.required">
 	            Name is required.
 	          	</div>
+	          	<div *ngIf="registerForm.controls['name'].errors.pattern">
+	              Invalid first name pattern.
+	          	</div>
 	        </div>
           <div class="form-group">
             <label for="surname">Last name</label>
@@ -41,6 +44,9 @@
           <div *ngIf="registerForm.controls['surname'].invalid && (registerForm.controls['surname'].dirty || registerForm.controls['surname'].touched)" class="alert alert-danger">
 	            <div *ngIf="registerForm.controls['surname'].errors.required">
 	            Last name is required.
+	          	</div>
+	          	<div *ngIf="registerForm.controls['surname'].errors.pattern">
+	              Invalid last name pattern.
 	          	</div>
 	        </div>
           <div class="form-group">

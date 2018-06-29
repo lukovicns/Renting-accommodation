@@ -2,15 +2,20 @@
   <div class="container">
     <div class="card">
       <div class="card-header">
-        <h1>New accommodation</h1>
+        <h1>New apartment</h1>
       </div>
       <div class="card-body">
         <form [formGroup]="apartmentForm" (ngSubmit)="addApartment()">
-        
+     
           <div class="form-group">
            	<label for="name">Name</label>
            	<input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter apartment name here">
           </div>
+           <div *ngIf="apartmentForm.controls['name'].invalid && (apartmentForm.controls['name'].dirty || apartmentForm.controls['name'].touched)" class="alert alert-danger">
+	            <div *ngIf="apartmentForm.controls['name'].errors.required">
+	            Name is required.
+	          	</div>
+	      </div>
           
           <div class="form-group">
             <label for="bedType">Bed type</label>
@@ -30,22 +35,42 @@
 			    </section>
 			 -->
 		  </div>
-		  
+		   <div *ngIf="apartmentForm.controls['bedType'].invalid && (apartmentForm.controls['bedType'].dirty || apartmentForm.controls['bedType'].touched)" class="alert alert-danger">
+	            <div *ngIf="apartmentForm.controls['bedType'].errors.required">
+	            Bed type is required.
+	          	</div>
+	      </div>
+		
 		  <div class="form-group">
             <label for="size">Size (in square meters)</label>
             <input formControlName="size" type="number" class="form-control" min="1" id="size" placeholder="Define apartment size">
 		  </div>
-		  
+		   <div *ngIf="apartmentForm.controls['size'].invalid && (apartmentForm.controls['size'].dirty || apartmentForm.controls['size'].touched)" class="alert alert-danger">
+	            <div *ngIf="apartmentForm.controls['size'].errors.required">
+	            Size is required.
+	          	</div>
+	      </div>
+		 
 		  <div class="form-group">
             <label for="numOfRooms">Number of rooms</label>
             <input formControlName="numOfRooms" type="number" class="form-control" min="1" id="numOfRooms" placeholder="Define number of rooms">
 		  </div>
-		  
+		   <div *ngIf="apartmentForm.controls['numOfRooms'].invalid && (apartmentForm.controls['numOfRooms'].dirty || apartmentForm.controls['numOfRooms'].touched)" class="alert alert-danger">
+	            <div *ngIf="apartmentForm.controls['numOfRooms'].errors.required">
+	            Number of rooms is required.
+	          	</div>
+	      </div>
+	      
 		  <div class="form-group">
             <label for="numOfGuests">Number of guest</label>
             <input formControlName="numOfGuests" type="number" class="form-control" min="1" id="numOfGuests" placeholder="Define max number of guests"> 
 		  </div>
-		  
+		   <div *ngIf="apartmentForm.controls['numOfGuests'].invalid && (apartmentForm.controls['numOfGuests'].dirty || apartmentForm.controls['numOfGuests'].touched)" class="alert alert-danger">
+	            <div *ngIf="apartmentForm.controls['numOfGuests'].errors.required">
+	            Number of guests is required.
+	          	</div>
+	      </div>
+	      
 		  <div class="form-group">
 		  <div>
             <label for="pricePlans">Price plan</label> 
@@ -59,6 +84,11 @@
             </div>
             </div>
             </div>
+            <div *ngIf="pricePlans.length === 0 && apartmentForm.controls['pricePlans'].touched" class="alert alert-danger">
+		            <div *ngIf="apartmentForm.controls['pricePlans'].errors.required">
+		            Name is required.
+		          	</div>
+	     	 </div>
             <!-- <select formControlName="pricePlans" required class="form-control">
             	<option value="" disabled="true" *ngIf="msg">{{msg}}</option>
             	<option *ngIf="!msg" value="" disabled="true"> Please select plan type</option>
@@ -68,20 +98,38 @@
 			  <hr>
 	          <div class="form-group">
 	            <label for="startDate">Start date</label>
-	          	<input formControlName="startDate" type="date"/>
+	          	<input [min]="getToday()" formControlName="startDate" type="date"/>
 			  </div>
+			   <div *ngIf="apartmentForm.controls['startDate'].invalid && (apartmentForm.controls['startDate'].dirty || apartmentForm.controls['startDate'].touched)" class="alert alert-danger">
+		            <div *ngIf="apartmentForm.controls['startDate'].errors.required">
+		            Start date is required.
+		          	</div>
+	      		</div>
 			  
 			  <div class="form-group">
 			   <label for="endDate">End date</label>
-	          	<input formControlName="endDate" type="date"/>
+	          	<input [min]="getToday()" formControlName="endDate" type="date"/>
 			  </div>
+			   <div *ngIf="apartmentForm.controls['endDate'].invalid && (apartmentForm.controls['endDate'].dirty || apartmentForm.controls['endDate'].touched)" class="alert alert-danger">
+		            <div *ngIf="apartmentForm.controls['endDate'].errors.required">
+		            End date is required.
+		          	</div>
+	      		</div>
 			  
 			   <div class="form-group">
 	           	<label for="price">Price</label>
 	           	<input formControlName="price" type="number" class="form-control" id="price" placeholder="Define price here">
 	          </div>
+	           <div *ngIf="apartmentForm.controls['price'].invalid && (apartmentForm.controls['price'].dirty || apartmentForm.controls['price'].touched)" class="alert alert-danger">
+		            <div *ngIf="apartmentForm.controls['price'].errors.required">
+		            Price is required.
+		          	</div>
+	     	 </div>
 				<div>		  
-	          		<button type="button" (click)="addPricePlan()" class="btn btn-info btn-block">Add</button>
+	          		<button type="button" (click)="addPricePlan()" [disabled]="apartmentForm.controls['startDate'].invalid || 
+	          		apartmentForm.controls['endDate'].invalid ||
+	          		apartmentForm.controls['price'].invalid"
+	          		  class="btn btn-info btn-block">Add</button>
 		      	</div>
 		      <hr>
 			</div>		  
@@ -97,22 +145,31 @@
 		        </label>
 		    	</div>
 			</div>
-		  
+			<div *ngIf="apartmentForm.controls['additional'].invalid && (apartmentForm.controls['additional'].dirty || apartmentForm.controls['additional'].touched)" class="alert alert-danger">
+		            <div *ngIf="apartmentForm.controls['additional'].errors.required">
+		            Name is required.
+		          	</div>
+	     	 </div>
+	     	 
 		  <div class="form-group">
             <label for="description">Description</label>
              <input type="text" style="height:100px" class="form-control" id="description"  formControlName="description" placeholder="Enter description here">
 		  </div>
-		  
 		   <div class="form-group">
-            <label for="image">Image</label>
+            <label for="image">Image (upload at least one)</label>
            	<div>
            		<!-- <input formControlName="image" class="form-control" id="image" > -->{{imgName}}
              	<input formControlName="image" style="display: none" type="file" (change)="onFileChanged($event)" #fileInput> 
-			 	<button type="button" class="btn btn-outline-info" (click)="fileInput.click()">Select File</button>
+			 	<button type="button" name="btnImg" class="btn btn-outline-info" #btn (click)="fileInput.click()">Select File</button>
 			 </div>
 		  </div>
-					  
-          <button type="submit" class="btn btn-info btn-block">Add</button>
+			<!-- <div [isPressed]="btn.attachedProp" class="alert alert-danger">
+		            <div *ngIf="apartmentForm.controls['additional'].errors.required">
+		            aa is required.
+		          	</div>
+	     	 </div> -->
+				  
+          <button type="submit" [disabled]="!apartmentForm.valid || pricePlans.length === 0" class="btn btn-info btn-block">Add</button>
         </form>
       </div>
     </div> 

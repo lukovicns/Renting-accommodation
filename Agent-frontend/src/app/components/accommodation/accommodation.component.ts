@@ -17,7 +17,7 @@ export class AccommodationComponent implements OnInit {
     accommodationCategory = [];
     cities = [];
     images = null;
-    
+    empty = true;
     
     title = 'The Booking App';
     
@@ -27,12 +27,14 @@ export class AccommodationComponent implements OnInit {
   constructor(private accommodationService: AccommodationService, private formBuilder: FormBuilder, private router: Router) { 
   }
   
+  fileName = '';
+  imgName: string;
   accommodationForm = this.formBuilder.group({
      name: ['', Validators.required],
      accType: ['', Validators.required],
      city: ['', Validators.required],
      street: ['', Validators.required],
-     description: ['', Validators.required],
+     description: [''],
      accCat: ['', Validators.required],
      image: ['', Validators.required]
 
@@ -40,16 +42,17 @@ export class AccommodationComponent implements OnInit {
   
   url:string;
   urls:string;
-  imgName:string;
   i = '';
   onFileChanged(event) {
       
       const file = event.target.files[0];
+      console.log('file ' + file);
+      
       if(this.imgName != undefined)
           this.imgName = this.imgName + '; ' + file.name;
       else 
           this.imgName = file.name;
-
+      
       if (event.target.files && event.target.files[0]) {
           var reader = new FileReader();
           reader.readAsDataURL(event.target.files[0]); // read file as data url
@@ -64,6 +67,8 @@ export class AccommodationComponent implements OnInit {
           }
           console.log(this.urls);
       }
+//      this.accommodationForm.controls['image'].setValue(this.imgName ? this.imgName : '');
+      console.log('imag ' + this.imgName);
   }
   
   getData(): void {
@@ -78,7 +83,8 @@ export class AccommodationComponent implements OnInit {
                   resultArray => { this.cities = resultArray['return']; }  
           );
      }
-
+  
+  
   onChange(animal) {
    alert(animal);
   }
@@ -87,6 +93,12 @@ export class AccommodationComponent implements OnInit {
          this.getData();
   }
 
+  imgEmpty(){
+      if(this.accommodationForm.controls['image'].value == '')
+          this.empty = true;
+      else
+          this.empty = false;
+  }
   
   addAccommodation() {
     this.accommodationService.addAccommodation(this.accommodationForm.value, this.urls)

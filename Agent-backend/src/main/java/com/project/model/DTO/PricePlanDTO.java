@@ -1,11 +1,19 @@
 package com.project.model.DTO;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
+
 public class PricePlanDTO {
 	
+	@NotNull @Pattern(regexp="[0-9]{4}-[0-9]{2}-[0-9]{2}")
 	private String startDate;
 	
+	@NotNull @Pattern(regexp="[0-9]{4}-[0-9]{2}-[0-9]{2}")
 	private String endDate;
 	
+	@NotNull
+	@PositiveOrZero
 	private int price;
 
 	public PricePlanDTO() {

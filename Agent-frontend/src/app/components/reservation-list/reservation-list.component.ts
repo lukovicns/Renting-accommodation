@@ -46,7 +46,6 @@ export class ReservationListComponent implements OnInit {
                     this.router.navigate(['/notFound'])
                 });
       }
-
   
   confirmReservation(id)
   {
@@ -54,7 +53,9 @@ export class ReservationListComponent implements OnInit {
       console.log(this.confirmed);
       this.reservationService.confirmReservation(id).subscribe(
               res => {
-                  console.log(res['return']);
+                  if(res['return'] == 'Unable to confirm reservation until it starts.')
+                      swal('Unable to confirm reservation until it starts.');
+                      console.log(res['return']);
                   
                  });
                   

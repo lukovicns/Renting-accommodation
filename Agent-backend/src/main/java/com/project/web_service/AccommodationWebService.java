@@ -3,7 +3,6 @@ package com.project.web_service;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -13,7 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.LongFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,17 +28,18 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.assertj.core.api.filter.InFilter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -48,7 +47,7 @@ import org.w3._2000._09.xmldsig.SignatureType;
 import org.xml.sax.SAXException;
 
 import com.project.model.Direction;
-import com.project.model.User;
+import com.mysql.jdbc.PreparedStatement;
 import com.project.model.Accommodation;
 import com.project.model.AccommodationCategory;
 import com.project.model.AccommodationType;
@@ -64,7 +63,6 @@ import com.project.model.Message;
 import com.project.model.MessageStatus;
 import com.project.model.PricePlan;
 import com.project.model.Reservation;
-import com.project.model.ReservationStatus;
 import com.project.model.ReservationStatus;
 import com.project.model.DTO.AccommodationDTO;
 import com.project.model.DTO.ApartmentDTO;
@@ -88,7 +86,6 @@ import com.project.service.AccommodationService;
 import com.project.service.AccommodationTypeService;
 import com.project.service.AdditionalServiceService;
 import com.project.service.AgentService;
-import com.project.service.ApartmentAdditionalServiceService;
 import com.project.service.ApartmentAdditionalServiceService;
 import com.project.service.ApartmentService;
 import com.project.service.BedTypeService;
@@ -221,9 +218,12 @@ public class AccommodationWebService {
 		String[] splits = image.split("ovo-je-separator");
 		
 		Accommodation saved = accService.save(newAccommodation);
+		
+		if(saved == null)
+			return "error";
+		
 		Long id = null;
 		File outputfile = null;
-		int size = -1;
 		int imgNameCounter = -1;
 		
 //		List<Image> images= imageService.findAll();
@@ -262,16 +262,38 @@ public class AccommodationWebService {
 				Image im = imageService.save(addImg);
 				
 				if(im != null)
-					session.createNativeQuery("insert into image values(" + im.getId() + ",'" +
-							im.getUrl() + "'," + saved.getId() + "," + null + ")").executeUpdate();
+				{	
+					Query<?> q = session.createNativeQuery("insert into image (image_id, url, accommodation_id, apartment_id) values (?, ?, ?, ?)");
+					q.setParameter(1, im.getId());
+					q.setParameter(2, im.getUrl());
+					q.setParameter(3, saved.getId());
+					q.setParameter(4, null);
+					
+					q.executeUpdate();
+				}
+				/*Query q = sessionFactory.getCurrentSession().createQuery("from LoginInfo where userName = :name");
+				q.setParameter("name", userName);
+				List<LoginInfo> loginList = q.list();*/
 			}
 		}
 		
 		System.out.println("aaa id " + id);
-		session.createNativeQuery("insert into accommodation values(" + saved.getId() + ",'" +
+		Query<?> q = session.createNativeQuery("insert into accommodation values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		q.setParameter(1, saved.getId());
+		q.setParameter(2, saved.getDescription());
+		q.setParameter(3, saved.getName());
+		q.setParameter(4, "ACTIVE");
+		q.setParameter(5, saved.getStreet());
+		q.setParameter(6, saved.getAgent().getId());
+		q.setParameter(7, saved.getCategory().getId());
+		q.setParameter(8, saved.getCity().getId());
+		q.setParameter(9, saved.getType().getId());
+		q.executeUpdate();
+		
+		/*session.createNativeQuery("insert into accommodation values(" + saved.getId() + ",'" +
 		saved.getDescription() + "','" + saved.getName() + "','ACTIVE','" + saved.getStreet() + "'," + saved.getAgent().getId() + "," + 
 		saved.getCategory().getId() + "," +
-		saved.getCity().getId() + "," + saved.getType().getId() + ")").executeUpdate();
+		saved.getCity().getId() + "," + saved.getType().getId() + ")").executeUpdate();*/
 		
 		retVal = "Accommodation successfully added";
 		
@@ -294,7 +316,12 @@ public class AccommodationWebService {
 	{
 		BedType bt = bedTypeService.findOne(Long.valueOf(bedType));
 		Optional<Accommodation> accDb= accService.findOne(Long.valueOf(accommodationId));
+		
+		if(!accDb.isPresent())
+			return "error";
+		
 		Accommodation accommodation = accDb.get();
+		
 		Apartment newApartment = new Apartment(name, bt, description, accommodation, Integer.parseInt(size), Integer.parseInt(numOfGuests), Integer.parseInt(numOfRooms));
 		
 		List<AdditionalService> tempArray = new ArrayList<>();
@@ -381,8 +408,17 @@ public class AccommodationWebService {
 				
 				if(saved != null)
 				if(im != null)
-					session.createNativeQuery("insert into image values(" + im.getId() + ",'" +
-							im.getUrl() + "'," + null + "," + saved.getId() + ")").executeUpdate();
+				{
+					Query<?> q = session.createNativeQuery("insert into image (image_id, url, accommodation_id, apartment_id) values (?, ?, ?, ?)");
+					q.setParameter(1, im.getId());
+					q.setParameter(2, im.getUrl());
+					q.setParameter(3, null);
+					q.setParameter(4, saved.getId());
+					
+					q.executeUpdate();
+				}
+//					session.createNativeQuery("insert into image values(" + im.getId() + ",'" +
+//							im.getUrl() + "'," + null + "," + saved.getId() + ")").executeUpdate();
 				
 			}
 			
@@ -396,27 +432,45 @@ public class AccommodationWebService {
 				
 				ApartmentAdditionalService ap = apartmentAdditionalService.save(new ApartmentAdditionalService(saved, ads));
 				System.out.println("ap " + ap.getId());
-				session.createNativeQuery("insert into apartment_additional_service values(" + ap.getId() + "," +
-					ads.getId() + "," + saved.getId() + ")").executeUpdate();
+				
+				Query<?> q = session.createNativeQuery("insert into apartment_additional_service values (?, ?, ?)");
+				q.setParameter(1, ap.getId());
+				q.setParameter(2, ads.getId());
+				q.setParameter(3, saved.getId());
+				q.executeUpdate();
 			}
 			
 			for(PricePlan pp : pricePlans)
 			{	
 				PricePlan p = pricePlanService.save(new PricePlan(saved, pp.getStartDate(), pp.getEndDate(), pp.getPrice()));
-				session.createNativeQuery("insert into price_plan values(" + p.getId() + ",'" +
-						p.getEndDate() + "'," + p.getPrice() + ",'" + p.getStartDate() + "','ACTIVE'," + saved.getId() + ")").executeUpdate();
+				Query<?> q = session.createNativeQuery("insert into price_plan values (?, ?, ?, ?, ?, ?)");
+				q.setParameter(1, p.getId());
+				q.setParameter(2, p.getEndDate());
+				q.setParameter(3, p.getPrice());
+				q.setParameter(4, p.getStartDate());
+				q.setParameter(5, "ACTIVE");
+				q.setParameter(6, saved.getId());
+				q.executeUpdate();
 			}
 			
-			session.createNativeQuery("insert into apartment values(" + saved.getId() + ",'" +
-					saved.getDescription() + "'," + saved.getMaxNumberOfGuests() + ",'" + saved.getName() + "'," + saved.getNumberOfRooms() + "," + saved.getSize() + ",'ACTIVE',"
-					+ saved.getAccommodation().getId() + "," + saved.getType().getId() + ")").executeUpdate();
+			Query<?> q = session.createNativeQuery("insert into apartment values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			q.setParameter(1, saved.getId());
+			q.setParameter(2, saved.getDescription());
+			q.setParameter(3, saved.getMaxNumberOfGuests());
+			q.setParameter(4, saved.getName());
+			q.setParameter(5, saved.getNumberOfRooms());
+			q.setParameter(6, saved.getSize());
+			q.setParameter(7, "ACTIVE");
+			q.setParameter(8, saved.getAccommodation().getId());
+			q.setParameter(9, saved.getType().getId());
+			q.executeUpdate();
 					
 			tx.commit();
 			session.close();
 			
 			retVal = "Apartment successfully added";
 		}else
-			return "Failed";
+			return "error";
 		
 		return retVal;
 		
@@ -425,7 +479,7 @@ public class AccommodationWebService {
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.AddPricePlan")
 	@ResponseWrapper(className="com.project.web_service.wrappers.responses.AddPricePlanResponse")
 	public String addPricePlan(@WebParam(name="apartmentId") String apartmentId, @WebParam(name = "startDate") String startDate, 
-			@WebParam(name = "endDate") String endDate, @WebParam(name = "price") String price, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+			@WebParam(name = "endDate") String endDate, @WebParam(name = "price") String price, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException, java.text.ParseException
 	{
 		System.out.println("tuu sm");
 		Optional<Apartment> optional = apartmentService.findOne(Long.valueOf(apartmentId));
@@ -436,15 +490,54 @@ public class AccommodationWebService {
 		
 		if(!optional.isPresent())
 			return "error";
+		
 		Apartment apartment = optional.get();
+		
 		PricePlan newPricePlan = new PricePlan(apartment, startDate, endDate, Integer.parseInt(price));
+		
+		Pattern pattern = Pattern.compile("^[0-3]?[0-9]/[0-3]?[0-9]/(?:[0-9]{2})?[0-9]{2}$");
+		Matcher startDateMatcher = pattern.matcher(startDate);
+		Matcher endDateMatcher = pattern.matcher(endDate);
+		
+		// Check date formats.
+		if (!startDateMatcher.find()) {
+			return "Wrong format";
+		}
+		if (!endDateMatcher.find()) {
+			return "Wrong format";
+		}
+		
+		// Check if dates are past dates.
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date checkStartDate = dateFormatter.parse(startDate);
+		Date checkEndDate = dateFormatter.parse(endDate);
+		
+		if (checkStartDate.before(new Date()) || checkEndDate.before(new Date())) {
+			return "You must enter future dates.";
+		}
+		
+		// Check if start date is before end date.
+		if (!checkStartDate.before(checkEndDate)) {
+			return "Start date must be before end date.";
+		}
+		
+		// Check if apartment is available in that period.
+		if (!pricePlanService.isAvailable(newPricePlan, newPricePlan.getStartDate(), newPricePlan.getEndDate())) {
+			return "Apartment is not available at the given period.";
+		}
 		
 		PricePlan saved = pricePlanService.save(newPricePlan);
 		if(saved == null)
 			return "error";
 		
-		session.createNativeQuery("insert into price_plan values(" + saved.getId() + ",'" +
-				saved.getEndDate() + "'," + saved.getPrice() + ",'" + saved.getStartDate() + "','ACTIVE'," + saved.getApartment().getId()).executeUpdate();
+		Query<?> q = session.createNativeQuery("insert into price_plan values(?, ?, ?, ?, ?, ?)");
+		q.setParameter(1, saved.getId());
+		q.setParameter(2, saved.getEndDate());
+		q.setParameter(3, saved.getPrice());
+		q.setParameter(4, saved.getStartDate());
+		q.setParameter(5, "ACTIVE");
+		q.setParameter(6, saved.getApartment().getId());
+		q.executeUpdate();
 		
 		tx.commit();
 		session.close();
@@ -505,14 +598,19 @@ public class AccommodationWebService {
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
-		System.out.println("jjjjj " + email);
-		
-		List<Accommodation> accommodations = session.createNativeQuery("select * from accommodation where status='ACTIVE'", Accommodation.class).getResultList();
 		List<AccommodationDTO> retVal = new ArrayList<>();
+		
+		System.out.println("jjjjj " + email);
+//		List<Accommodation> accommodations = session.createNativeQuery("select * from accommodation where status='ACTIVE'", Accommodation.class).getResultList();
+		List<Accommodation> accommodations = session.createNativeQuery("select * from accommodation where status = ?", Accommodation.class)
+				  .setParameter(1, "ACTIVE").getResultList();
+		
+		if(accommodations == null)
+			return retVal;
+		
 		System.out.println(accommodations.size());
 		tx.commit();
 		session.close();
-
 		
 		for(Accommodation acc : accommodations)
 		{
@@ -558,6 +656,8 @@ public class AccommodationWebService {
 		List<ReservationDTO> retVal = new ArrayList<>();
 		
 		List<Reservation> allReservations = session.createNativeQuery("select * from reservation", Reservation.class).getResultList();
+		System.out.println("sbe " + allReservations.size());
+		
 		tx.commit();
 		session.close();
 		
@@ -576,7 +676,7 @@ public class AccommodationWebService {
 	
 	@RequestWrapper(className="com.project.web_service.wrappers.requests.ConfirmReservation")
 	@ResponseWrapper(className="com.project.web_service.wrappers.ConfirmReservationResponse")
-	public String confirmReservation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+	public String confirmReservation(@WebParam(name = "id") String id, @WebParam(name = "Signature", targetNamespace = "http://www.w3.org/2000/09/xmldsig#") SignatureType signature) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException, java.text.ParseException
 	{
 		String subjectData = signature.getKeyInfo().getX509Data().getName();
 		String email = subjectData.split("=")[8];
@@ -586,6 +686,14 @@ public class AccommodationWebService {
 		System.out.println("resrvatio id " + id);
 		
 		Reservation reservation = reservationService.findOne(Long.valueOf(id));
+		
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+			
+		Date startDate = dateFormatter.parse(reservation.getStartDate());
+		if (startDate.compareTo(new Date()) < 0) {
+			return "Unable to confirm reservation until it starts.";
+		}
+		
 		reservation.setStatus(ReservationStatus.VISIT);
 		reservationService.save(reservation);
 		session.update(reservation);
@@ -629,9 +737,8 @@ public class AccommodationWebService {
 		if(!ids.contains(Long.valueOf(id)))
 			return retVal;
 		
-		List<Apartment> all = session.createNativeQuery("select * from apartment where status='ACTIVE'", Apartment.class).getResultList();
-//		
-//				apartmentService.findByAccommodationId(Long.valueOf(id));
+		List<Apartment> all = session.createNativeQuery("select * from apartment where status = ?", Apartment.class)
+							  .setParameter(1, "ACTIVE").getResultList();
 		
 		List<ApartmentAdditionalService> apartmentServices = new ArrayList<>();
 		List<PricePlan> pricePlans = new ArrayList<>();
@@ -645,6 +752,7 @@ public class AccommodationWebService {
 		
 		for(Apartment ap : all)
 		{	
+			System.out.println("nasao " + ap.getId());
 			apartmentServices = apartmentAdditionalService.findByApartmentId(ap.getId());
 			pricePlans = pricePlanService.findByApartmentId(ap.getId());
 			
@@ -709,11 +817,14 @@ public class AccommodationWebService {
 //			return new ApartmentDTO("error");
 		
 //		Apartment ap = optional.get();
-		
-		Apartment ap = session.get(Apartment.class, Long.valueOf(id));
+		Apartment ap = session.createNativeQuery("select * from apartment where apartment_id = ?", Apartment.class)
+				.setParameter(1, id).getSingleResult();
 		
 		if(ap == null)
 			return new ApartmentDTO("error");
+		
+		System.out.println("tanjaa " + ap.getId());
+//		Apartment ap = session.get(Apartment.class, Long.valueOf(id));
 			
 		List<ApartmentAdditionalService> apartmentServices = new ArrayList<>();
 		List<PricePlan> pricePlans = new ArrayList<>();
@@ -726,7 +837,8 @@ public class AccommodationWebService {
 		final JSONObject res = new JSONObject();
 			
 		apartmentServices = apartmentAdditionalService.findByApartmentId(ap.getId());
-		pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=" + ap.getId(), PricePlan.class).getResultList();
+		pricePlans = session.createNativeQuery("select * from price_plan where apartment_id= ?", PricePlan.class).setParameter(1, ap.getId()).getResultList();
+		
 //				pricePlanService.findByApartmentId(ap.getId());
 		tx.commit();
 		session.close();
@@ -811,13 +923,15 @@ public class AccommodationWebService {
 		
 		Accommodation acc = session.get(Accommodation.class, Long.valueOf(id));
 		
-		List<Apartment> apartments = session.createNativeQuery("select * from apartment where accommodation_id=" + acc.getId(), Apartment.class).getResultList();
+		List<Apartment> apartments = session.createNativeQuery("select * from apartment where accommodation_id=?", Apartment.class)
+				.setParameter(1, acc.getId()).getResultList();
 		
 		for(Apartment apartment : apartments)
 		{
 			if(apartment.getStatus().equals(DeleteStatus.ACTIVE))
 			{
-				pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=" + apartment.getId(), PricePlan.class).getResultList();
+				pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=?", PricePlan.class)
+						.setParameter(1, apartment.getId()).getResultList();
 				
 				for(PricePlan pp : pricePlans)
 				{	
@@ -854,6 +968,9 @@ public class AccommodationWebService {
 		
 		Accommodation acc = session.get(Accommodation.class, Long.valueOf(id));
 		
+		if(acc == null)
+			return  new AccommodationDTO("error");
+		
 		System.out.println("aaa " + acc);
 		if(acc.getStatus().equals(DeleteStatus.ACTIVE))
 			retVal = new AccommodationDTO(acc.getId().toString(), acc.getName(), acc.getType().getName(), acc.getCity().getName(),
@@ -861,7 +978,8 @@ public class AccommodationWebService {
 		
 //		TODO sredi za vracanje slike
 		
-		List<Image> images = session.createNativeQuery("select * from image where accommodation_id=" + acc.getId(), Image.class).getResultList();
+		List<Image> images = session.createNativeQuery("select * from image where accommodation_id=?", Image.class)
+				.setParameter(1, acc.getId()).getResultList();
 		String temp = "";
 		
 		for(Image img : images)
@@ -888,11 +1006,14 @@ public class AccommodationWebService {
 		Session session = getSession(email);
 		Transaction tx = session.beginTransaction();
 		
-		Apartment apartment = session.get(Apartment.class, Long.valueOf(id));
+		Apartment apartment = session.createNativeQuery("select * from apartment where apartment_id = ?", Apartment.class)
+				.setParameter(1, id).getSingleResult();
+//		Apartment apartment = session.get(Apartment.class, Long.valueOf(id));
 		
 		if(apartment.getStatus().equals(DeleteStatus.ACTIVE))
 		{
-			pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=" + apartment.getId(), PricePlan.class).getResultList();
+			pricePlans = session.createNativeQuery("select * from price_plan where apartment_id=?", PricePlan.class)
+					.setParameter(1, apartment.getId()).getResultList();
 			
 			for(PricePlan pp : pricePlans)
 			{	
@@ -939,7 +1060,11 @@ public class AccommodationWebService {
 		String email = subjectData.split("=")[8];
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
-		Message message = s.get(Message.class, Long.valueOf(id));
+//		Message message = s.get(Message.class, Long.valueOf(id));
+		Query<?> q = s.createQuery("select message from message where message_id = ?");
+		q.setParameter(1, id);
+		Message message = (Message) q.getSingleResult();
+		
 		tx.commit();
 		s.close();
 		return new MessageDTO(message.getId().toString(), message.getUser().getName(), message.getUser().getSurname(), message.getText(), message.getDate(), message.getTime(), 
@@ -969,7 +1094,16 @@ public class AccommodationWebService {
 		String email = subjectData.split("=")[8];
 		Session s = getSession(email);
 		Transaction tx = s.beginTransaction();
-		List<Message> messages = s.createNativeQuery("select * from  message where direction = 'USER_TO_AGENT' and status!='DELETED_FOR_AGENT'", Message.class).getResultList();
+		
+		/*PreparedStatement stmt = s.createCriteria(prepareStatement("SELECT * FROM users WHERE userid=? AND password=?");
+		s.pre
+		stmt.setString(1, userid);
+		stmt.setString(2, password);
+		ResultSet rs = stmt.executeQuery();*/
+		List<Message> messages = s.createNativeQuery("select * from  message where direction = ? and status != ?", Message.class)
+				.setParameter(1, "USER_TO_AGENT")
+				.setParameter(2, "DELETED_FOR_AGENT").getResultList();
+		
 		tx.commit();
 		s.close();
 
@@ -1030,6 +1164,7 @@ public class AccommodationWebService {
 		Transaction tx = s.beginTransaction();
 		
 		Apartment apartment = s.get(Apartment.class, Long.valueOf(apartmentId));
+		
 		Reservation reservation = new Reservation(null, apartment, startDate, endDate, 0, ReservationStatus.RESERVATION);
 
 		Pattern pattern = Pattern.compile("^[0-3]?[0-9]/[0-3]?[0-9]/(?:[0-9]{2})?[0-9]{2}$");
@@ -1064,10 +1199,40 @@ public class AccommodationWebService {
 		
 		Reservation r = reservationService.save(reservation);
 		
-		s.createNativeQuery("insert into reservation values("+r.getId()+",'"+r.getEndDate()+"',"+0+",'"+r.getStartDate()+"','RESERVATION',"+apartmentId+",NULL)").executeUpdate();
+		/*String insert = "INSERT INTO customer(name,address,email) VALUES(?, ?, ?);";
+		PreparedStatement ps = s.prepareStatement(insert);
+		ps.setString(1, name);
+		ps.setString(2, addre);
+		ps.setString(3, email);
+
+		ResultSet rs = ps.executeQuery();
 		
-		tx.commit();
-		s.close();
+		String custname = r.getParameter("customerName"); // This should REALLY be validated too
+		 // perform input validation to detect attacks
+		 String query = "SELECT account_balance FROM user_data WHERE user_name = ? ";
+		 
+		 PreparedStatement pstmt = connection.prepareStatement( query );
+		 pstmt.setString( 1, custname); 
+		 ResultSet results = pstmt.executeQuery( );
+	*/
+//		Query sqlQuery = session.createSQLQuery("Select * from Books where author = ?");
+//		 List results = sqlQuery.setString(0, "Charles Dickens").list();
+		 
+//		 s.createNativeQuery("insert into reservation values("+r.getId()+",'"+r.getEndDate()+"',"+0+",'"+r.getStartDate()+"','RESERVATION',"+apartmentId+",NULL)").executeUpdate();
+	
+		 Query<?> sqlQuery = s.createNativeQuery("insert into reservation (reservation_id, end_date, price, start_date, status, apartment_id, user_id) values (?, ?, ?, ?, ?, ?, ?)");	 
+		 sqlQuery.setParameter(1, r.getId());
+		 sqlQuery.setParameter(2, r.getEndDate());
+		 sqlQuery.setParameter(3, 0);
+		 sqlQuery.setParameter(4, r.getStartDate());
+		 sqlQuery.setParameter(5, "RESERVATION");
+		 sqlQuery.setParameter(6, apartmentId);
+		 sqlQuery.setParameter(7, null);
+		 
+		 sqlQuery.executeUpdate();
+		 
+		 tx.commit();
+		 s.close();
 		
 		return "Reservation successfully added";
 	}
@@ -1090,7 +1255,21 @@ public class AccommodationWebService {
 		
 		Message messageResponse = new Message(message.getUser(), message.getAgent(), message.getApartment(), date, time, messageText, MessageStatus.UNREAD, Direction.AGENT_TO_USER);
 		Message m = messageService.save(messageResponse);
-		s.createNativeQuery("insert into message values("+m.getId()+",'"+date+"','"+m.getDirection()+"','"+ m.getStatus()+"','"+messageText+"','"+time+"',"+m.getAgent().getId()+","+m.getApartment().getId()+","+ m.getUser().getId()+")").executeUpdate();
+		
+		Query<?> sqlQuery = s.createNativeQuery("insert into message (message_id, date, direction, status, message_text, time, agent_id, apartment_id, user_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?)");	 
+		sqlQuery.setParameter(1, m.getId());
+		sqlQuery.setParameter(2, date);
+		sqlQuery.setParameter(3, m.getDirection());
+		sqlQuery.setParameter(4, m.getStatus());
+		sqlQuery.setParameter(5, messageText);
+		sqlQuery.setParameter(6, time);
+		sqlQuery.setParameter(7, m.getAgent().getId());
+		sqlQuery.setParameter(8, m.getApartment().getId());
+		sqlQuery.setParameter(9, m.getUser().getId());
+		sqlQuery.executeUpdate();
+		
+//		s.createNativeQuery("insert into message values("+m.getId()+",'"+date+"','"+m.getDirection()+"','"+ 
+//		m.getStatus()+"','"+messageText+"','"+time+"',"+m.getAgent().getId()+","+m.getApartment().getId()+","+ m.getUser().getId()+")").executeUpdate();
 		tx.commit();
 		s.close();
 

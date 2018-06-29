@@ -69,21 +69,14 @@
 			             <tr>
 			                 <th class="text-center">Name</th>
 			                 <th class="text-center">Bed type</th>
-			                 <th class="text-center">Size(m^2)</th>
-			                 <th class="text-center">Number of rooms</th>
-			                 <th class="text-center">Number of guests</th>
 			                 <th class="text-center">Description</th>
-			                 <th class="text-center">Image</th>
 			             </tr>
 			             </thead>
 			             <tbody>
 			             <tr *ngFor="let apartment of apartments">
 		                 <td class="text-center" style="width: 15px;">{{apartment.name}}</td>
 		                 <td class="text-center" style="width: 15px;">{{apartment.bedType}}</td>
-		                 <td class="text-center" style="width: 15px;">{{apartment.size}}</td>
-		                 <td class="text-center" style="width: 15px;">{{apartment.numOfRooms}}</td>
-		                 <td class="text-center" style="width: 15px;">{{apartment.numOfGuests}}</td>
-		                 <td class="text-center" style="width: 15px;">{{apartment.image}}</td>
+		                 <td class="text-center" style="width: 15px;">{{apartment.description}}</td>
 						 <td class="text-center" style="width: 15px;">
 							<div>
 				                <button class="btn btn-outline-info" type="button" [routerLink]="['/apartmentDetail', apartment.id]">Details</button>

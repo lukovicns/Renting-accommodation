@@ -1,27 +1,46 @@
 package com.project.model.DTO;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class AccommodationDTO {
 	
+	@Pattern(regexp ="[0-9]*")
 	private String id;
 	
+	@NotNull
 	private String name;
 	
+	@NotNull
 	private String type;
 
+	@NotNull
 	private String city;
 	
+	@NotNull
 	private String country;
 	
+	@NotNull
 	private String street;
 	
+	@NotNull @Size(max = 900)
 	private String description;
 	
+	@NotNull
 	private String category;
 	
+	@NotNull
 	private String image;
 
 	public AccommodationDTO() {
 		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	public AccommodationDTO(String error) {
+		super();
+		this.name = error;
 		// TODO Auto-generated constructor stub
 	}
 

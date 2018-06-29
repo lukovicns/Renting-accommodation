@@ -1,25 +1,39 @@
 package com.project.model.DTO;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class ApartmentDTO {
 	
+	@Pattern(regexp ="[0-9]*")
 	private String id;
 	
+	@NotNull
 	private String name;
 	
+	@NotNull
 	private String bedType;
 
+	@NotNull @Pattern(regexp ="[0-9]+")
 	private String size;
 	
+	@NotNull @Pattern(regexp ="[0-9]+")
 	private String numOfRooms;
 	
+	@NotNull @Pattern(regexp ="[0-9]+")
 	private String numOfGuests;
 	
+	@NotNull @Size(max = 900)
 	private String description;
 	
+	@NotNull
 	private String image;
 	
+	@NotNull
 	private String additionalService;
 	
+	@NotNull 
 	private String pricePlans;
 
 	public ApartmentDTO() {

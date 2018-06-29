@@ -1,16 +1,34 @@
 package com.project.model.DTO;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 public class MessageDTO {
 
+	@Pattern(regexp ="[0-9]*")
 	String id;
-	String name;
-	String surname;
-	String content;
-	String date;
-	String time;
-	String agentEmail;
-	String userEmail;
 	
+	@NotNull
+	String name;
+	
+	@NotNull
+	String surname;
+	
+	@NotNull
+	String content;
+	
+	@NotNull @Pattern(regexp="[0-9]{4}-[0-9]{2}-[0-9]{2}")
+	String date;
+	
+	@NotNull @Pattern(regexp="[0-24]{1}:[0-59]{1}")
+	String time;
+	
+	@NotNull @Email
+	String agentEmail;
+	
+	@NotNull @Email
+	String userEmail;
 	
 	public MessageDTO(String id, String name, String surname, String content, String date, String time,
 			String agentEmail, String userEmail) {
