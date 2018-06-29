@@ -48,9 +48,9 @@ export class ApartmentComponent implements OnInit {
       numOfRooms: ['', Validators.required],
       numOfGuests: ['', Validators.required],
       additional: ['', Validators.required],
-      description: ['', Validators.required],
+      description: [''],
       image: ['', Validators.required],
-      pricePlans: ['', Validators.required],
+      pricePlans: [''],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       price: ['', Validators.required]
@@ -58,24 +58,29 @@ export class ApartmentComponent implements OnInit {
   
   addPricePlan(){
 
-      this.pricePlan = {
-        'startDate': this.apartmentForm.value.startDate,
-        'endDate': this.apartmentForm.value.endDate,
-        'price': this.apartmentForm.value.price
+      if(this.apartmentForm.value.startDate < this.getToday() || this.apartmentForm.value.endDate < this.getToday())
+      {          
+          swal('Past date cannot be selected.');
+          
       }
-      
-      this.pricePlans.push(this.pricePlan);
-      this.finalPricePlans.push(this.pricePlan);
-      console.log(this.pricePlans);
-      console.log(this.finalPricePlans);
-      
+      else{
+          this.pricePlan = {
+            'startDate': this.apartmentForm.value.startDate,
+            'endDate': this.apartmentForm.value.endDate,
+            'price': this.apartmentForm.value.price
+          }
+          
+          this.pricePlans.push(this.pricePlan);
+          this.finalPricePlans.push(this.pricePlan);
+          console.log(this.pricePlans);
+          console.log(this.finalPricePlans);
+          this.showNewPricePlan = false;
+          this.moreThanOne = true;
+      }
 //      this.pricePlans.push({ id: 1, pricePlan: { startDate: this.pricePlan.startDate, endDate: this.pricePlan.endDate, price: this.pricePlan.price }});
 //      console.log(this.pricePlan);
 //      console.log(this.pricePlans);
 //      this.pricePlans.push(this.pricePlan.price);
-      
-      this.showNewPricePlan = false;
-      this.moreThanOne = true;
   }
  
   onFileChanged(event) {
@@ -132,7 +137,11 @@ export class ApartmentComponent implements OnInit {
         this.checkedList.splice(this.checkedList.indexOf(check), 1);
         console.log(this.checkedList);
   
-    }
+    } 
+    if(this.checkedList.length === 0)
+        this.apartmentForm.controls['pricePlans'].markAsDirty();
+    else
+        !this.apartmentForm.controls['pricePlans'].markAsDirty();
   }
   
   
@@ -166,19 +175,31 @@ export class ApartmentComponent implements OnInit {
       this.showNewPricePlan = true;
   }
   
+  getToday(): string {
+      return new Date().toISOString().split('T')[0]
+   }
+  
   addApartment() {
       console.log(this.checkedList);
       console.log(JSON.stringify(this.checkedList));
       console.log(JSON.stringify(this.finalPricePlans));
+      console.log(this.url);
       
-      this.apartmentService.addApartment(this.apartmentForm.value, JSON.stringify(this.checkedList), JSON.stringify(this.finalPricePlans), this.accommodationId, this.url)
-      .subscribe(res => { 
-          swal({
-              text: res['return'],
-              confirmButtonText: 'Ok',
-          });
-             this.router.navigate(['/accommodationDetail/'+ this.accommodationId]);
-        });
+      if(this.url == undefined)
+      {    
+          swal('You must upload at least one image.')
+      }else{
+          this.apartmentService.addApartment(this.apartmentForm.value, JSON.stringify(this.checkedList), JSON.stringify(this.finalPricePlans), this.accommodationId, this.url)
+          .subscribe(res => { 
+              swal({
+                  text: res['return'],
+                  confirmButtonText: 'Ok',
+              });
+                 this.router.navigate(['/accommodationDetail/'+ this.accommodationId]);
+            }, err => { 
+                this.router.navigate(['/notFound'])
+            });
+      }
    }
   
 }

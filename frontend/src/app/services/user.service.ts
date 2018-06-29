@@ -43,7 +43,6 @@ export class UserService {
     if (token == null) {
       return false;
     }
-    // if(!token) return true;
     const date = this.getTokenExpirationDate(token);
     if(date === undefined) return false;
     return !(date.valueOf() > new Date().valueOf());

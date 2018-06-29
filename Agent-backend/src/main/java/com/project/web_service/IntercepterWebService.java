@@ -9,8 +9,8 @@
  import java.io.IOException;
  import java.io.InputStreamReader;
  import java.io.OutputStream;
+import java.security.InvalidAlgorithmParameterException;
  import java.io.PrintWriter;
- import java.security.InvalidAlgorithmParameterException;
  import java.security.KeyStore;
  import java.security.KeyStoreException;
  import java.security.NoSuchAlgorithmException;
@@ -28,6 +28,10 @@ import java.util.Collections;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.xml.bind.DatatypeConverter;
+import javax.validation.Valid;
+import javax.xml.bind.DatatypeConverter;
+import javax.xml.bind.JAXBException;
+ import javax.xml.bind.DatatypeConverter;
  import javax.xml.bind.JAXBException;
  import javax.xml.crypto.MarshalException;
  import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -70,8 +74,10 @@ import org.json.JSONException;
  import org.springframework.http.HttpStatus;
  import org.springframework.http.MediaType;
  import org.springframework.http.ResponseEntity;
- import org.springframework.web.bind.annotation.CrossOrigin;
- import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
  import org.springframework.web.bind.annotation.RequestBody;
  import org.springframework.web.bind.annotation.RequestHeader;
  import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,15 +86,11 @@ import org.json.JSONException;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.project.config.BlankingResolver;
-import com.project.model.Message;
-import com.project.model.SendMessage;
 import com.project.model.DTO.AccommodationDTO;
  import com.project.model.DTO.ApartmentDTO;
 import com.project.model.DTO.MakeReservationDTO;
 import com.project.model.DTO.PricePlanDTO;
-import com.project.model.DTO.ReservationDTO;
 
 import io.jsonwebtoken.Claims;
  import io.jsonwebtoken.Jwts;
@@ -107,8 +109,11 @@ public class IntercepterWebService {
 	public static int PRETTY_PRINT_INDENT_FACTOR = 4;
 	
 	@RequestMapping(value="/addAccommodation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> addAccommodation(@RequestBody AccommodationDTO accommodation, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	public ResponseEntity<String> addAccommodation(@Valid @RequestBody AccommodationDTO accommodation, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
+        }
 		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
@@ -146,6 +151,9 @@ public class IntercepterWebService {
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		
+		if(xmlJSONObj.toString().contains("error"))
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
         JSONObject retVal =  new JSONObject();
         retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:addAccommodationResponse")).get("return"));
         
@@ -153,8 +161,13 @@ public class IntercepterWebService {
 	}
     
 	@RequestMapping(value="/addApartment/{accommodationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> addApartment(@PathVariable String accommodationId, @RequestBody ApartmentDTO apartment, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	public ResponseEntity<String> addApartment(@PathVariable String accommodationId, @Valid @RequestBody ApartmentDTO apartment, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		if (bindingResult.hasErrors()) {
+			System.out.println("add apartment " + bindingResult);
+            return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
+        }
+		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -185,6 +198,11 @@ public class IntercepterWebService {
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		System.out.println("inte " + xmlJSONObj);
+		
+		if(xmlJSONObj.toString().contains("error"))
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        
+		
         JSONObject retVal =  new JSONObject();
         retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:addApartmentResponse")).get("return"));
         
@@ -192,8 +210,13 @@ public class IntercepterWebService {
 	}
 	
 	@RequestMapping(value="/addReservation/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> addReservation(@PathVariable String id, @RequestBody MakeReservationDTO reservation, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException, java.text.ParseException
+	public ResponseEntity<String> addReservation(@PathVariable String id, @Valid @RequestBody MakeReservationDTO reservation, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException, java.text.ParseException
 	{
+		System.out.println(reservation.getStartDate() + " aa " + reservation.getEndDate());
+		System.out.println("bb " + bindingResult);
+		if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
+        }
 		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
@@ -246,8 +269,14 @@ public class IntercepterWebService {
 	}
 	
 	@RequestMapping(value="/addPricePlan/{apartmentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> addPricePlan(@PathVariable String apartmentId, @RequestBody PricePlanDTO pricePlan, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
+	public ResponseEntity<String> addPricePlan(@PathVariable String apartmentId, @Valid @RequestBody PricePlanDTO pricePlan, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		System.out.println("add price plan " + pricePlan.getEndDate() + pricePlan.getStartDate() + pricePlan.getPrice());
+		
+		if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
+        }
+		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -272,6 +301,9 @@ public class IntercepterWebService {
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
 		
+		if(xmlJSONObj.toString().contains("error"))
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
         JSONObject retVal =  new JSONObject();
         retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:addPricePlanResponse")).get("return"));
         
@@ -282,6 +314,7 @@ public class IntercepterWebService {
 	@RequestMapping(value="/confirmReservation/{id}")
 	public ResponseEntity<String> confirmReservation(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
+		
 		String email = getEmailFromToken(token);
 		String soap = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
 		
@@ -318,13 +351,13 @@ public class IntercepterWebService {
 		String body = "<ns2:getAccommodationTypes xmlns:ns2=\"http://com.project/web_service/wrappers\">"
 				+ "</ns2:getAccommodationTypes>";
 		
-		PrintWriter pwo = new PrintWriter("out.xml");
-		pwo.write("");
-		pwo.close();
+//		PrintWriter pwo = new PrintWriter("out.xml");
+//		pwo.write("");
+//		pwo.close();
 //		
-		PrintWriter pw = new PrintWriter("test.xml");
-		pw.write("");
-		pw.close();
+//		PrintWriter pw = new PrintWriter("test.xml");
+//		pw.write("");
+//		pw.close();
 		System.out.println("types b " + body);
 		signXml(body, email,"test2.xml", "out2.xml");
 		File file = new File("out2.xml");
@@ -543,6 +576,13 @@ public class IntercepterWebService {
 		JSONObject xmlJSONObj = httpClientExecute(soap);
         JSONObject retVal =  new JSONObject();
         System.out.println("get " + xmlJSONObj);
+        
+        if(xmlJSONObj.toString().contains("error"))
+        {	
+        	System.out.println("error " + xmlJSONObj);
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        
         if(xmlJSONObj.toString().contains("return"))
         	retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getApartmentsResponse")).get("return"));
         else
@@ -643,12 +683,17 @@ public class IntercepterWebService {
 		bin.close();
 		
 		JSONObject xmlJSONObj = httpClientExecute(soap);
+		
+		if(xmlJSONObj.toString().contains("error"))
+        {	
+        	System.out.println("error " + xmlJSONObj);
+        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+		
 		JSONObject retVal =  new JSONObject();
 		System.out.println("x " + xmlJSONObj);
 		if(xmlJSONObj.toString().contains("return"))
 			retVal.put("return", ((JSONObject) ((JSONObject) ((JSONObject) xmlJSONObj.get("S:Envelope")).get("S:Body")).get("ns3:getAccommodationResponse")).get("return"));
-		else if(!xmlJSONObj.toString().contains("ns3:getAccommodationResponse"))
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else
         	retVal.put("return", "This accommodation has no apartments.");
 		

@@ -28,15 +28,24 @@ export class RegisterComponent implements OnInit {
       Validators.required,
       Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')
     ])],
-    name: ['', Validators.required],
-    surname: ['', Validators.required],
+    /*^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$
+*/    name: ['', Validators.compose([
+      Validators.required,
+      Validators.pattern('^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$')
+    ])],
+    surname: ['', Validators.compose([
+      Validators.required,
+      Validators.pattern('^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$')
+    ])],
     phone: ['', Validators.compose([
       Validators.required,
       Validators.pattern('^[0-9]*$')
     ])],
+//    /^\s*\S+(?:\s+\S+){2}/
     country: ['', Validators.required],
     city: ['', Validators.required],
-    street: ['', Validators.required],
+    street: ['',  Validators.required,
+    ],
     password1: ['', Validators.compose([
                                         Validators.required,
                                         Validators.pattern('^(?=.*[A-Za-z])(?=.*\\d)(?=.*[A-Z])(.{10,})$')

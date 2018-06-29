@@ -1,6 +1,7 @@
 package com.project.Rentingaccommodation.controller;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.Rentingaccommodation.logger.AccommodationCategoryLogger;
 import com.project.Rentingaccommodation.model.AccommodationCategory;
 import com.project.Rentingaccommodation.model.AccommodationCategoryStatus;
 import com.project.Rentingaccommodation.service.AccommodationCategoryService;
@@ -53,9 +55,11 @@ public class AccommodationCategoryController {
 		}
 		AccommodationCategory c = service.findByCategoryName(data.getName());
 		if (c != null) {
+			AccommodationCategoryLogger.log(Level.WARNING, "Tried to add accommodation category, but another accommodation category with this name already exists.");
 			return new ResponseEntity<>("Category with this name already exists.", HttpStatus.FORBIDDEN);
 		}
 		AccommodationCategory category = new AccommodationCategory(data.getName(), AccommodationCategoryStatus.ACTIVE);
+		AccommodationCategoryLogger.log(Level.INFO, "Accommodation category '" + category.getName() + "' is successfully added.");
 		return new ResponseEntity<>(service.save(category), HttpStatus.OK);
 	}
 	
@@ -70,9 +74,11 @@ public class AccommodationCategoryController {
 		}
 		AccommodationCategory c = service.findByCategoryName(data.getName());
 		if (c != null && c.getId() != category.getId()) {
+			AccommodationCategoryLogger.log(Level.WARNING, "Tried to edit accommodation category, but another category with this name already exists.");
 			return new ResponseEntity<>("Another category with this name already exists.", HttpStatus.FORBIDDEN);
 		}
 		category.setName(data.getName());
+		AccommodationCategoryLogger.log(Level.INFO, "Accommodation category '" + category.getName() + "' is successfully updated.");
 		return new ResponseEntity<>(service.save(category), HttpStatus.OK);
 	}
 	
@@ -83,6 +89,7 @@ public class AccommodationCategoryController {
 			return new ResponseEntity<>("Category not found.", HttpStatus.NOT_FOUND);
 		}
 		category.setStatus(AccommodationCategoryStatus.ACTIVE);
+		AccommodationCategoryLogger.log(Level.INFO, "Accommodation category '" + category.getName() + "' is activated.");
 		return new ResponseEntity<>(service.save(category), HttpStatus.OK);
 	}
 	
@@ -93,6 +100,7 @@ public class AccommodationCategoryController {
 			return new ResponseEntity<>("Category not found.", HttpStatus.NOT_FOUND);
 		}
 		category.setStatus(AccommodationCategoryStatus.INACTIVE);
+		AccommodationCategoryLogger.log(Level.INFO, "Accommodation category '" + category.getName() + "' is deactivated.");
 		return new ResponseEntity<>(service.save(category), HttpStatus.OK);
 	}
 }

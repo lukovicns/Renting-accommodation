@@ -120,7 +120,9 @@ public class AdminController {
 		}
 		
 		admin.setMax_tries(0);
+
 		String token = jwtGenerator.generateAdmin(new JwtUser(admin.getId(), admin.getEmail(), admin.getPassword(), admin.getStatus().toString(), UserPrivileges.READ_WRITE_PRIVILEGE.toString()));
+
 		HashMap<String, Object> response = new HashMap<String, Object>();
 		response.put("token", token);
 		AdminLogger.log(Level.INFO, "Admin " + admin.getEmail() + " is successfully logged in.");

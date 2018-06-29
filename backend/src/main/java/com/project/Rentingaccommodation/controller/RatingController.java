@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.project.Rentingaccommodation.logger.RatingLogger;
 import com.project.Rentingaccommodation.model.Apartment;
 import com.project.Rentingaccommodation.model.Rating;
 import com.project.Rentingaccommodation.model.Reservation;
@@ -104,6 +107,7 @@ public class RatingController {
 		// Check if user already rated.
 		Rating userRating = service.findUserRatingForApartment(user, apartment);
 		if (userRating != null) {
+			RatingLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to rate #" + apartment.getId() + " apartment, but he already rated it.");
 			return new ResponseEntity<>("User already rated this apartment.", HttpStatus.FORBIDDEN);
 		}
 		
@@ -115,6 +119,7 @@ public class RatingController {
 		List<Reservation> userReservations = reservationService.findUserReservationsByApartmentId(user, apartment.getId());
 		
 		if (userReservations.isEmpty()) {
+			RatingLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to rate #" + apartment.getId() + " apartment, but he doesn't have reservations for this apartment yet.");
 			return new ResponseEntity<>("You must first make reservations to rate apartment.", HttpStatus.FORBIDDEN);
 		}
 		
@@ -122,6 +127,7 @@ public class RatingController {
 			try {
 				Date endDate = dateFormatter.parse(reservation.getEndDate());
 				if (endDate.compareTo(new Date()) > 0) {
+					RatingLogger.log(Level.WARNING, "User " + user.getEmail() + " tried to rate #" + apartment.getId() + " apartment, but his reservation didn't pass yet.");
 					return new ResponseEntity<>("You can rate apartment after the reservation has passed.", HttpStatus.FORBIDDEN);
 				}
 			} catch (ParseException e) {
@@ -130,6 +136,7 @@ public class RatingController {
 		}
 		
 		Rating rating = new Rating(user, apartment, date, time, data.getRating());
+		RatingLogger.log(Level.INFO, "User " + user.getEmail() + " successfully rated #" + apartment.getId() + " apartment.");
 		return new ResponseEntity<>(service.save(rating), HttpStatus.OK);
 	}
 	

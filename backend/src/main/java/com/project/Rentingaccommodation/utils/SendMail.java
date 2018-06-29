@@ -76,12 +76,7 @@ public class SendMail {
 	}
 
 	public static String generateRandomPassword() {
-		  
-	    int length = 10;
-	    boolean useLetters = true;
-	    boolean useNumbers = false;
-	    String generatedPassword = RandomStringUtils.random(length, useLetters, useNumbers);
-	 
+	    String generatedPassword = RandomStringUtils.random(15, true, true);
 	    System.out.println(generatedPassword);
 	    return generatedPassword;
 	}

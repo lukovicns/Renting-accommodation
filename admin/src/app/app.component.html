@@ -37,8 +37,13 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="user-nav-link" routerLink="/users" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <a class="nav-link" routerLink="/users" *ngIf="adminIsLoggedIn()" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <i class="fas fa-user"></i>&nbsp;Users
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" *ngIf="adminIsLoggedIn()" routerLink="/profile" routerLinkActive="active">
+          <i class="fas fa-user"></i>&nbsp;Profile
         </a>
       </li>
       <li class="nav-item">
@@ -47,7 +52,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="adminIsLoggedIn()" (click)="logout()" id="logout">
+        <a class="nav-link" id="logout" *ngIf="adminIsLoggedIn()" (click)="logout()">
           <i class="fas fa-power-off"></i>&nbsp;Logout
         </a>
       </li>

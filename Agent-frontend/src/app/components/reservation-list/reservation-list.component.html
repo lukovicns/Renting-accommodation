@@ -28,7 +28,7 @@
             <td>{{ reservation.price }}</td>
             <td>{{ reservation.status }}</td>
             <td>
-              <button *ngIf="reservation.status == 'RESERVATION'" class="btn btn-success btn-sm" (click)="confirmReservation(reservation.id)">Confirm reservation</button>
+              <button *ngIf="reservation.status === 'RESERVATION' && reservation.status !== 'VISIT'" class="btn btn-success btn-sm" (click)="confirmReservation(reservation.id)">Confirm reservation</button>
               <button *ngIf="confirmed" class="btn btn-basic btn-sm" disabled> Reservation confirmed</button>
                <a>
                   <i *ngIf="confirmed" class="fas fa-check"></i>

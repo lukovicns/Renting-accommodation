@@ -66,9 +66,9 @@ export class ApartmentService {
   
   addNewPricePlan(pricePlan, apartmentId){
       var data = {
-          'startDate': pricePlan.startDate,
-          'endDate': pricePlan.endDate,
-          'price': pricePlan.price
+          'startDate': pricePlan.startDatePP,
+          'endDate': pricePlan.endDatePP,
+          'price': pricePlan.pricePP
       };
       console.log(data);
       console.log(apartmentId);

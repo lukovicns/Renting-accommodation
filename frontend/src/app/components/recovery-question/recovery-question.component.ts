@@ -44,17 +44,17 @@ export class RecoveryQuestionComponent implements OnInit {
     }
   }
 
-  userExists(email) {
-    this.userService.getUserByEmail(email)
-    .subscribe(res => {
-      console.log(res);
-      return true;
-    }, err => {
-      this.errorMessage = err['error'];
-      console.log(this.errorMessage);
-      return false;
-    });
-  }
+  // userExists(email) {
+  //   this.userService.getUserByEmail(email)
+  //   .subscribe(res => {
+  //     console.log(res);
+  //     return true;
+  //   }, err => {
+  //     this.errorMessage = err['error'];
+  //     console.log(this.errorMessage);
+  //     return false;
+  //   });
+  // }
 
   sendMail() {
     this.data = {

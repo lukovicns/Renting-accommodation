@@ -9,7 +9,10 @@ import { AdminService } from './services/admin.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private adminService: AdminService, private router: Router) { }
+  constructor(
+    private adminService: AdminService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.adminIsLoggedIn();

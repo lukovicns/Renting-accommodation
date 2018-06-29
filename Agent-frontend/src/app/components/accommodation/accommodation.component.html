@@ -11,33 +11,61 @@
            	<label for="name">Name</label>
            	<input formControlName="name" type="text" class="form-control" id="name" placeholder="Enter accommodaion name here">
           </div>
+          <div *ngIf="accommodationForm.controls['name'].invalid && (accommodationForm.controls['name'].dirty || accommodationForm.controls['name'].touched)" class="alert alert-danger">
+	            <div *ngIf="accommodationForm.controls['name'].errors.required">
+	            Name is required.
+	          	</div>
+	      </div>
           
           <!-- [(ngModel)]="accommodationTypes" id="accommodationTypes" [ngModelOptions]="{standalone: true}" -->
           <div class="form-group">
             <label for="accType">Accommodation type</label>
 	        <select formControlName="accType" required class="form-control"><!-- [(ngModel)]="model" name="type"> -->
+	       		 <option value="" disabled="true"> Please select accommodation type</option>
 			    <option *ngFor="let at of accommodationTypes" [value]="at.id">{{at.name}}</option>
 			</select>
 		  </div>
+		  <div *ngIf="accommodationForm.controls['accType'].invalid && (accommodationForm.controls['accType'].dirty || accommodationForm.controls['accType'].touched)" class="alert alert-danger">
+	            <div *ngIf="accommodationForm.controls['accType'].errors.required">
+	            Accommodation type is required.
+	          	</div>
+	      </div>
 		  
 		  <div class="form-group">
             <label for="accCat">Accommodation category</label>
             <select formControlName="accCat" required class="form-control"><!-- [(ngModel)]="model" name="type"> -->
+            	<option value="" disabled="true"> Please select accommodation category</option>
 			    <option *ngFor="let ac of accommodationCategory" [value]="ac.id">{{ac.name}}</option>
 			</select>
 		  </div>
+		  <div *ngIf="accommodationForm.controls['accCat'].invalid && (accommodationForm.controls['accCat'].dirty || accommodationForm.controls['accCat'].touched)" class="alert alert-danger">
+	            <div *ngIf="accommodationForm.controls['accCat'].errors.required">
+	            Accommodation category is required.
+	          	</div>
+	      </div>
 		  
 		  <div class="form-group">
             <label for="city">City</label>
             <select formControlName="city" required class="form-control"><!-- [(ngModel)]="model" name="type"> -->
+            	<option value="" disabled="true"> Please select city</option>
 			    <option *ngFor="let c of cities" [value]="c.id">{{c.name}}</option>
 			</select>
 		  </div>
+		  <div *ngIf="accommodationForm.controls['city'].invalid && (accommodationForm.controls['city'].dirty || accommodationForm.controls['city'].touched)" class="alert alert-danger">
+	            <div *ngIf="accommodationForm.controls['city'].errors.required">
+	            City is required.
+	          	</div>
+	      </div>
 		  
 		  <div class="form-group">
             <label for="street">Street</label>
             <input formControlName="street" type="text" class="form-control" id="street" placeholder="Enter street here"> 
 		  </div>
+		   <div *ngIf="accommodationForm.controls['street'].invalid && (accommodationForm.controls['street'].dirty || accommodationForm.controls['street'].touched)" class="alert alert-danger">
+	            <div *ngIf="accommodationForm.controls['street'].errors.required">
+	            Street is required.
+	          	</div>
+	      </div>
 		  
 		  <div class="form-group">
             <label for="description">Description</label>
@@ -46,15 +74,30 @@
 		  </div>
 		  
 		   <div class="form-group">
-            <label for="image">Image</label>
-           	<div>
+		  <!--  <label class="btn btn-secondary btn-file">Browse -->
+          	 <!-- <input formControlName="image" type="file" (change)="onFileChange($event)">
+          	 <input type="hidden" name="fileHidden" formControlName="image"/> --> <!-- Validation Field -->
+        	<!-- </label> -->
+             <label for="image">Image (upload at least one)</label> 
+           	 <div>
            		{{imgName}}
              	<input formControlName="image" style="display: none" type="file" (change)="onFileChanged($event)" #fileInput> 
-			 	<button type="button" class="btn btn-outline-info" (click)="fileInput.click()">Select File</button>
-			 </div>
+			 	<button type="button" name="btn" class="btn btn-outline-info" (click)="fileInput.click()">Select File</button>
+			 </div> 
+			 <!-- <div *ngIf="fileInput.$error" class="alert alert-danger">
+	            <div *ngIf="fileInput.errors.required">
+	            At least one image is required.
+	          	</div>
+	     	 </div>  -->
 		  </div>
+		  <div *ngIf="btn" class="alert alert-danger">
+	            <div *ngIf="empty">
+	            Image is required.
+	          	</div>
+	      </div>
+		 
 					  
-          <button type="submit" class="btn btn-info btn-block" >Add</button>
+          <button type="submit" (click)="imgEmpty()" [disabled]="!accommodationForm.valid || imgName === ''" class="btn btn-info btn-block" >Add</button>
         </form>
       </div>
     </div> 
