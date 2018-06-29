@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 @Injectable()
 export class ReservationService {
 
-    private url = 'http://localhost:9000/restIntercepter';
+    private url = 'https://localhost:9000/restIntercepter';
  /* private headers = new HttpHeaders()
     .append('Content-Type', 'application/json')
     .append('Authorization', 'Bearer ' + localStorage.getItem('token'));*/

@@ -14,7 +14,7 @@ import { BehaviorSubject } from 'rxjs';
 export class AccommodationService implements OnInit {
   
 
-  private url = 'http://localhost:9000/restIntercepter';
+  private url = 'https://localhost:9000/restIntercepter';
   data = {};
   title = "tttt";
   

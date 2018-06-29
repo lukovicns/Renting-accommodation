@@ -1,7 +1,19 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.io.BufferedInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,15 +21,30 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.util.EntityUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -29,6 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -62,6 +90,7 @@ import com.project.Rentingaccommodation.utils.UserUtils;
 
 @RestController
 @RequestMapping(value = "/api/agents")
+@CrossOrigin(value = "https://localhost:4200")
 public class AgentController {
 
 	@Autowired
@@ -225,7 +254,7 @@ public class AgentController {
 	}
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<Object> registerAgent(@RequestBody AgentDTO agent) {
+	public ResponseEntity<Object> registerAgent(@RequestBody AgentDTO agent) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NoSuchProviderException, CertificateException {
 		
 		if (UserUtils.userExists(agent.getEmail(), userService, adminService, service)) {
 			return new ResponseEntity<>("User with this email already exists.", HttpStatus.FORBIDDEN);
@@ -554,7 +583,75 @@ public class AgentController {
 		return new ResponseEntity<>(agent, HttpStatus.OK);	
 	}
 	
-	public void createCertificate(String email) throws ClientProtocolException, IOException {
+	public void createCertificate(String email) throws ClientProtocolException, IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, NoSuchProviderException, CertificateException {
+		
+		/*try {
+			// get ssl context
+			SSLContext sc = SSLContext.getInstance("SSL");
+
+			// Create empty HostnameVerifier
+			HostnameVerifier hv = new HostnameVerifier() {
+			public boolean verify(String urlHostName,SSLSession session) {
+			return true;
+			}
+			};
+
+			// Create a trust manager that does not validate certificate chains
+			TrustManager[] trustAllCerts = new TrustManager[]{
+			new X509TrustManager() {
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+			return null;
+			}
+			public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+			}
+			public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+			}
+			}
+			};
+
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			SSLSocketFactory sslSocketFactory = sc.getSocketFactory();
+
+			HttpsURLConnection.setDefaultSSLSocketFactory(sslSocketFactory);
+			HttpsURLConnection.setDefaultHostnameVerifier(hv);
+
+			URL u = new URL(url);
+			URLConnection uc = u.openConnection();
+			HttpsURLConnection connection = (HttpsURLConnection)uc; 
+			connection.setRequestMethod("POST");
+			connection.setDoOutput(true);
+			connection.setInstanceFollowRedirects(false);
+			connection.setUseCaches( false );
+			try( DataOutputStream wr = new DataOutputStream( connection.getOutputStream())) {
+				   wr.write(email.getBytes(charset));
+				}
+
+			} catch (Exception e) {
+			System.out.println("Exception: " + e);
+			}*/
+		
+		/*KeyStore ks = KeyStore.getInstance("PKCS12");
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(System.getProperty("user.dir").replace("backend", "Certificate-Generator")+"\\keystore.p12"));
+		ks.load(in, "password".toCharArray());
+		
+		SSLContextBuilder builder = new SSLContextBuilder();
+	    builder.loadTrustMaterial(ks, new TrustSelfSignedStrategy());
+	    SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+	            builder.build());
+	    CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(
+	            sslsf).build();
+
+	    HttpPost post = new HttpPost(url);
+	    CloseableHttpResponse response = httpclient.execute(post);
+	    try {
+	        System.out.println(response.getStatusLine());
+	        HttpEntity entity = response.getEntity();
+	        EntityUtils.consume(entity);
+	    }
+	    finally {
+	        response.close();
+	    }*/
+		
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(url);
 		post.setEntity(new StringEntity(email,charset));

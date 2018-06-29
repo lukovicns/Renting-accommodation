@@ -90,11 +90,11 @@ import io.jsonwebtoken.Claims;
  import io.jsonwebtoken.Jwts;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://localhost:4200")
 @RequestMapping(value="/restIntercepter")
 public class IntercepterWebService {
 
-	public static String url = "http://localhost:9090/Agent-backend/AccommodationWebService";
+	public static String url = "https://localhost:9090/Agent-backend/AccommodationWebService";
 	
 	public static String URL_ENCODING = "UTF-8";
 	

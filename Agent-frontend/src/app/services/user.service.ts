@@ -6,8 +6,8 @@ import * as decode from 'jwt-decode';
 export class UserService {
 
   private data = {};
-  private url: string = 'http://localhost:8081/api/agents/';
-  private tokenUrl: string = 'http://localhost:8081/token/';
+  private url: string = 'https://localhost:8081/api/agents/';
+  private tokenUrl: string = 'https://localhost:8081/token/';
   private email: string;
   private tokenExpiredMessage: string;
   

@@ -7,7 +7,7 @@ import { Message } from '../models/Message';
 })
 export class MessageService {
     
-    private url: string = 'http://localhost:9000/restIntercepter/';
+    private url: string = 'https://localhost:9000/restIntercepter/';
 
   constructor(private http: HttpClient) { }
   

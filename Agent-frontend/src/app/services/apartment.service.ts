@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ApartmentService {
 
-  private url = 'http://localhost:9000/restIntercepter';
+  private url = 'https://localhost:9000/restIntercepter';
   data = {};
   newPricePlan:any;
   allPricePlans: any;
