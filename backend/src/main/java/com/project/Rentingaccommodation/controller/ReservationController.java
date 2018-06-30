@@ -1,5 +1,6 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -107,7 +108,7 @@ public class ReservationController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<Object> makeReservation(@RequestBody Reservation reservation, @RequestHeader("Authorization") String authHeader) {
+	public ResponseEntity<Object> makeReservation(@RequestBody Reservation reservation, @RequestHeader("Authorization") String authHeader) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(authHeader, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}

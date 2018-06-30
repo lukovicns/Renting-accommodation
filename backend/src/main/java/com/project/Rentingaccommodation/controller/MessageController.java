@@ -1,5 +1,6 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -172,7 +173,7 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/user-to-agent", method=RequestMethod.POST)
-	public ResponseEntity<Object> sendMessageToAgent(@RequestBody SendMessage data, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<Object> sendMessageToAgent(@RequestBody SendMessage data, @RequestHeader("Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -209,7 +210,7 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/agent-to-user", method=RequestMethod.POST)
-	public ResponseEntity<Object> sendMessageToUser(@RequestBody SendMessage data, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<Object> sendMessageToUser(@RequestBody SendMessage data, @RequestHeader("Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -245,7 +246,7 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteMessage(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
+	public ResponseEntity<Object> deleteMessage(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(authHeader, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -275,7 +276,7 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}/delete-user-sent", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteUserSentMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<Object> deleteUserSentMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -297,7 +298,7 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}/delete-user-received", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteUserReceivedMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<Object> deleteUserReceivedMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -319,7 +320,7 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}/delete-agent-sent", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteAgentSentMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<Object> deleteAgentSentMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -341,7 +342,7 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value="/{id}/delete-agent-received", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteAgentReceivedMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<Object> deleteAgentReceivedMessage(@PathVariable Long id, @RequestHeader("Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}

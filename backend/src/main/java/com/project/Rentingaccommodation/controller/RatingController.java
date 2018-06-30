@@ -1,5 +1,6 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -95,7 +96,7 @@ public class RatingController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<Object> addRatingForApartment(@RequestBody Rating data, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<Object> addRatingForApartment(@RequestBody Rating data, @RequestHeader("Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.USER, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}

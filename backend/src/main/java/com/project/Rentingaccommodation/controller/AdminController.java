@@ -1,6 +1,7 @@
 package com.project.Rentingaccommodation.controller;
 
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
-	public ResponseEntity<Object> loginAdmin(@RequestBody Admin data) {
+	public ResponseEntity<Object> loginAdmin(@RequestBody Admin data) throws SecurityException, IOException {
 		if (data.getEmail() == null || data.getEmail() == "" ||
 				data.getPassword() == null || data.getPassword() == "") {
 			return new ResponseEntity<>("Email and password not provided.", HttpStatus.NOT_ACCEPTABLE);
@@ -136,7 +137,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
-	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) {
+	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) throws SecurityException, IOException {
 		if (passDTO.getOldPassword() == null || passDTO.getOldPassword() == "" ||
 			passDTO.getNewPassword() == null || passDTO.getNewPassword() == "" ||
 			passDTO.getToken() == null || passDTO.getToken() == "") {
@@ -242,7 +243,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/reset", method = RequestMethod.POST)
-	public ResponseEntity<Object> resetPassword(@RequestBody SecurityQuestionDTO questionDTO) throws ParseException {
+	public ResponseEntity<Object> resetPassword(@RequestBody SecurityQuestionDTO questionDTO) throws ParseException, SecurityException, IOException {
 		if (questionDTO.getEmail() == null || questionDTO.getEmail() == "" ||
 			questionDTO.getAnswer() == null || questionDTO.getAnswer() == "") {
 			return new ResponseEntity<>("Email and answer must be provided.", HttpStatus.FORBIDDEN);
@@ -292,7 +293,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/activate-user/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> activateUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> activateUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -306,7 +307,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/block-user/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> blockUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> blockUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.READ_WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -320,7 +321,7 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value="/delete-user/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> deleteUser(@PathVariable Long id, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.READ_WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}

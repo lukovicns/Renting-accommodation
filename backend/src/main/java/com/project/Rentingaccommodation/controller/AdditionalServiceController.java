@@ -1,5 +1,6 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -45,7 +46,7 @@ public class AdditionalServiceController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<Object> addAdditionalService(@RequestBody AdditionalService data, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> addAdditionalService(@RequestBody AdditionalService data, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -63,7 +64,7 @@ public class AdditionalServiceController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> updateAdditionalService(@PathVariable Long id, @RequestBody AdditionalService data, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> updateAdditionalService(@PathVariable Long id, @RequestBody AdditionalService data, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -85,7 +86,7 @@ public class AdditionalServiceController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteAdditionalService(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> deleteAdditionalService(@PathVariable Long id, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}

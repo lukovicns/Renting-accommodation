@@ -1,5 +1,6 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -94,7 +95,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<Object> registerUser(@RequestBody User user) {
+	public ResponseEntity<Object> registerUser(@RequestBody User user) throws SecurityException, IOException {
 		if (user.getName() == null || user.getName() == "" ||
 			user.getSurname() == null || user.getSurname() == "" ||
 			user.getEmail() == null || user.getEmail() == "" ||
@@ -139,7 +140,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
-	public ResponseEntity<Object> loginUser(@RequestBody User user) {
+	public ResponseEntity<Object> loginUser(@RequestBody User user) throws SecurityException, IOException {
 		if (user.getEmail() == null || user.getEmail() == "" ||
 			user.getPassword() == null || user.getPassword() == "") {
 			return new ResponseEntity<>("Email and password not provided.", HttpStatus.NOT_ACCEPTABLE);
@@ -208,7 +209,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/change", method = RequestMethod.POST)
-	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) {
+	public ResponseEntity<Object> changePassword(@RequestBody PasswordChangeDTO passDTO) throws SecurityException, IOException {
 		if (passDTO.getOldPassword() == null || passDTO.getOldPassword() == "" ||
 			passDTO.getNewPassword() == null || passDTO.getNewPassword() == "" ||
 			passDTO.getToken() == null || passDTO.getToken() == "") {
@@ -320,7 +321,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/reset", method = RequestMethod.POST)
-	public ResponseEntity<Object> resetPassword(@RequestBody SecurityQuestionDTO questionDTO) throws ParseException {
+	public ResponseEntity<Object> resetPassword(@RequestBody SecurityQuestionDTO questionDTO) throws ParseException, SecurityException, IOException {
 		if (questionDTO.getEmail() == null || questionDTO.getEmail() == "" ||
 			questionDTO.getAnswer() == null || questionDTO.getAnswer() == "") {
 			return new ResponseEntity<>("Email and answer must be provided.", HttpStatus.FORBIDDEN);

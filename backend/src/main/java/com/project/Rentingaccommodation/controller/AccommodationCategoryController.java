@@ -1,5 +1,6 @@
 package com.project.Rentingaccommodation.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -56,7 +57,7 @@ public class AccommodationCategoryController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.POST)
-	public ResponseEntity<Object> addAccommodationCategory(@RequestBody AccommodationCategory data, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> addAccommodationCategory(@RequestBody AccommodationCategory data, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -74,7 +75,7 @@ public class AccommodationCategoryController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<Object> updateAccommodationCategory(@PathVariable Long id, @RequestBody AccommodationCategory data, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> updateAccommodationCategory(@PathVariable Long id, @RequestBody AccommodationCategory data, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -96,7 +97,7 @@ public class AccommodationCategoryController {
 	}
 	
 	@RequestMapping(value="/{id}/activate", method=RequestMethod.PUT)
-	public ResponseEntity<Object> activateCategory(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> activateCategory(@PathVariable Long id, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
@@ -110,7 +111,7 @@ public class AccommodationCategoryController {
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public ResponseEntity<Object> delete(@PathVariable Long id, @RequestHeader(value="Authorization") String token) {
+	public ResponseEntity<Object> delete(@PathVariable Long id, @RequestHeader(value="Authorization") String token) throws SecurityException, IOException {
 		if(!jwtUserPermissions.hasRoleAndPrivilege(token, UserRoles.ADMIN, UserPrivileges.WRITE_PRIVILEGE)) {
 			return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}

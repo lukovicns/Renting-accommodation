@@ -88,7 +88,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.project.config.BlankingResolver;
-import com.project.logger.AgentLogger;
+import com.project.logger.WSLogger;
 import com.project.model.UserPrivileges;
 import com.project.model.UserRoles;
 import com.project.model.DTO.AccommodationDTO;
@@ -142,12 +142,12 @@ public class IntercepterWebService {
 	public ResponseEntity<String> addAccommodation(@Valid @RequestBody AccommodationDTO accommodation, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to add accommodation but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to add accommodation but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		if (bindingResult.hasErrors()) {
 			System.out.println("eeee " + bindingResult);
-			AgentLogger.log(Level.WARNING, "Agent " + getEmailFromToken(token) + " tried to add accommodation but didn't send valid data.");
+			WSLogger.log(Level.WARNING, "Agent " + getEmailFromToken(token) + " tried to add accommodation but didn't send valid data.");
             return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
         }
 		
@@ -200,12 +200,12 @@ public class IntercepterWebService {
 	{
 		
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to add apartment but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to add apartment but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		if (bindingResult.hasErrors()) {
 			System.out.println("add apartment " + bindingResult);
-			AgentLogger.log(Level.WARNING, "Agent " + getEmailFromToken(token) + " tried to add apartment but is not authorized.");
+			WSLogger.log(Level.WARNING, "Agent " + getEmailFromToken(token) + " tried to add apartment but didn't send valid data.");
             return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
         }
 		
@@ -254,13 +254,13 @@ public class IntercepterWebService {
 	public ResponseEntity<String> addReservation(@PathVariable String id, @Valid @RequestBody MakeReservationDTO reservation, BindingResult bindingResult, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException, java.text.ParseException
 	{
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to add reservation but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to add reservation but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		System.out.println(reservation.getStartDate() + " aa " + reservation.getEndDate());
 		System.out.println("bb " + bindingResult);
 		if (bindingResult.hasErrors()) {
-			AgentLogger.log(Level.WARNING, "Agent " + getEmailFromToken(token) + " tried to add reservation but is not authorized.");
+			WSLogger.log(Level.WARNING, "Agent " + getEmailFromToken(token) + " tried to add reservation but is not authorized.");
             return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
         }
 		
@@ -319,13 +319,13 @@ public class IntercepterWebService {
 	{
 		
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to add price plan but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to add price plan but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		System.out.println("add price plan " + pricePlan.getEndDate() + pricePlan.getStartDate() + pricePlan.getPrice());
 		
 		if (bindingResult.hasErrors()) {
-			AgentLogger.log(Level.WARNING, "Agent " + getEmailFromToken(token) + " tried to add price plan but is not authorized.");
+			WSLogger.log(Level.WARNING, "Agent " + getEmailFromToken(token) + " tried to add price plan but is not authorized.");
             return new ResponseEntity<>("Invalid data pattern.", HttpStatus.BAD_REQUEST);
         }
 		
@@ -368,7 +368,7 @@ public class IntercepterWebService {
 	{
 		
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to confirm reservation but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to confirm reservation but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		
@@ -722,7 +722,7 @@ public class IntercepterWebService {
 	{
 		
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to delete accommodation but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to delete accommodation but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		String email = getEmailFromToken(token);
@@ -801,7 +801,7 @@ public class IntercepterWebService {
 	public ResponseEntity<String> deleteApartment(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws KeyStoreException, ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to delete apartment but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to delete apartment but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		String email = getEmailFromToken(token);
@@ -1059,7 +1059,7 @@ public class IntercepterWebService {
 	public ResponseEntity<String> markAsReadAgentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to read message but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to read message but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		
@@ -1100,7 +1100,7 @@ public class IntercepterWebService {
 	public ResponseEntity<String> deleteAgentSentMessage(@PathVariable String id, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to delete message but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to delete message but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		String email = getEmailFromToken(token);
@@ -1139,7 +1139,7 @@ public class IntercepterWebService {
 	public ResponseEntity<String> sendMessageToUser(@PathVariable (name = "id") String id, @RequestBody String text, @RequestHeader(value="Authorization") String token) throws ClientProtocolException, IOException, JSONException, SOAPException, JAXBException, ParseException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException, UnrecoverableEntryException, SAXException, ParserConfigurationException, MarshalException, XMLSignatureException, TransformerException
 	{
 		if(!hasRoleAndPrivilege(token, UserRoles.AGENT, UserPrivileges.WRITE_PRIVILEGE)) {
-			AgentLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to send message but is not authorized.");
+			WSLogger.log(Level.WARNING, "User " + getEmailFromToken(token) + " tried to send message but is not authorized.");
 			return new ResponseEntity<String>("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 		
