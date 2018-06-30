@@ -7,7 +7,7 @@ import { AccommodationCategory } from '../models/AccommodationCategory';
 })
 export class CategoryService {
 
-  private url: string = 'http://localhost:8081/api/categories/';
+  private url: string = 'https://localhost:8081/api/categories/';
 
   constructor(private http: HttpClient) { }
   private headers = new HttpHeaders()

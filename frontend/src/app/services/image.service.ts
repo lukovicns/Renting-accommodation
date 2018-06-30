@@ -5,7 +5,7 @@ import { Image } from '../models/Image';
 @Injectable()
 export class ImageService {
 
-  private url: string = 'http://localhost:8081/api/images/';
+  private url: string = 'https://localhost:8081/api/images/';
 
   constructor(private http: HttpClient) { }
 

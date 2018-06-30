@@ -7,7 +7,7 @@ import { AdditionalService } from '../models/AdditionalService';
 })
 export class AdditionalServicesService {
 
-  private url: string = 'http://localhost:8081/api/additional-services/';
+  private url: string = 'https://localhost:8081/api/additional-services/';
   private headers = new HttpHeaders()
     .append('Content-Type', 'application/json')
     .append('Authorization', 'Bearer ' + localStorage.getItem('token'))

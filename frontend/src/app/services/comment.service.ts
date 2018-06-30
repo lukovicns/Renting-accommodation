@@ -5,7 +5,7 @@ import { Comment } from '../models/Comment';
 @Injectable()
 export class CommentService {
 
-  private url: string = 'http://localhost:8081/api/comments/';
+  private url: string = 'https://localhost:8081/api/comments/';
   private headers = new HttpHeaders()
     .append('Content-Type', 'application/json')
     .append('Authorization', 'Bearer ' + localStorage.getItem('token'))

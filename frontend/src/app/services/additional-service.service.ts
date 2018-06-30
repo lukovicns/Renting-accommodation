@@ -5,7 +5,7 @@ import { AdditionalService } from '../models/AdditionalService';
 @Injectable()
 export class AdditionalServiceService {
 
-  private url: string = 'http://localhost:8081/api/additional-services/';
+  private url: string = 'https://localhost:8081/api/additional-services/';
 
   constructor(private http: HttpClient) { }
 

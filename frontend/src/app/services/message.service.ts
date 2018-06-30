@@ -5,7 +5,7 @@ import { Message } from '../models/Message';
 @Injectable()
 export class MessageService {
 
-  private url: string = 'http://localhost:8081/api/messages/';
+  private url: string = 'https://localhost:8081/api/messages/';
   private headers = new HttpHeaders()
     .append('Content-Type', 'application/json')
     .append('Authorization', 'Bearer ' + localStorage.getItem('token'))

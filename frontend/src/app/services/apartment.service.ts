@@ -5,7 +5,7 @@ import { Apartment } from '../models/Apartment';
 @Injectable()
 export class ApartmentService {
 
-  private url: string = 'http://localhost:8081/api/apartments/';
+  private url: string = 'https://localhost:8081/api/apartments/';
   private headers = new HttpHeaders()
   .append('Content-Type', 'application/json')
   .append('Authorization', 'Bearer ' + localStorage.getItem('token'));

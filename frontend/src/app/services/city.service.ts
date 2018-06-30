@@ -5,7 +5,7 @@ import { City } from '../models/City';
 @Injectable()
 export class CityService {
 
-  private url: string = 'http://localhost:8081/api/cities/';
+  private url: string = 'https://localhost:8081/api/cities/';
 
   constructor(private http: HttpClient) { }
 

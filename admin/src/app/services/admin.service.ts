@@ -10,8 +10,8 @@ import { User } from '../models/User';
 export class AdminService {
 
   private data = {};
-  private url: string = 'http://localhost:8081/api/admins/';
-  private tokenUrl: string = 'http://localhost:8081/token/';
+  private url: string = 'https://localhost:8081/api/admins/';
+  private tokenUrl: string = 'https://localhost:8081/token/';
   private email: string;
   private tokenExpiredMessage: string;
   private headers = new HttpHeaders()

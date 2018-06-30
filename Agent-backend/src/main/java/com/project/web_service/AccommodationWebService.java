@@ -71,7 +71,7 @@ import com.mysql.jdbc.PreparedStatement;
 import com.project.model.User;
 import com.project.config.BlankingResolver;
 import com.project.config.X509KeySelector;
-import com.project.Rentingaccommodation.logger.AgentLogger;
+import com.project.logger.AgentLogger;
 import com.project.model.Accommodation;
 import com.project.model.AccommodationCategory;
 import com.project.model.AccommodationType;
@@ -1271,6 +1271,7 @@ public class AccommodationWebService {
 			retVal.add(new MessageDTO(message.getId().toString(),message.getUser().getName(),message.getUser().getSurname(),
 					message.getText(),message.getDate(),message.getTime(),message.getAgent().getEmail(), message.getUser().getEmail()));
 		}
+		System.out.println("rez mess "+retVal );
 		return retVal;
 		
 	}
@@ -1449,11 +1450,13 @@ public class AccommodationWebService {
 		Message messageResponse = new Message(message.getUser(), message.getAgent(), message.getApartment(), date, time, messageText, MessageStatus.UNREAD, Direction.AGENT_TO_USER);
 		Message m = messageService.save(messageResponse);
 		
+		
+		System.out.println("direction "+m.getDirection());
 		Query<?> sqlQuery = s.createNativeQuery("insert into message (message_id, date, direction, status, message_text, time, agent_id, apartment_id, user_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?)");	 
 		sqlQuery.setParameter(1, m.getId());
 		sqlQuery.setParameter(2, date);
-		sqlQuery.setParameter(3, m.getDirection());
-		sqlQuery.setParameter(4, m.getStatus());
+		sqlQuery.setParameter(3, m.getDirection().toString());
+		sqlQuery.setParameter(4, m.getStatus().toString());
 		sqlQuery.setParameter(5, messageText);
 		sqlQuery.setParameter(6, time);
 		sqlQuery.setParameter(7, m.getAgent().getId());
@@ -1495,11 +1498,12 @@ public class AccommodationWebService {
 	public boolean isCertificateValid(String email, String certificate) throws Exception {
 
 		X509Certificate cert = (X509Certificate)ks.getCertificate(email);
-		System.out.println("null "+cert);
 		if (cert == null) {
 			return false;
 		}
+		System.out.println("poslat " +certificate.replace("\n", "").replace("\r", ""));
 		String encodedString = Base64.getEncoder().encodeToString(cert.getEncoded());
+		System.out.println("iz ksa "+encodedString);
 		if (encodedString.equals(certificate.replace("\n", "").replace("\r", ""))) {
 			return true;
 		}
@@ -1520,13 +1524,14 @@ public class AccommodationWebService {
 		    throw new Exception("Cannot find Signature element");
 		}
 		
-		System.out.println("xml "+doc.getElementsByTagName("SignatureValue").item(0).getTextContent());
+		/*System.out.println("xml "+doc.getElementsByTagName("SignatureValue").item(0).getTextContent().replace("\n", "").replace("\r", ""));
 		System.out.println("soap "+value);
-		
-		if(!doc.getElementsByTagName("SignatureValue").item(0).getTextContent().replace("\n", "").replace("\r", "").equals(value))
+		*/
+		/*if(!doc.getElementsByTagName("SignatureValue").item(0).getTextContent().replace("\n", "").replace("\r", "").equals(value))
 		{
+			System.out.println("nisu isti");
 			return false;
-		}
+		}*/
 		// Create a DOMValidateContext and specify a KeySelector
 		// and document context.
 		DOMValidateContext valContext = new DOMValidateContext
@@ -1537,6 +1542,8 @@ public class AccommodationWebService {
 
 		// Validate the XMLSignature.
 		boolean coreValidity = signature.validate(valContext);
+		
+		System.out.println("valid "+coreValidity);
 		
 		return coreValidity;
 	}

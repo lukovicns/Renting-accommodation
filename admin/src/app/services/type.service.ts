@@ -7,7 +7,7 @@ import { AccommodationType } from '../models/AccommodationType';
 })
 export class TypeService {
 
-  private url: string = 'http://localhost:8081/api/types/';
+  private url: string = 'https://localhost:8081/api/types/';
 
   constructor(private http: HttpClient) { }
   private headers = new HttpHeaders()

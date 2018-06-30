@@ -5,7 +5,7 @@ import { AccommodationType } from '../models/AccommodationType';
 @Injectable()
 export class AccommodationTypeService {
 
-  private url: string = 'http://localhost:8081/api/types/';
+  private url: string = 'https://localhost:8081/api/types/';
 
   constructor(private http: HttpClient) { }
 
